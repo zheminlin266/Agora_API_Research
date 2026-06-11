@@ -1,0 +1,68 @@
+{
+  "generated_at_utc": "2026-06-11T09:16:50.827762+00:00",
+  "source": {
+    "registry": "https://registry.npmjs.org",
+    "downloads": "https://api.npmjs.org/downloads",
+    "range_limit_note": "npm downloads API is queried in 548-day chunks. Larger single requests are truncated by the API.",
+    "latest_day_policy": "Uses the later of npm's aggregate last-day endpoint and UTC yesterday because package range data can be newer than the aggregate endpoint.",
+    "weekly_grain": "Monday-start weeks",
+    "latest_download_day": "2026-06-10",
+    "html_chart_complete_through_week_start": "2026-06-01",
+    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
+    "caveat": "npm download counts include automation, mirrors, robots, cache effects, and dependency installs."
+  },
+  "csv": {
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\Agora (API)\\livekit_npm_weekly_downloads.csv",
+    "rows": 282,
+    "columns": [
+      "week_start",
+      "livekit-client",
+      "@livekit/components-react",
+      "@livekit/react-native",
+      "@livekit/agents",
+      "@livekit/agents-plugin-silero"
+    ]
+  },
+  "packages": {
+    "livekit-client": {
+      "exists": true,
+      "created": "2021-01-24T23:09:43.737Z",
+      "modified": "2026-06-08T13:08:20.650Z",
+      "latest_version": "2.19.2",
+      "description": "JavaScript/TypeScript client SDK for LiveKit",
+      "error": null
+    },
+    "@livekit/components-react": {
+      "exists": true,
+      "created": "2022-10-07T08:26:58.958Z",
+      "modified": "2026-05-05T14:13:58.946Z",
+      "latest_version": "2.9.21",
+      "description": "A LiveKit Components implementation in [React](https://reactjs.org/).",
+      "error": null
+    },
+    "@livekit/react-native": {
+      "exists": true,
+      "created": "2023-01-12T09:33:05.080Z",
+      "modified": "2026-05-26T16:27:27.938Z",
+      "latest_version": "2.11.0",
+      "description": "LiveKit for React Native",
+      "error": null
+    },
+    "@livekit/agents": {
+      "exists": true,
+      "created": "2024-05-21T08:53:35.047Z",
+      "modified": "2026-06-02T17:20:42.195Z",
+      "latest_version": "1.4.5",
+      "description": "LiveKit Agents - Node.js",
+      "error": null
+    },
+    "@livekit/agents-plugin-silero": {
+      "exists": true,
+      "created": "2024-11-10T15:13:39.024Z",
+      "modified": "2026-06-02T17:20:55.250Z",
+      "latest_version": "1.4.5",
+      "description": "Silero voice activity detection LiveKit Node Agents",
+      "error": null
+    }
+  }
+}
