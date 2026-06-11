@@ -1,0 +1,54 @@
+{
+  "generated_at_utc": "2026-06-11T02:48:31.558215+00:00",
+  "source": {
+    "registry": "https://registry.npmjs.org",
+    "downloads": "https://api.npmjs.org/downloads",
+    "range_limit_note": "npm downloads API is queried in 365-day chunks.",
+    "weekly_grain": "Monday-start weeks",
+    "latest_download_day": "2026-06-02",
+    "html_chart_complete_through_week_start": "2026-05-25",
+    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
+    "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
+  },
+  "csv": {
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\agora_npm_weekly_downloads.csv",
+    "rows": 469,
+    "columns": [
+      "week_start",
+      "agora-rtc-sdk-ng",
+      "agora-rtm-sdk",
+      "agora-rtc-react",
+      "react-native-agora"
+    ]
+  },
+  "packages": {
+    "agora-rtc-sdk-ng": {
+      "exists": true,
+      "created": "2020-03-02T11:06:28.278Z",
+      "modified": "2026-05-27T07:31:09.218Z",
+      "description": "Agora WebRTC SDK for JavaScript",
+      "error": null
+    },
+    "agora-rtm-sdk": {
+      "exists": true,
+      "created": "2019-07-23T09:40:49.363Z",
+      "modified": "2026-04-03T10:51:21.311Z",
+      "description": "JavaScript SDK for Agora RTM",
+      "error": null
+    },
+    "agora-rtc-react": {
+      "exists": true,
+      "created": "2021-10-17T13:31:08.072Z",
+      "modified": "2025-12-17T03:50:09.444Z",
+      "description": "Agora RTC React SDK",
+      "error": null
+    },
+    "react-native-agora": {
+      "exists": true,
+      "created": "2017-06-13T10:15:31.546Z",
+      "modified": "2026-05-08T08:25:54.362Z",
+      "description": "Agora RTC SDK For React Native",
+      "error": null
+    }
+  }
+}
