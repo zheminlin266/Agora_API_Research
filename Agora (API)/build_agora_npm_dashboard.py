@@ -358,18 +358,18 @@ def chart_payload(series: list[tuple[str, int]]) -> str:
 def interactive_chart_shell(package: str, series: list[tuple[str, int]], color: str) -> str:
     data = chart_payload(series)
     safe_package = html.escape(package)
+    min_week = html.escape(series[0][0]) if series else ""
+    max_week = html.escape(series[-1][0]) if series else ""
+    disabled = " disabled" if not series else ""
     return f"""
       <div class="chart-toolbar">
         <label>
-          <span>Week range</span>
-          <select class="week-range" aria-label="Select week range for {safe_package}">
-            <option value="all" selected>All weeks</option>
-            <option value="156">Last 156 weeks</option>
-            <option value="104">Last 104 weeks</option>
-            <option value="52">Last 52 weeks</option>
-            <option value="26">Last 26 weeks</option>
-            <option value="13">Last 13 weeks</option>
-          </select>
+          <span>Start week</span>
+          <input class="range-start" type="date" min="{min_week}" max="{max_week}" value="{min_week}" aria-label="Start week for {safe_package}"{disabled}>
+        </label>
+        <label>
+          <span>End week</span>
+          <input class="range-end" type="date" min="{min_week}" max="{max_week}" value="{max_week}" aria-label="End week for {safe_package}"{disabled}>
         </label>
       </div>
       <div class="chart-wrap" data-chart data-package="{safe_package}" data-color="{html.escape(color)}" data-series="{data}">
@@ -412,30 +412,58 @@ def interactive_dashboard_script() -> str:
         return node;
       }
 
-      function showTooltip(wrap, event, point) {
+      function filteredRows(allRows, startInput, endInput) {
+        if (!allRows.length) return [];
+        const minWeek = allRows[0].week;
+        const maxWeek = allRows[allRows.length - 1].week;
+        for (const input of [startInput, endInput]) {
+          input.min = minWeek;
+          input.max = maxWeek;
+        }
+        if (!startInput.value) startInput.value = minWeek;
+        if (!endInput.value) endInput.value = maxWeek;
+
+        let startWeek = startInput.value || minWeek;
+        let endWeek = endInput.value || maxWeek;
+        if (startWeek > endWeek) {
+          [startWeek, endWeek] = [endWeek, startWeek];
+        }
+        return allRows.filter((row) => row.week >= startWeek && row.week <= endWeek);
+      }
+
+      function svgPoint(svg, event) {
+        const point = svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        return point.matrixTransform(svg.getScreenCTM().inverse());
+      }
+
+      function showTooltip(wrap, event, row) {
         const tooltip = wrap.querySelector(".chart-tooltip");
         const rect = wrap.getBoundingClientRect();
-        const x = event.clientX ? event.clientX - rect.left : Number(point.dataset.x);
-        const y = event.clientY ? event.clientY - rect.top : Number(point.dataset.y);
-        tooltip.innerHTML = `<strong>${point.dataset.week}</strong><br>${numberFormat.format(Number(point.dataset.downloads))} downloads`;
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        tooltip.innerHTML = `<strong>${row.week}</strong><br>${numberFormat.format(row.downloads)} downloads`;
         tooltip.style.left = `${Math.min(Math.max(x + 14, 8), rect.width - 190)}px`;
         tooltip.style.top = `${Math.max(y - 44, 8)}px`;
         tooltip.classList.add("is-visible");
       }
 
-      function hideTooltip(wrap) {
+      function hideHover(wrap, hoverGuide, hoverPoint) {
         wrap.querySelector(".chart-tooltip").classList.remove("is-visible");
+        hoverGuide.setAttribute("display", "none");
+        hoverPoint.setAttribute("display", "none");
       }
 
       function renderChart(wrap) {
         const card = wrap.closest(".chart-card");
-        const select = card.querySelector(".week-range");
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
         const svg = wrap.querySelector("svg");
         const color = wrap.dataset.color;
         const packageName = wrap.dataset.package;
         const allRows = JSON.parse(wrap.dataset.series || "[]");
-        const selectedRange = select.value;
-        const rows = selectedRange === "all" ? allRows : allRows.slice(-Number(selectedRange));
+        const rows = filteredRows(allRows, startInput, endInput);
         const width = 1040;
         const height = 330;
         const left = 72;
@@ -453,6 +481,7 @@ def interactive_dashboard_script() -> str:
         if (!rows.length) {
           svg.appendChild(el("text", { x: width / 2, y: height / 2 - 10, "text-anchor": "middle", class: "empty-title" }, "No npm data"));
           svg.appendChild(el("text", { x: width / 2, y: height / 2 + 18, "text-anchor": "middle", class: "empty-subtitle" }, "No complete-week data in this range."));
+          wrap.querySelector(".chart-tooltip").classList.remove("is-visible");
           return;
         }
 
@@ -481,47 +510,67 @@ def interactive_dashboard_script() -> str:
         svg.appendChild(el("line", { x1: left, x2: left, y1: top, y2: top + plotH, class: "axis" }));
 
         const points = rows.map((row, index) => `${xAt(index).toFixed(1)},${yAt(row.downloads).toFixed(1)}`).join(" ");
-        const areaPoints = `${left},${top + plotH} ${points} ${left + plotW},${top + plotH}`;
-        svg.appendChild(el("polygon", { points: areaPoints, fill: color, opacity: "0.08" }));
         svg.appendChild(el("polyline", { points, fill: "none", stroke: color, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" }));
 
         const latest = rows[rows.length - 1];
         const peak = rows.reduce((best, row) => row.downloads > best.downloads ? row : best, rows[0]);
-        svg.appendChild(el("text", { x: left, y: 20, class: "chart-caption" }, `Weekly downloads, ${selectedRange === "all" ? "all complete weeks" : `last ${selectedRange} complete weeks`}`));
-        svg.appendChild(el("text", { x: left + plotW, y: 20, "text-anchor": "end", class: "chart-caption" }, `Latest: ${latest.week} / ${numberFormat.format(latest.downloads)} · Peak: ${peak.week} / ${numberFormat.format(peak.downloads)}`));
+        svg.appendChild(el("text", { x: left, y: 20, class: "chart-caption" }, `Weekly downloads, ${rows[0].week} to ${latest.week}`));
+        svg.appendChild(el("text", { x: left + plotW, y: 20, "text-anchor": "end", class: "chart-caption" }, `Latest: ${latest.week} / ${numberFormat.format(latest.downloads)} | Peak: ${peak.week} / ${numberFormat.format(peak.downloads)}`));
 
-        rows.forEach((row, index) => {
+        const hoverGuide = el("line", {
+          x1: left,
+          x2: left,
+          y1: top,
+          y2: top + plotH,
+          class: "hover-guide",
+          display: "none",
+        });
+        const hoverPoint = el("circle", {
+          cx: left,
+          cy: top + plotH,
+          r: 5,
+          fill: "#ffffff",
+          stroke: color,
+          "stroke-width": 2.4,
+          class: "hover-point",
+          display: "none",
+        });
+        svg.appendChild(hoverGuide);
+        svg.appendChild(hoverPoint);
+
+        const overlay = el("rect", {
+          x: left,
+          y: top,
+          width: plotW,
+          height: plotH,
+          fill: "transparent",
+          class: "hover-overlay",
+        });
+        overlay.addEventListener("pointermove", (event) => {
+          const local = svgPoint(svg, event);
+          const rawIndex = rows.length === 1 ? 0 : Math.round(((local.x - left) / plotW) * (rows.length - 1));
+          const index = Math.max(0, Math.min(rows.length - 1, rawIndex));
+          const row = rows[index];
           const cx = xAt(index);
           const cy = yAt(row.downloads);
-          const point = el("circle", {
-            cx: cx.toFixed(1),
-            cy: cy.toFixed(1),
-            r: 3.1,
-            fill: "#ffffff",
-            stroke: color,
-            "stroke-width": 1.8,
-            class: "data-point",
-            tabindex: 0,
-            role: "img",
-            "aria-label": `${row.week}: ${numberFormat.format(row.downloads)} downloads`,
-          });
-          point.dataset.week = row.week;
-          point.dataset.downloads = row.downloads;
-          point.dataset.x = cx.toFixed(1);
-          point.dataset.y = cy.toFixed(1);
-          point.addEventListener("pointerenter", (event) => showTooltip(wrap, event, point));
-          point.addEventListener("pointermove", (event) => showTooltip(wrap, event, point));
-          point.addEventListener("pointerleave", () => hideTooltip(wrap));
-          point.addEventListener("focus", () => showTooltip(wrap, { clientX: 0, clientY: 0 }, point));
-          point.addEventListener("blur", () => hideTooltip(wrap));
-          svg.appendChild(point);
+          hoverGuide.setAttribute("x1", cx.toFixed(1));
+          hoverGuide.setAttribute("x2", cx.toFixed(1));
+          hoverGuide.removeAttribute("display");
+          hoverPoint.setAttribute("cx", cx.toFixed(1));
+          hoverPoint.setAttribute("cy", cy.toFixed(1));
+          hoverPoint.removeAttribute("display");
+          showTooltip(wrap, event, row);
         });
+        overlay.addEventListener("pointerleave", () => hideHover(wrap, hoverGuide, hoverPoint));
+        svg.appendChild(overlay);
       }
 
       document.querySelectorAll("[data-chart]").forEach((wrap) => {
         const card = wrap.closest(".chart-card");
-        const select = card.querySelector(".week-range");
-        select.addEventListener("change", () => renderChart(wrap));
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
+        startInput.addEventListener("change", () => renderChart(wrap));
+        endInput.addEventListener("change", () => renderChart(wrap));
         renderChart(wrap);
       });
     })();
@@ -769,6 +818,8 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       display: flex;
       justify-content: flex-end;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
       margin: 10px 0 8px;
     }}
     .chart-toolbar label {{
@@ -779,13 +830,14 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       font-size: 12px;
       font-weight: 650;
     }}
-    .week-range {{
+    .range-start,
+    .range-end {{
       border: 1px solid var(--line);
       border-radius: 6px;
       background: #ffffff;
       color: var(--ink);
       font-size: 13px;
-      padding: 6px 28px 6px 9px;
+      padding: 6px 9px;
     }}
     .chart-wrap {{
       width: 100%;
@@ -816,15 +868,17 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       font-size: 12px;
       font-weight: 650;
     }}
-    .data-point {{
+    .hover-overlay {{
       cursor: crosshair;
-      transition: r 120ms ease, stroke-width 120ms ease;
     }}
-    .data-point:hover,
-    .data-point:focus {{
-      r: 5;
-      stroke-width: 2.4;
-      outline: none;
+    .hover-guide {{
+      stroke: #94a3b8;
+      stroke-width: 1;
+      stroke-dasharray: 3 5;
+      opacity: 0.85;
+    }}
+    .hover-point {{
+      pointer-events: none;
     }}
     .chart-tooltip {{
       position: absolute;
