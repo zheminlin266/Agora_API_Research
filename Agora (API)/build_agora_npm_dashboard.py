@@ -350,6 +350,185 @@ def svg_line_chart(package: str, series: list[tuple[str, int]], color: str) -> s
     """
 
 
+def chart_payload(series: list[tuple[str, int]]) -> str:
+    payload = [{"week": week, "downloads": value} for week, value in series]
+    return html.escape(json.dumps(payload, ensure_ascii=False), quote=True)
+
+
+def interactive_chart_shell(package: str, series: list[tuple[str, int]], color: str) -> str:
+    data = chart_payload(series)
+    safe_package = html.escape(package)
+    return f"""
+      <div class="chart-toolbar">
+        <label>
+          <span>Week range</span>
+          <select class="week-range" aria-label="Select week range for {safe_package}">
+            <option value="all" selected>All weeks</option>
+            <option value="156">Last 156 weeks</option>
+            <option value="104">Last 104 weeks</option>
+            <option value="52">Last 52 weeks</option>
+            <option value="26">Last 26 weeks</option>
+            <option value="13">Last 13 weeks</option>
+          </select>
+        </label>
+      </div>
+      <div class="chart-wrap" data-chart data-package="{safe_package}" data-color="{html.escape(color)}" data-series="{data}">
+        <svg viewBox="0 0 1040 330" role="img" aria-label="{safe_package} weekly downloads line chart"></svg>
+        <div class="chart-tooltip" role="status"></div>
+      </div>
+    """
+
+
+def interactive_dashboard_script() -> str:
+    return """
+  <script>
+    (() => {
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const numberFormat = new Intl.NumberFormat("en-US");
+
+      function compactInt(value) {
+        if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+        if (value >= 1000) return `${Math.round(value / 1000)}K`;
+        return String(Math.round(value));
+      }
+
+      function niceYMax(value) {
+        if (value <= 0) return 1;
+        const exponent = Math.floor(Math.log10(value));
+        const base = 10 ** exponent;
+        for (const multiplier of [1, 2, 5, 10]) {
+          const candidate = multiplier * base;
+          if (candidate >= value) return candidate;
+        }
+        return 10 * base;
+      }
+
+      function el(name, attrs = {}, text = null) {
+        const node = document.createElementNS(SVG_NS, name);
+        for (const [key, value] of Object.entries(attrs)) {
+          node.setAttribute(key, value);
+        }
+        if (text !== null) node.textContent = text;
+        return node;
+      }
+
+      function showTooltip(wrap, event, point) {
+        const tooltip = wrap.querySelector(".chart-tooltip");
+        const rect = wrap.getBoundingClientRect();
+        const x = event.clientX ? event.clientX - rect.left : Number(point.dataset.x);
+        const y = event.clientY ? event.clientY - rect.top : Number(point.dataset.y);
+        tooltip.innerHTML = `<strong>${point.dataset.week}</strong><br>${numberFormat.format(Number(point.dataset.downloads))} downloads`;
+        tooltip.style.left = `${Math.min(Math.max(x + 14, 8), rect.width - 190)}px`;
+        tooltip.style.top = `${Math.max(y - 44, 8)}px`;
+        tooltip.classList.add("is-visible");
+      }
+
+      function hideTooltip(wrap) {
+        wrap.querySelector(".chart-tooltip").classList.remove("is-visible");
+      }
+
+      function renderChart(wrap) {
+        const card = wrap.closest(".chart-card");
+        const select = card.querySelector(".week-range");
+        const svg = wrap.querySelector("svg");
+        const color = wrap.dataset.color;
+        const packageName = wrap.dataset.package;
+        const allRows = JSON.parse(wrap.dataset.series || "[]");
+        const selectedRange = select.value;
+        const rows = selectedRange === "all" ? allRows : allRows.slice(-Number(selectedRange));
+        const width = 1040;
+        const height = 330;
+        const left = 72;
+        const right = 28;
+        const top = 34;
+        const bottom = 56;
+        const plotW = width - left - right;
+        const plotH = height - top - bottom;
+
+        svg.textContent = "";
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.setAttribute("aria-label", `${packageName} weekly downloads line chart`);
+        svg.appendChild(el("rect", { width, height, rx: 8, fill: "#ffffff" }));
+
+        if (!rows.length) {
+          svg.appendChild(el("text", { x: width / 2, y: height / 2 - 10, "text-anchor": "middle", class: "empty-title" }, "No npm data"));
+          svg.appendChild(el("text", { x: width / 2, y: height / 2 + 18, "text-anchor": "middle", class: "empty-subtitle" }, "No complete-week data in this range."));
+          return;
+        }
+
+        const yMax = niceYMax(Math.max(...rows.map((row) => row.downloads)));
+        const xAt = (index) => rows.length === 1 ? left + plotW / 2 : left + (index / (rows.length - 1)) * plotW;
+        const yAt = (value) => top + plotH - (value / yMax) * plotH;
+
+        for (let tick = 0; tick < 5; tick += 1) {
+          const value = Math.round(yMax * tick / 4);
+          const y = yAt(value);
+          svg.appendChild(el("line", { x1: left, x2: left + plotW, y1: y.toFixed(1), y2: y.toFixed(1), class: "grid" }));
+          svg.appendChild(el("text", { x: left - 12, y: (y + 4).toFixed(1), "text-anchor": "end", class: "axis-label" }, compactInt(value)));
+        }
+
+        const tickIndexes = new Set([0, rows.length - 1]);
+        for (let i = 0; i < 6; i += 1) {
+          tickIndexes.add(Math.round(i * (rows.length - 1) / 5));
+        }
+        [...tickIndexes].sort((a, b) => a - b).forEach((index) => {
+          const x = xAt(index);
+          svg.appendChild(el("line", { x1: x.toFixed(1), x2: x.toFixed(1), y1: top + plotH, y2: top + plotH + 5, class: "tick" }));
+          svg.appendChild(el("text", { x: x.toFixed(1), y: top + plotH + 26, "text-anchor": "middle", class: "axis-label" }, rows[index].week));
+        });
+
+        svg.appendChild(el("line", { x1: left, x2: left + plotW, y1: top + plotH, y2: top + plotH, class: "axis" }));
+        svg.appendChild(el("line", { x1: left, x2: left, y1: top, y2: top + plotH, class: "axis" }));
+
+        const points = rows.map((row, index) => `${xAt(index).toFixed(1)},${yAt(row.downloads).toFixed(1)}`).join(" ");
+        const areaPoints = `${left},${top + plotH} ${points} ${left + plotW},${top + plotH}`;
+        svg.appendChild(el("polygon", { points: areaPoints, fill: color, opacity: "0.08" }));
+        svg.appendChild(el("polyline", { points, fill: "none", stroke: color, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+        const latest = rows[rows.length - 1];
+        const peak = rows.reduce((best, row) => row.downloads > best.downloads ? row : best, rows[0]);
+        svg.appendChild(el("text", { x: left, y: 20, class: "chart-caption" }, `Weekly downloads, ${selectedRange === "all" ? "all complete weeks" : `last ${selectedRange} complete weeks`}`));
+        svg.appendChild(el("text", { x: left + plotW, y: 20, "text-anchor": "end", class: "chart-caption" }, `Latest: ${latest.week} / ${numberFormat.format(latest.downloads)} · Peak: ${peak.week} / ${numberFormat.format(peak.downloads)}`));
+
+        rows.forEach((row, index) => {
+          const cx = xAt(index);
+          const cy = yAt(row.downloads);
+          const point = el("circle", {
+            cx: cx.toFixed(1),
+            cy: cy.toFixed(1),
+            r: 3.1,
+            fill: "#ffffff",
+            stroke: color,
+            "stroke-width": 1.8,
+            class: "data-point",
+            tabindex: 0,
+            role: "img",
+            "aria-label": `${row.week}: ${numberFormat.format(row.downloads)} downloads`,
+          });
+          point.dataset.week = row.week;
+          point.dataset.downloads = row.downloads;
+          point.dataset.x = cx.toFixed(1);
+          point.dataset.y = cy.toFixed(1);
+          point.addEventListener("pointerenter", (event) => showTooltip(wrap, event, point));
+          point.addEventListener("pointermove", (event) => showTooltip(wrap, event, point));
+          point.addEventListener("pointerleave", () => hideTooltip(wrap));
+          point.addEventListener("focus", () => showTooltip(wrap, { clientX: 0, clientY: 0 }, point));
+          point.addEventListener("blur", () => hideTooltip(wrap));
+          svg.appendChild(point);
+        });
+      }
+
+      document.querySelectorAll("[data-chart]").forEach((wrap) => {
+        const card = wrap.closest(".chart-card");
+        const select = card.querySelector(".week-range");
+        select.addEventListener("change", () => renderChart(wrap));
+        renderChart(wrap);
+      });
+    })();
+  </script>
+"""
+
+
 def package_note(package: str) -> str:
     notes = {
         "agora-rtc-sdk-ng": (
@@ -414,7 +593,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
             if meta is None
             else (meta.description or meta.error or "No npm registry record.")
         )
-        chart = svg_line_chart(package, series, colors[package])
+        chart = interactive_chart_shell(package, series, colors[package])
         return f"""
             <section class="chart-card">
               <div class="card-head">
@@ -430,7 +609,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
                   <div><dt>Non-zero weeks</dt><dd>{format_int(non_zero)}</dd></div>
                 </dl>
               </div>
-              <div class="chart-wrap">{chart}</div>
+              {chart}
               <p class="note">{html.escape(package_note(package))}</p>
             </section>
             """
@@ -457,6 +636,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     last_week = rows[-1]["week_start"] if rows else "-"
     row_count = len(rows)
     chart_last_week = complete_through.isoformat()
+    dashboard_script = interactive_dashboard_script()
 
     return f"""<!doctype html>
 <html lang="zh-CN">
@@ -585,9 +765,32 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       font-weight: 700;
       white-space: nowrap;
     }}
+    .chart-toolbar {{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin: 10px 0 8px;
+    }}
+    .chart-toolbar label {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }}
+    .week-range {{
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      font-size: 13px;
+      padding: 6px 28px 6px 9px;
+    }}
     .chart-wrap {{
       width: 100%;
       overflow-x: auto;
+      position: relative;
     }}
     svg {{
       width: 100%;
@@ -612,6 +815,37 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       fill: #475467;
       font-size: 12px;
       font-weight: 650;
+    }}
+    .data-point {{
+      cursor: crosshair;
+      transition: r 120ms ease, stroke-width 120ms ease;
+    }}
+    .data-point:hover,
+    .data-point:focus {{
+      r: 5;
+      stroke-width: 2.4;
+      outline: none;
+    }}
+    .chart-tooltip {{
+      position: absolute;
+      z-index: 5;
+      min-width: 150px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 120ms ease, transform 120ms ease;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.45;
+      padding: 8px 10px;
+    }}
+    .chart-tooltip.is-visible {{
+      opacity: 1;
+      transform: translateY(0);
     }}
     .empty-title {{
       fill: #334155;
@@ -712,6 +946,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       </p>
     </section>
   </main>
+  {dashboard_script}
 </body>
 </html>
 """
