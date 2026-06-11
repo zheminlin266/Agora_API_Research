@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-11T02:48:31.558215+00:00",
+  "generated_at_utc": "2026-06-11T03:33:15.898871+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
@@ -11,11 +11,12 @@
     "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
   },
   "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\agora_npm_weekly_downloads.csv",
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\agora_npm_weekly_downloads.csv",
     "rows": 469,
     "columns": [
       "week_start",
       "agora-rtc-sdk-ng",
+      "agora-rtc-sdk",
       "agora-rtm-sdk",
       "agora-rtc-react",
       "react-native-agora"
@@ -27,6 +28,13 @@
       "created": "2020-03-02T11:06:28.278Z",
       "modified": "2026-05-27T07:31:09.218Z",
       "description": "Agora WebRTC SDK for JavaScript",
+      "error": null
+    },
+    "agora-rtc-sdk": {
+      "exists": true,
+      "created": "2018-04-10T08:35:15.112Z",
+      "modified": "2023-10-26T08:08:43.626Z",
+      "description": "AgoraRTC SDK for web",
       "error": null
     },
     "agora-rtm-sdk": {

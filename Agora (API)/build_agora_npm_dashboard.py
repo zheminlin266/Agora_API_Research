@@ -15,6 +15,7 @@ from pathlib import Path
 
 PACKAGES = [
     "agora-rtc-sdk-ng",
+    "agora-rtc-sdk",
     "agora-rtm-sdk",
     "agora-rtc-react",
     "react-native-agora",
@@ -312,6 +313,9 @@ def package_note(package: str) -> str:
         "agora-rtc-sdk-ng": (
             "功能：Agora WebRTC JavaScript 核心 SDK。它更接近 Web 端音视频通话、直播互动、在线课堂等实际集成需求。下载数包含 CI、镜像和重复安装，不能等同客户数或用量；看趋势、峰值和版本发布后的变化，比看绝对值更可靠。"
         ),
+        "agora-rtc-sdk": (
+            "功能：Agora 旧版 Web RTC JavaScript SDK。它反映 legacy Web 集成、历史项目维护或旧版本依赖需求。数值应与 agora-rtc-sdk-ng 分开看，不能直接相加；若旧包下降而 NG 包上升，通常意味着迁移到新版 SDK。"
+        ),
         "agora-rtm-sdk": (
             "功能：Agora Real-Time Messaging 的 JavaScript SDK。它反映实时消息、信令、在线状态、房间控制等互动能力需求。数值可作为 JS 侧 RTM 采用热度，但可能被依赖安装和自动构建放大，适合与 RTC 包趋势交叉判断。"
         ),
@@ -329,6 +333,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     complete_through = latest_complete_week_start(latest_day)
     colors = {
         "agora-rtc-sdk-ng": "#2563eb",
+        "agora-rtc-sdk": "#d97706",
         "agora-rtm-sdk": "#b7791f",
         "agora-rtc-react": "#0f766e",
         "react-native-agora": "#7c3aed",
