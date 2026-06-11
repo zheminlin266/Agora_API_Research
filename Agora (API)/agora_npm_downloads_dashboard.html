@@ -40,6 +40,21 @@
       font-size: 14px;
       line-height: 1.6;
     }
+    .methodology {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .methodology strong {
+      color: var(--ink);
+      font-weight: 750;
+    }
     .summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -104,7 +119,7 @@
     }
     .metrics {
       display: grid;
-      grid-template-columns: repeat(5, minmax(86px, auto));
+      grid-template-columns: repeat(3, minmax(86px, auto));
       gap: 8px;
       margin: 0;
     }
@@ -271,8 +286,13 @@
     <header>
       <h1>Agora npm 周度下载量看板</h1>
       <p class="subtitle">
-        数据来自 npm 官方 downloads API，按周一作为每周开始日期汇总。HTML 折线图只展示完整周，已排除最新不完整周。npm 下载数是包 tarball 下载次数，会包含 CI、镜像、机器人和缓存影响，适合看趋势，不等于客户数、开发者人数或 Agora 实际用量。
+        数据来自 npm 官方 downloads API，按周一作为每周开始日期汇总；HTML 折线图只展示完整周，已排除最新不完整周。
       </p>
+      <div class="methodology" aria-label="npm downloads methodology">
+        <strong>如何理解 npm downloads：</strong>该数值统计的是 npm registry 返回的包 tarball 下载次数，而不是独立用户、客户数、活跃开发者数或实际音视频用量。
+        同一次项目安装可能因依赖解析、CI/CD、容器构建、镜像同步、机器人、缓存策略或版本锁定而产生多次或更少下载；monorepo/多包 SDK 还会出现跨包重复计数。
+        因此本看板更适合观察同一包在一致口径下的长期趋势、峰值、发布/迁移后的变化，以及同类包之间的相对热度；不建议把绝对下载量直接换算为商业使用规模。
+      </div>
     </header>
 
     <section class="summary" aria-label="dashboard summary">
@@ -290,11 +310,9 @@
                   <p>Agora WebRTC SDK for JavaScript</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2020-03-02</dd></div>
                   <div><dt>Chart total</dt><dd>10,807,115</dd></div>
                   <div><dt>Latest complete week</dt><dd>119,169</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>326</dd></div>
                 </dl>
               </div>
               
@@ -323,11 +341,9 @@
                   <p>AgoraRTC SDK for web</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2018-04-10</dd></div>
                   <div><dt>Chart total</dt><dd>1,701,411</dd></div>
                   <div><dt>Latest complete week</dt><dd>3,564</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>425</dd></div>
                 </dl>
               </div>
               
@@ -356,11 +372,9 @@
                   <p>Derived sum of agora-rtc-sdk-ng and agora-rtc-sdk.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Derived</dd></div>
                   <div><dt>Created</dt><dd>-</dd></div>
                   <div><dt>Chart total</dt><dd>12,508,526</dd></div>
                   <div><dt>Latest complete week</dt><dd>122,733</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>425</dd></div>
                 </dl>
               </div>
               
@@ -389,11 +403,9 @@
                   <p>JavaScript SDK for Agora RTM</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2019-07-23</dd></div>
                   <div><dt>Chart total</dt><dd>3,160,651</dd></div>
                   <div><dt>Latest complete week</dt><dd>32,283</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>358</dd></div>
                 </dl>
               </div>
               
@@ -422,11 +434,9 @@
                   <p>Agora RTC React SDK</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2021-10-17</dd></div>
                   <div><dt>Chart total</dt><dd>2,598,696</dd></div>
                   <div><dt>Latest complete week</dt><dd>32,549</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>242</dd></div>
                 </dl>
               </div>
               
@@ -455,11 +465,9 @@
                   <p>Agora RTC SDK For React Native</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2017-06-13</dd></div>
                   <div><dt>Chart total</dt><dd>1,927,580</dd></div>
                   <div><dt>Latest complete week</dt><dd>23,223</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>468</dd></div>
                 </dl>
               </div>
               
@@ -495,11 +503,9 @@
                   <p>Compatibility shim for the renamed agora-agents package.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2026-03-14</dd></div>
                   <div><dt>Chart total</dt><dd>2,804</dd></div>
                   <div><dt>Latest complete week</dt><dd>753</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>12</dd></div>
                 </dl>
               </div>
               
@@ -528,11 +534,9 @@
                   <p>Agora Agent Client Toolkit — real-time voice agent integration for web</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2026-03-15</dd></div>
                   <div><dt>Chart total</dt><dd>1,346</dd></div>
                   <div><dt>Latest complete week</dt><dd>389</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>7</dd></div>
                 </dl>
               </div>
               
@@ -561,11 +565,9 @@
                   <p>React component library for building conversational, voice, video, and biomarker AI interfaces with Agora</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2026-03-20</dd></div>
                   <div><dt>Chart total</dt><dd>874</dd></div>
                   <div><dt>Latest complete week</dt><dd>107</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>11</dd></div>
                 </dl>
               </div>
               
@@ -594,11 +596,9 @@
                   <p>Agora AI Denoiser for Web SDK in Conversational AI Scenarios</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2025-03-04</dd></div>
                   <div><dt>Chart total</dt><dd>4,522</dd></div>
                   <div><dt>Latest complete week</dt><dd>284</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>65</dd></div>
                 </dl>
               </div>
               

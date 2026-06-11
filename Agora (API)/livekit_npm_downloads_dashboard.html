@@ -38,6 +38,21 @@
       font-size: 14px;
       line-height: 1.6;
     }
+    .methodology {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .methodology strong {
+      color: var(--ink);
+      font-weight: 750;
+    }
     .summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -186,8 +201,13 @@
     <header>
       <h1>LiveKit npm 周度下载量看板</h1>
       <p class="subtitle">
-        数据来自 npm 官方 downloads API，按周一作为每周开始日期汇总。CSV 覆盖各包上线以来可查询的完整历史；HTML 折线图只展示完整周，排除最新不完整周。
+        数据来自 npm 官方 downloads API，按周一作为每周开始日期汇总；CSV 覆盖各包上线以来可查询的完整历史，HTML 折线图只展示完整周，排除最新不完整周。
       </p>
+      <div class="methodology" aria-label="npm downloads methodology">
+        <strong>如何理解 npm downloads：</strong>该数值统计的是 npm registry 返回的包 tarball 下载次数，而不是独立用户、客户数、活跃开发者数或实际 LiveKit 用量。
+        同一次项目安装可能因依赖解析、CI/CD、容器构建、镜像同步、机器人、缓存策略或版本锁定而产生多次或更少下载；monorepo/多包 SDK 还会出现跨包重复计数。
+        因此本看板更适合观察同一包在一致口径下的长期趋势、峰值、发布/迁移后的变化，以及同类包之间的相对热度；不建议把绝对下载量直接换算为商业使用规模。
+      </div>
     </header>
 
     <section class="summary" aria-label="dashboard summary">
@@ -210,12 +230,10 @@
                   <p>Core JavaScript client SDK for browser and Node-based LiveKit applications. This is the broadest developer demand signal among the selected packages.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2021-01-24</dd></div>
                   <div><dt>Chart total</dt><dd>35,559,900</dd></div>
                   <div><dt>Latest complete week</dt><dd>1,690,666</dd></div>
                   <div><dt>Peak week</dt><dd>2026-05-18 / 1,862,266</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>280</dd></div>
                 </dl>
               </div>
               
@@ -243,12 +261,10 @@
                   <p>React component layer for building LiveKit video, audio, and room UI. It captures higher-level React adoption on top of the client SDK.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2022-10-07</dd></div>
                   <div><dt>Chart total</dt><dd>15,205,049</dd></div>
                   <div><dt>Latest complete week</dt><dd>781,326</dd></div>
                   <div><dt>Peak week</dt><dd>2026-06-01 / 781,326</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>187</dd></div>
                 </dl>
               </div>
               
@@ -276,12 +292,10 @@
                   <p>React Native SDK for mobile LiveKit applications. It is useful for reading cross-platform mobile integration demand.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2023-01-12</dd></div>
                   <div><dt>Chart total</dt><dd>1,760,824</dd></div>
                   <div><dt>Latest complete week</dt><dd>95,032</dd></div>
                   <div><dt>Peak week</dt><dd>2026-06-01 / 95,032</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>178</dd></div>
                 </dl>
               </div>
               
@@ -316,12 +330,10 @@
                   <p>JavaScript/TypeScript LiveKit Agents framework package for realtime AI agents, voice workflows, and server-side agent applications.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2024-05-21</dd></div>
                   <div><dt>Chart total</dt><dd>2,936,655</dd></div>
                   <div><dt>Latest complete week</dt><dd>134,247</dd></div>
                   <div><dt>Peak week</dt><dd>2026-05-11 / 255,473</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>91</dd></div>
                 </dl>
               </div>
               
@@ -349,12 +361,10 @@
                   <p>Silero plugin for LiveKit Agents voice activity detection. It is a narrower AI-agent ecosystem signal and should be read alongside @livekit/agents.</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>Found</dd></div>
                   <div><dt>Created</dt><dd>2024-11-10</dd></div>
                   <div><dt>Chart total</dt><dd>1,792,782</dd></div>
                   <div><dt>Latest complete week</dt><dd>118,686</dd></div>
                   <div><dt>Peak week</dt><dd>2026-05-11 / 176,011</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>82</dd></div>
                 </dl>
               </div>
               
