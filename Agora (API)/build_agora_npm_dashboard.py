@@ -21,8 +21,23 @@ PACKAGES = [
     "react-native-agora",
 ]
 DERIVED_COLUMNS = ["rtc-sdk-total"]
-CSV_COLUMNS = ["week_start", *PACKAGES, *DERIVED_COLUMNS]
-CHART_SERIES = [*PACKAGES, *DERIVED_COLUMNS]
+CSV_COLUMNS = [
+    "week_start",
+    "agora-rtc-sdk-ng",
+    "agora-rtc-sdk",
+    "rtc-sdk-total",
+    "agora-rtm-sdk",
+    "agora-rtc-react",
+    "react-native-agora",
+]
+CHART_SERIES = [
+    "agora-rtc-sdk-ng",
+    "agora-rtc-sdk",
+    "rtc-sdk-total",
+    "agora-rtm-sdk",
+    "agora-rtc-react",
+    "react-native-agora",
+]
 
 ROOT = Path(__file__).resolve().parent
 CSV_PATH = ROOT / "agora_npm_weekly_downloads.csv"
