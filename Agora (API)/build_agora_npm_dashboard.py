@@ -20,6 +20,9 @@ PACKAGES = [
     "agora-rtc-react",
     "react-native-agora",
 ]
+DERIVED_COLUMNS = ["rtc-sdk-total"]
+CSV_COLUMNS = ["week_start", *PACKAGES, *DERIVED_COLUMNS]
+CHART_SERIES = [*PACKAGES, *DERIVED_COLUMNS]
 
 ROOT = Path(__file__).resolve().parent
 CSV_PATH = ROOT / "agora_npm_weekly_downloads.csv"
@@ -192,6 +195,12 @@ def build_csv_rows(
                 row[package] = ""
             else:
                 row[package] = str(weekly_data.get(package, {}).get(current, 0))
+        rtc_values = [row["agora-rtc-sdk-ng"], row["agora-rtc-sdk"]]
+        row["rtc-sdk-total"] = (
+            str(sum(int(value) for value in rtc_values if value != ""))
+            if any(value != "" for value in rtc_values)
+            else ""
+        )
         rows.append(row)
         current += timedelta(days=7)
     return rows
@@ -199,7 +208,7 @@ def build_csv_rows(
 
 def write_csv(rows: list[dict[str, str]]) -> None:
     with CSV_PATH.open("w", newline="", encoding="utf-8-sig") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["week_start", *PACKAGES])
+        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
         writer.writeheader()
         writer.writerows(rows)
 
@@ -316,6 +325,9 @@ def package_note(package: str) -> str:
         "agora-rtc-sdk": (
             "功能：Agora 旧版 Web RTC JavaScript SDK。它反映 legacy Web 集成、历史项目维护或旧版本依赖需求。数值应与 agora-rtc-sdk-ng 分开看，不能直接相加；若旧包下降而 NG 包上升，通常意味着迁移到新版 SDK。"
         ),
+        "rtc-sdk-total": (
+            "功能：agora-rtc-sdk-ng 与 agora-rtc-sdk 的周度下载合计。它用于观察 Agora Web RTC SDK 总体开发者安装需求，减少新旧包迁移造成的误读；但仍包含 CI、镜像和重复安装，不能代表真实客户数或用量。"
+        ),
         "agora-rtm-sdk": (
             "功能：Agora Real-Time Messaging 的 JavaScript SDK。它反映实时消息、信令、在线状态、房间控制等互动能力需求。数值可作为 JS 侧 RTM 采用热度，但可能被依赖安装和自动构建放大，适合与 RTC 包趋势交叉判断。"
         ),
@@ -334,20 +346,25 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     colors = {
         "agora-rtc-sdk-ng": "#2563eb",
         "agora-rtc-sdk": "#d97706",
+        "rtc-sdk-total": "#be123c",
         "agora-rtm-sdk": "#b7791f",
         "agora-rtc-react": "#0f766e",
         "react-native-agora": "#7c3aed",
     }
     cards = []
-    for package in PACKAGES:
+    for package in CHART_SERIES:
         series = series_for_package(rows, package, complete_through=complete_through)
         total = sum(value for _, value in series) if series else None
         latest = series[-1][1] if series else None
         non_zero = sum(1 for _, value in series if value > 0)
-        meta = metas[package]
-        status = "Found" if meta.exists else "Not found"
-        created = meta.created_raw[:10] if meta.created_raw else "-"
-        description = meta.description or meta.error or "No npm registry record."
+        meta = metas.get(package)
+        status = "Derived" if meta is None else ("Found" if meta.exists else "Not found")
+        created = "-" if meta is None else (meta.created_raw[:10] if meta.created_raw else "-")
+        description = (
+            "Derived sum of agora-rtc-sdk-ng and agora-rtc-sdk."
+            if meta is None
+            else (meta.description or meta.error or "No npm registry record.")
+        )
         chart = svg_line_chart(package, series, colors[package])
         cards.append(
             f"""
@@ -649,7 +666,13 @@ def write_metadata(
         "csv": {
             "path": str(CSV_PATH),
             "rows": len(rows),
-            "columns": ["week_start", *PACKAGES],
+            "columns": CSV_COLUMNS,
+        },
+        "derived_columns": {
+            "rtc-sdk-total": {
+                "formula": "agora-rtc-sdk-ng + agora-rtc-sdk",
+                "blank_policy": "Blank when both source package columns are blank; otherwise blank source cells count as zero.",
+            }
         },
         "packages": {
             name: {

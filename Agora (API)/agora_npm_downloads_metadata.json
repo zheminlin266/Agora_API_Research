@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-11T03:33:15.898871+00:00",
+  "generated_at_utc": "2026-06-11T04:00:39.770551+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
@@ -19,8 +19,15 @@
       "agora-rtc-sdk",
       "agora-rtm-sdk",
       "agora-rtc-react",
-      "react-native-agora"
+      "react-native-agora",
+      "rtc-sdk-total"
     ]
+  },
+  "derived_columns": {
+    "rtc-sdk-total": {
+      "formula": "agora-rtc-sdk-ng + agora-rtc-sdk",
+      "blank_policy": "Blank when both source package columns are blank; otherwise blank source cells count as zero."
+    }
   },
   "packages": {
     "agora-rtc-sdk-ng": {
