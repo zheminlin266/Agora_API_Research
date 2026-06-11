@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-06-11T04:08:20.818487+00:00",
+  "generated_at_utc": "2026-06-11T04:28:29.441854+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
-    "range_limit_note": "npm downloads API is queried in 365-day chunks.",
+    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
     "latest_download_day": "2026-06-02",
     "html_chart_complete_through_week_start": "2026-05-25",
@@ -20,7 +20,11 @@
       "rtc-sdk-total",
       "agora-rtm-sdk",
       "agora-rtc-react",
-      "react-native-agora"
+      "react-native-agora",
+      "agora-agent-server-sdk",
+      "agora-agent-client-toolkit",
+      "agora-agent-uikit",
+      "agora-conversational-ai-denoiser"
     ]
   },
   "derived_columns": {
@@ -63,6 +67,34 @@
       "created": "2017-06-13T10:15:31.546Z",
       "modified": "2026-05-08T08:25:54.362Z",
       "description": "Agora RTC SDK For React Native",
+      "error": null
+    },
+    "agora-agent-server-sdk": {
+      "exists": true,
+      "created": "2026-03-14T10:14:36.708Z",
+      "modified": "2026-06-05T18:51:55.927Z",
+      "description": "Compatibility shim for the renamed agora-agents package.",
+      "error": null
+    },
+    "agora-agent-client-toolkit": {
+      "exists": true,
+      "created": "2026-03-15T11:48:05.077Z",
+      "modified": "2026-04-09T17:15:05.337Z",
+      "description": "Agora Agent Client Toolkit — real-time voice agent integration for web",
+      "error": null
+    },
+    "agora-agent-uikit": {
+      "exists": true,
+      "created": "2026-03-20T03:41:49.381Z",
+      "modified": "2026-04-10T14:55:17.400Z",
+      "description": "React component library for building conversational, voice, video, and biomarker AI interfaces with Agora",
+      "error": null
+    },
+    "agora-conversational-ai-denoiser": {
+      "exists": true,
+      "created": "2025-03-04T12:11:11.292Z",
+      "modified": "2025-03-05T08:03:59.832Z",
+      "description": "Agora AI Denoiser for Web SDK in Conversational AI Scenarios",
       "error": null
     }
   }

@@ -13,13 +13,20 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 
-PACKAGES = [
+CORE_PACKAGES = [
     "agora-rtc-sdk-ng",
     "agora-rtc-sdk",
     "agora-rtm-sdk",
     "agora-rtc-react",
     "react-native-agora",
 ]
+AI_PACKAGES = [
+    "agora-agent-server-sdk",
+    "agora-agent-client-toolkit",
+    "agora-agent-uikit",
+    "agora-conversational-ai-denoiser",
+]
+PACKAGES = [*CORE_PACKAGES, *AI_PACKAGES]
 DERIVED_COLUMNS = ["rtc-sdk-total"]
 CSV_COLUMNS = [
     "week_start",
@@ -29,8 +36,9 @@ CSV_COLUMNS = [
     "agora-rtm-sdk",
     "agora-rtc-react",
     "react-native-agora",
+    *AI_PACKAGES,
 ]
-CHART_SERIES = [
+CORE_CHART_SERIES = [
     "agora-rtc-sdk-ng",
     "agora-rtc-sdk",
     "rtc-sdk-total",
@@ -38,6 +46,7 @@ CHART_SERIES = [
     "agora-rtc-react",
     "react-native-agora",
 ]
+AI_CHART_SERIES = [*AI_PACKAGES]
 
 ROOT = Path(__file__).resolve().parent
 CSV_PATH = ROOT / "agora_npm_weekly_downloads.csv"
@@ -47,7 +56,7 @@ META_PATH = ROOT / "agora_npm_downloads_metadata.json"
 NPM_REGISTRY = "https://registry.npmjs.org"
 NPM_DOWNLOADS = "https://api.npmjs.org/downloads"
 EARLIEST_NPM_DOWNLOAD_DATE = date(2015, 1, 10)
-MAX_RANGE_DAYS = 365
+MAX_RANGE_DAYS = 548
 
 
 @dataclass
@@ -61,7 +70,7 @@ class PackageMeta:
     error: str | None = None
 
 
-def fetch_json(url: str, retries: int = 3) -> dict:
+def fetch_json(url: str, retries: int = 6) -> dict:
     last_error: Exception | None = None
     for attempt in range(retries):
         try:
@@ -74,7 +83,15 @@ def fetch_json(url: str, retries: int = 3) -> dict:
             )
             with urllib.request.urlopen(request, timeout=45) as response:
                 return json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError:
+        except urllib.error.HTTPError as exc:
+            if exc.code == 429 and attempt < retries - 1:
+                retry_after = exc.headers.get("Retry-After")
+                try:
+                    wait_seconds = float(retry_after) if retry_after else 30 * (attempt + 1)
+                except ValueError:
+                    wait_seconds = 30 * (attempt + 1)
+                time.sleep(wait_seconds)
+                continue
             raise
         except Exception as exc:  # noqa: BLE001 - keep network retry compact.
             last_error = exc
@@ -166,6 +183,7 @@ def load_daily_downloads(package: str, start: date, end: date) -> dict[date, int
             if exc.code == 404:
                 continue
             raise
+        time.sleep(0.35)
         for row in payload.get("downloads", []):
             daily[date.fromisoformat(row["day"])] = int(row.get("downloads", 0))
     return daily
@@ -352,6 +370,18 @@ def package_note(package: str) -> str:
         "react-native-agora": (
             "功能：Agora RTC 的 React Native SDK。它反映跨平台移动端应用接入语音、视频通话和互动直播的开发需求。下载数包含 CI、镜像和依赖安装，不能等同移动端活跃应用数；更适合观察移动开发者采用趋势。"
         ),
+        "agora-agent-server-sdk": (
+            "功能：Agora Agent 服务端 SDK/兼容包，面向实时语音 Agent、会话控制和服务端集成。它反映开发者在后端接入 Agora Conversational AI/Agent 能力的需求；下载量较小，适合看早期采用趋势。"
+        ),
+        "agora-agent-client-toolkit": (
+            "功能：Agora Agent 客户端工具包，用于在前端接入实时语音 Agent、会话状态和交互控制。它反映开发者把 AI Agent 体验嵌入 Web 或应用端的需求，下载量可作为客户端 Agent 集成热度信号。"
+        ),
+        "agora-agent-uikit": (
+            "功能：Agora Agent UI Kit，提供构建语音、视频或对话式 AI Agent 界面的组件。它反映开发者希望用现成 UI 快速集成 AI Agent 体验的需求；数值更偏产品化前端组件采用。"
+        ),
+        "agora-conversational-ai-denoiser": (
+            "功能：Agora Conversational AI 场景的 Web SDK 降噪扩展。它反映语音 Agent、对话 AI 和实时互动中对语音清晰度、噪声抑制的需求，适合观察 AI 语音体验优化相关采用。"
+        ),
     }
     return notes[package]
 
@@ -365,9 +395,13 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
         "agora-rtm-sdk": "#b7791f",
         "agora-rtc-react": "#0f766e",
         "react-native-agora": "#7c3aed",
+        "agora-agent-server-sdk": "#475569",
+        "agora-agent-client-toolkit": "#0891b2",
+        "agora-agent-uikit": "#db2777",
+        "agora-conversational-ai-denoiser": "#65a30d",
     }
-    cards = []
-    for package in CHART_SERIES:
+
+    def render_card(package: str) -> str:
         series = series_for_package(rows, package, complete_through=complete_through)
         total = sum(value for _, value in series) if series else None
         latest = series[-1][1] if series else None
@@ -381,8 +415,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
             else (meta.description or meta.error or "No npm registry record.")
         )
         chart = svg_line_chart(package, series, colors[package])
-        cards.append(
-            f"""
+        return f"""
             <section class="chart-card">
               <div class="card-head">
                 <div>
@@ -401,7 +434,9 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
               <p class="note">{html.escape(package_note(package))}</p>
             </section>
             """
-        )
+
+    core_cards = [render_card(package) for package in CORE_CHART_SERIES]
+    ai_cards = [render_card(package) for package in AI_CHART_SERIES]
 
     package_rows = []
     for package in PACKAGES:
@@ -493,6 +528,20 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 18px;
+    }}
+    .section-divider {{
+      margin: 28px 0 16px;
+      padding: 18px 0 4px;
+      border-top: 2px solid #cbd5e1;
+    }}
+    .section-divider h2 {{
+      margin: 0 0 4px;
+      font-size: 22px;
+    }}
+    .section-divider p {{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
     }}
     .card-head {{
       display: grid;
@@ -634,7 +683,14 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       <div><span>Latest npm day</span><strong>{latest_day.isoformat()}</strong></div>
     </section>
 
-    {''.join(cards)}
+    {''.join(core_cards)}
+
+    <section class="section-divider" aria-label="AI related section">
+      <h2>AI related</h2>
+      <p>Agent, conversational AI, and AI voice enhancement packages.</p>
+    </section>
+
+    {''.join(ai_cards)}
 
     <section class="source-box">
       <h2>Source And Package Metadata</h2>
@@ -671,7 +727,7 @@ def write_metadata(
         "source": {
             "registry": NPM_REGISTRY,
             "downloads": NPM_DOWNLOADS,
-            "range_limit_note": "npm downloads API is queried in 365-day chunks.",
+            "range_limit_note": f"npm downloads API is queried in {MAX_RANGE_DAYS}-day chunks.",
             "weekly_grain": "Monday-start weeks",
             "latest_download_day": latest_day.isoformat(),
             "html_chart_complete_through_week_start": latest_complete_week_start(latest_day).isoformat(),
