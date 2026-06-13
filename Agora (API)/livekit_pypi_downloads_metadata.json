@@ -1,0 +1,75 @@
+{
+  "source": {
+    "download_table": "pypi.pypi_downloads_per_day",
+    "download_provider": "ClickPy public ClickHouse endpoint",
+    "download_endpoint": "https://sql-clickhouse.clickhouse.com/",
+    "metadata_provider": "PyPI JSON API",
+    "source_last_date": "2026-06-12",
+    "generated_at_utc": "2026-06-13T07:07:56+00:00"
+  },
+  "packages": {
+    "livekit": {
+      "exists": true,
+      "role": "Python SDK",
+      "summary": "Python Real-time SDK for LiveKit",
+      "latest_version": "1.1.10",
+      "requires_python": ">=3.9.0",
+      "first_upload": "2023-06-06",
+      "package_url": "https://pypi.org/project/livekit/",
+      "source_url": "https://github.com/livekit/python-sdks/",
+      "note": "Realtime audio/video/data Python SDK; useful as the broad SDK adoption signal.",
+      "error": null
+    },
+    "livekit-api": {
+      "exists": true,
+      "role": "Server API",
+      "summary": "Python Server API for LiveKit",
+      "latest_version": "1.1.0",
+      "requires_python": ">=3.9.0",
+      "first_upload": "2023-10-23",
+      "package_url": "https://pypi.org/project/livekit-api/",
+      "source_url": "https://github.com/livekit/python-sdks/",
+      "note": "Server API and token generation package; closer to backend deployment activity.",
+      "error": null
+    },
+    "livekit-agents": {
+      "exists": true,
+      "role": "Agents",
+      "summary": "A powerful framework for building realtime voice AI agents",
+      "latest_version": "1.6.0",
+      "requires_python": "<3.15,>=3.10",
+      "first_upload": "2023-11-14",
+      "package_url": "https://pypi.org/project/livekit-agents/",
+      "source_url": "https://github.com/livekit/agents",
+      "note": "Voice/AI agents framework; the key package for LiveKit's AI application momentum.",
+      "error": null
+    },
+    "livekit-plugins": {
+      "exists": false,
+      "role": "Plugins",
+      "summary": null,
+      "latest_version": null,
+      "requires_python": null,
+      "first_upload": null,
+      "package_url": null,
+      "source_url": null,
+      "note": "Small meta/package signal; treat as early-stage noise unless volume becomes sustained.",
+      "error": "HTTP 404 for https://pypi.org/pypi/livekit-plugins/json: {\"message\": \"Not Found\"}"
+    }
+  },
+  "dataset": {
+    "csv": "livekit_pypi_weekly_downloads.csv",
+    "html": "livekit_pypi_downloads_dashboard.html",
+    "rows": 158,
+    "first_week_start": "2023-06-05",
+    "last_week_start": "2026-06-08",
+    "latest_complete_week_start": "2026-06-01",
+    "columns": [
+      "week_start",
+      "livekit",
+      "livekit-api",
+      "livekit-agents",
+      "livekit-plugins"
+    ]
+  }
+}
