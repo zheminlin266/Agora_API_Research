@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agora (API) Dashboards</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --text: #1f2933;
+      --muted: #5b6675;
+      --panel: #ffffff;
+      --border: #d9dee7;
+      --link: #1264a3;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 48px 20px;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .links {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .links li {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+
+    a {
+      color: var(--link);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Agora (API) Dashboards</h1>
+    <ul class="links">
+      <li>
+        <a href="./agora_npm_downloads_dashboard.html">Agora npm weekly downloads dashboard</a>
+        <p>Tracks weekly npm downloads for Agora JavaScript, React, React Native, RTM, and legacy RTC packages to monitor developer demand signals.</p>
+      </li>
+      <li>
+        <a href="./agora_pypi_weekly_downloads_dashboard.html">Agora PyPI weekly downloads dashboard</a>
+        <p>Tracks weekly PyPI downloads for Agora Python-related packages to monitor backend, token-server, and testing/deployment demand signals.</p>
+      </li>
+      <li>
+        <a href="./livekit_npm_downloads_dashboard.html">LiveKit npm weekly downloads dashboard</a>
+        <p>Tracks weekly npm downloads for LiveKit client, React, React Native, and Agents packages from launch through the latest npm range data.</p>
+      </li>
+      <li>
+        <a href="./livekit_pypi_downloads_dashboard.html">LiveKit PyPI weekly downloads dashboard</a>
+        <p>Tracks weekly PyPI downloads for LiveKit Python SDK, Server API, Agents, and Plugins packages to monitor Python ecosystem demand signals.</p>
+      </li>
+    </ul>
+  </main>
+</body>
+</html>
