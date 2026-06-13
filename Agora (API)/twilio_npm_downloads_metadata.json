@@ -1,0 +1,63 @@
+{
+  "generated_at_utc": "2026-06-13T15:30:01.149Z",
+  "vendor": "twilio",
+  "source": {
+    "registry": "https://registry.npmjs.org",
+    "downloads": "https://api.npmjs.org/downloads",
+    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
+    "weekly_grain": "Monday-start weeks",
+    "latest_download_day": "2026-06-12",
+    "html_chart_complete_through_week_start": "2026-06-01",
+    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
+    "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
+  },
+  "csv": {
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\twilio_npm_weekly_downloads.csv",
+    "rows": 597,
+    "columns": [
+      "week_start",
+      "twilio-video",
+      "@twilio/voice-sdk",
+      "@twilio/video-react-native-sdk",
+      "@twilio/video-processors",
+      "twilio"
+    ]
+  },
+  "packages": {
+    "twilio-video": {
+      "exists": true,
+      "created": "2016-10-04T00:35:38.307Z",
+      "modified": "2026-04-29T17:49:52.308Z",
+      "description": "Twilio Video JavaScript Library",
+      "error": null
+    },
+    "@twilio/voice-sdk": {
+      "exists": true,
+      "created": "2021-07-09T17:14:17.395Z",
+      "modified": "2026-05-11T17:34:49.297Z",
+      "description": "Twilio's JavaScript Voice SDK",
+      "error": null
+    },
+    "@twilio/video-react-native-sdk": {
+      "exists": true,
+      "created": "2025-11-12T10:16:11.897Z",
+      "modified": "2026-04-21T21:40:57.594Z",
+      "description": "Twilio Video WebRTC for React Native.",
+      "error": null
+    },
+    "@twilio/video-processors": {
+      "exists": true,
+      "created": "2021-06-16T21:12:22.963Z",
+      "modified": "2026-04-22T18:33:23.132Z",
+      "description": "Twilio Video Processors JavaScript Library",
+      "error": null
+    },
+    "twilio": {
+      "exists": true,
+      "created": "2011-03-08T00:34:18.576Z",
+      "modified": "2026-05-07T16:42:29.589Z",
+      "description": "A Twilio helper library",
+      "error": null
+    }
+  }
+}

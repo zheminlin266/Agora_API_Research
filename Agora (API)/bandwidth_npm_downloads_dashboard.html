@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bandwidth npm Weekly Downloads Dashboard</title>
+  <style>
+    :root { --ink: #162033; --muted: #596579; --line: #dbe2ea; --soft: #f5f7fb; --panel: #ffffff; --accent: #2563eb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f7f8fb; color: var(--ink); }
+    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 32px 0 48px; }
+    header { margin-bottom: 22px; }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.2; letter-spacing: 0; }
+    .subtitle { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 20px 0 24px; }
+    .summary div, .source-box { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+    .summary span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .summary strong { font-size: 18px; font-weight: 700; }
+    .chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 18px; }
+    .card-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: start; margin-bottom: 10px; }
+    h2 { margin: 0 0 4px; font-size: 20px; line-height: 1.25; letter-spacing: 0; }
+    .card-head p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(86px, auto)); gap: 8px; margin: 0; }
+    .metrics div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: #fbfcfe; }
+    dt { color: var(--muted); font-size: 11px; margin-bottom: 3px; }
+    dd { margin: 0; font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .chart-toolbar { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 10px; margin: 10px 0 8px; }
+    .chart-toolbar label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .range-start, .range-end { border: 1px solid var(--line); border-radius: 6px; background: #ffffff; color: var(--ink); font-size: 13px; padding: 6px 9px; }
+    .chart-wrap { width: 100%; overflow-x: auto; position: relative; }
+    svg { width: 100%; min-width: 760px; height: auto; display: block; }
+    .grid { stroke: #e7ecf2; stroke-width: 1; }
+    .axis, .tick { stroke: #98a3b3; stroke-width: 1; }
+    .axis-label { fill: #667085; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .chart-caption { fill: #475467; font-size: 12px; font-weight: 650; }
+    .hover-overlay { cursor: crosshair; }
+    .hover-guide { stroke: #94a3b8; stroke-width: 1; stroke-dasharray: 3 5; opacity: 0.85; }
+    .hover-point { pointer-events: none; }
+    .chart-tooltip { position: absolute; z-index: 5; min-width: 150px; pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity 120ms ease, transform 120ms ease; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16); color: var(--ink); font-size: 12px; line-height: 1.45; padding: 8px 10px; }
+    .chart-tooltip.is-visible { opacity: 1; transform: translateY(0); }
+    .empty-title { fill: #334155; font-size: 24px; font-weight: 700; }
+    .empty-subtitle { fill: #667085; font-size: 14px; }
+    .note { margin: 12px 0 0; color: #334155; font-size: 14px; line-height: 1.65; background: var(--soft); border-left: 3px solid var(--accent); padding: 10px 12px; }
+    .source-box { margin-top: 18px; }
+    .source-box h2 { margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-top: 1px solid var(--line); padding: 9px 8px; text-align: left; vertical-align: top; }
+    th { color: #475467; font-weight: 700; background: #fbfcfe; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    @media (max-width: 860px) {
+      main { width: min(100vw - 20px, 1180px); padding-top: 20px; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card-head { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Bandwidth npm Weekly Downloads Dashboard</h1>
+      <p class="subtitle">Data comes from the official npm downloads API, aggregated by Monday-start weeks. CSV files retain the latest incomplete week; HTML charts show complete weeks only. npm downloads include CI, mirrors, bots, and cache effects, so they are best used as directional developer-demand signals rather than customer counts or runtime usage.</p>
+    </header>
+    <section class="summary" aria-label="dashboard summary">
+      <div><span>CSV rows</span><strong>153</strong></div>
+      <div><span>Week range</span><strong>2023-07-10 to 2026-06-08</strong></div>
+      <div><span>Chart through</span><strong>2026-06-01</strong></div>
+      <div><span>Latest npm day</span><strong>2026-06-12</strong></div>
+    </section>
+    
+            <section class="chart-card">
+              <div class="card-head">
+                <div>
+                  <h2>bandwidth-rtc</h2>
+                  <p>SDK for BandwidthRTC Node Applications</p>
+                </div>
+                <dl class="metrics">
+                  <div><dt>Status</dt><dd>Found</dd></div>
+                  <div><dt>Created</dt><dd>2026-01-15</dd></div>
+                  <div><dt>Chart total</dt><dd>1,538</dd></div>
+                  <div><dt>Latest complete week</dt><dd>117</dd></div>
+                  <div><dt>Non-zero weeks</dt><dd>21</dd></div>
+                </dl>
+              </div>
+              
+      <div class="chart-toolbar">
+        <label><span>Start week</span><input class="range-start" type="date" min="2026-01-12" max="2026-06-01" value="2026-01-12" aria-label="Start week for bandwidth-rtc"></label>
+        <label><span>End week</span><input class="range-end" type="date" min="2026-01-12" max="2026-06-01" value="2026-06-01" aria-label="End week for bandwidth-rtc"></label>
+      </div>
+      <div class="chart-wrap" data-chart data-package="bandwidth-rtc" data-color="#2563eb" data-series="[{&quot;week&quot;:&quot;2026-01-12&quot;,&quot;downloads&quot;:245},{&quot;week&quot;:&quot;2026-01-19&quot;,&quot;downloads&quot;:41},{&quot;week&quot;:&quot;2026-01-26&quot;,&quot;downloads&quot;:18},{&quot;week&quot;:&quot;2026-02-02&quot;,&quot;downloads&quot;:9},{&quot;week&quot;:&quot;2026-02-09&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2026-02-16&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2026-02-23&quot;,&quot;downloads&quot;:6},{&quot;week&quot;:&quot;2026-03-02&quot;,&quot;downloads&quot;:6},{&quot;week&quot;:&quot;2026-03-09&quot;,&quot;downloads&quot;:63},{&quot;week&quot;:&quot;2026-03-16&quot;,&quot;downloads&quot;:16},{&quot;week&quot;:&quot;2026-03-23&quot;,&quot;downloads&quot;:62},{&quot;week&quot;:&quot;2026-03-30&quot;,&quot;downloads&quot;:84},{&quot;week&quot;:&quot;2026-04-06&quot;,&quot;downloads&quot;:40},{&quot;week&quot;:&quot;2026-04-13&quot;,&quot;downloads&quot;:154},{&quot;week&quot;:&quot;2026-04-20&quot;,&quot;downloads&quot;:163},{&quot;week&quot;:&quot;2026-04-27&quot;,&quot;downloads&quot;:97},{&quot;week&quot;:&quot;2026-05-04&quot;,&quot;downloads&quot;:69},{&quot;week&quot;:&quot;2026-05-11&quot;,&quot;downloads&quot;:88},{&quot;week&quot;:&quot;2026-05-18&quot;,&quot;downloads&quot;:87},{&quot;week&quot;:&quot;2026-05-25&quot;,&quot;downloads&quot;:165},{&quot;week&quot;:&quot;2026-06-01&quot;,&quot;downloads&quot;:117}]">
+        <svg viewBox="0 0 1040 330" role="img" aria-label="bandwidth-rtc weekly downloads line chart"></svg>
+        <div class="chart-tooltip" role="status"></div>
+      </div>
+              <p class="note">Bandwidth RTC package demand signal. If npm metadata is absent, the dashboard keeps the package visible with a not-found status.</p>
+            </section>
+            <section class="chart-card">
+              <div class="card-head">
+                <div>
+                  <h2>@bandwidth/bw-webrtc-sdk</h2>
+                  <p>Bandwidth webrtc sdk</p>
+                </div>
+                <dl class="metrics">
+                  <div><dt>Status</dt><dd>Found</dd></div>
+                  <div><dt>Created</dt><dd>2023-07-11</dd></div>
+                  <div><dt>Chart total</dt><dd>185,470</dd></div>
+                  <div><dt>Latest complete week</dt><dd>6,281</dd></div>
+                  <div><dt>Non-zero weeks</dt><dd>147</dd></div>
+                </dl>
+              </div>
+              
+      <div class="chart-toolbar">
+        <label><span>Start week</span><input class="range-start" type="date" min="2023-07-10" max="2026-06-01" value="2023-07-10" aria-label="Start week for @bandwidth/bw-webrtc-sdk"></label>
+        <label><span>End week</span><input class="range-end" type="date" min="2023-07-10" max="2026-06-01" value="2026-06-01" aria-label="End week for @bandwidth/bw-webrtc-sdk"></label>
+      </div>
+      <div class="chart-wrap" data-chart data-package="@bandwidth/bw-webrtc-sdk" data-color="#d97706" data-series="[{&quot;week&quot;:&quot;2023-07-10&quot;,&quot;downloads&quot;:104},{&quot;week&quot;:&quot;2023-07-17&quot;,&quot;downloads&quot;:12},{&quot;week&quot;:&quot;2023-07-24&quot;,&quot;downloads&quot;:5},{&quot;week&quot;:&quot;2023-07-31&quot;,&quot;downloads&quot;:190},{&quot;week&quot;:&quot;2023-08-07&quot;,&quot;downloads&quot;:33},{&quot;week&quot;:&quot;2023-08-14&quot;,&quot;downloads&quot;:32},{&quot;week&quot;:&quot;2023-08-21&quot;,&quot;downloads&quot;:10},{&quot;week&quot;:&quot;2023-08-28&quot;,&quot;downloads&quot;:40},{&quot;week&quot;:&quot;2023-09-04&quot;,&quot;downloads&quot;:28},{&quot;week&quot;:&quot;2023-09-11&quot;,&quot;downloads&quot;:37},{&quot;week&quot;:&quot;2023-09-18&quot;,&quot;downloads&quot;:29},{&quot;week&quot;:&quot;2023-09-25&quot;,&quot;downloads&quot;:24},{&quot;week&quot;:&quot;2023-10-02&quot;,&quot;downloads&quot;:59},{&quot;week&quot;:&quot;2023-10-09&quot;,&quot;downloads&quot;:5},{&quot;week&quot;:&quot;2023-10-16&quot;,&quot;downloads&quot;:20},{&quot;week&quot;:&quot;2023-10-23&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2023-10-30&quot;,&quot;downloads&quot;:5},{&quot;week&quot;:&quot;2023-11-06&quot;,&quot;downloads&quot;:12},{&quot;week&quot;:&quot;2023-11-13&quot;,&quot;downloads&quot;:6},{&quot;week&quot;:&quot;2023-11-20&quot;,&quot;downloads&quot;:6},{&quot;week&quot;:&quot;2023-11-27&quot;,&quot;downloads&quot;:1},{&quot;week&quot;:&quot;2023-12-04&quot;,&quot;downloads&quot;:8},{&quot;week&quot;:&quot;2023-12-11&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2023-12-18&quot;,&quot;downloads&quot;:1},{&quot;week&quot;:&quot;2023-12-25&quot;,&quot;downloads&quot;:6},{&quot;week&quot;:&quot;2024-01-01&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-01-08&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2024-01-15&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-01-22&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2024-01-29&quot;,&quot;downloads&quot;:5},{&quot;week&quot;:&quot;2024-02-05&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2024-02-12&quot;,&quot;downloads&quot;:0},{&quot;week&quot;:&quot;2024-02-19&quot;,&quot;downloads&quot;:3},{&quot;week&quot;:&quot;2024-02-26&quot;,&quot;downloads&quot;:1},{&quot;week&quot;:&quot;2024-03-04&quot;,&quot;downloads&quot;:0},{&quot;week&quot;:&quot;2024-03-11&quot;,&quot;downloads&quot;:3},{&quot;week&quot;:&quot;2024-03-18&quot;,&quot;downloads&quot;:0},{&quot;week&quot;:&quot;2024-03-25&quot;,&quot;downloads&quot;:13},{&quot;week&quot;:&quot;2024-04-01&quot;,&quot;downloads&quot;:0},{&quot;week&quot;:&quot;2024-04-08&quot;,&quot;downloads&quot;:1},{&quot;week&quot;:&quot;2024-04-15&quot;,&quot;downloads&quot;:1},{&quot;week&quot;:&quot;2024-04-22&quot;,&quot;downloads&quot;:5},{&quot;week&quot;:&quot;2024-04-29&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-05-06&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2024-05-13&quot;,&quot;downloads&quot;:0},{&quot;week&quot;:&quot;2024-05-20&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2024-05-27&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2024-06-03&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2024-06-10&quot;,&quot;downloads&quot;:3},{&quot;week&quot;:&quot;2024-06-17&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-06-24&quot;,&quot;downloads&quot;:5},{&quot;week&quot;:&quot;2024-07-01&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-07-08&quot;,&quot;downloads&quot;:27},{&quot;week&quot;:&quot;2024-07-15&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-07-22&quot;,&quot;downloads&quot;:14},{&quot;week&quot;:&quot;2024-07-29&quot;,&quot;downloads&quot;:11},{&quot;week&quot;:&quot;2024-08-05&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2024-08-12&quot;,&quot;downloads&quot;:78},{&quot;week&quot;:&quot;2024-08-19&quot;,&quot;downloads&quot;:14},{&quot;week&quot;:&quot;2024-08-26&quot;,&quot;downloads&quot;:6},{&quot;week&quot;:&quot;2024-09-02&quot;,&quot;downloads&quot;:19},{&quot;week&quot;:&quot;2024-09-09&quot;,&quot;downloads&quot;:32},{&quot;week&quot;:&quot;2024-09-16&quot;,&quot;downloads&quot;:11},{&quot;week&quot;:&quot;2024-09-23&quot;,&quot;downloads&quot;:12},{&quot;week&quot;:&quot;2024-09-30&quot;,&quot;downloads&quot;:17},{&quot;week&quot;:&quot;2024-10-07&quot;,&quot;downloads&quot;:20},{&quot;week&quot;:&quot;2024-10-14&quot;,&quot;downloads&quot;:24},{&quot;week&quot;:&quot;2024-10-21&quot;,&quot;downloads&quot;:27},{&quot;week&quot;:&quot;2024-10-28&quot;,&quot;downloads&quot;:17},{&quot;week&quot;:&quot;2024-11-04&quot;,&quot;downloads&quot;:35},{&quot;week&quot;:&quot;2024-11-11&quot;,&quot;downloads&quot;:24},{&quot;week&quot;:&quot;2024-11-18&quot;,&quot;downloads&quot;:34},{&quot;week&quot;:&quot;2024-11-25&quot;,&quot;downloads&quot;:14},{&quot;week&quot;:&quot;2024-12-02&quot;,&quot;downloads&quot;:98},{&quot;week&quot;:&quot;2024-12-09&quot;,&quot;downloads&quot;:81},{&quot;week&quot;:&quot;2024-12-16&quot;,&quot;downloads&quot;:55},{&quot;week&quot;:&quot;2024-12-23&quot;,&quot;downloads&quot;:129},{&quot;week&quot;:&quot;2024-12-30&quot;,&quot;downloads&quot;:30},{&quot;week&quot;:&quot;2025-01-06&quot;,&quot;downloads&quot;:28},{&quot;week&quot;:&quot;2025-01-13&quot;,&quot;downloads&quot;:86},{&quot;week&quot;:&quot;2025-01-20&quot;,&quot;downloads&quot;:71},{&quot;week&quot;:&quot;2025-01-27&quot;,&quot;downloads&quot;:71},{&quot;week&quot;:&quot;2025-02-03&quot;,&quot;downloads&quot;:66},{&quot;week&quot;:&quot;2025-02-10&quot;,&quot;downloads&quot;:55},{&quot;week&quot;:&quot;2025-02-17&quot;,&quot;downloads&quot;:61},{&quot;week&quot;:&quot;2025-02-24&quot;,&quot;downloads&quot;:83},{&quot;week&quot;:&quot;2025-03-03&quot;,&quot;downloads&quot;:71},{&quot;week&quot;:&quot;2025-03-10&quot;,&quot;downloads&quot;:116},{&quot;week&quot;:&quot;2025-03-17&quot;,&quot;downloads&quot;:130},{&quot;week&quot;:&quot;2025-03-24&quot;,&quot;downloads&quot;:88},{&quot;week&quot;:&quot;2025-03-31&quot;,&quot;downloads&quot;:155},{&quot;week&quot;:&quot;2025-04-07&quot;,&quot;downloads&quot;:270},{&quot;week&quot;:&quot;2025-04-14&quot;,&quot;downloads&quot;:700},{&quot;week&quot;:&quot;2025-04-21&quot;,&quot;downloads&quot;:1060},{&quot;week&quot;:&quot;2025-04-28&quot;,&quot;downloads&quot;:512},{&quot;week&quot;:&quot;2025-05-05&quot;,&quot;downloads&quot;:837},{&quot;week&quot;:&quot;2025-05-12&quot;,&quot;downloads&quot;:1042},{&quot;week&quot;:&quot;2025-05-19&quot;,&quot;downloads&quot;:638},{&quot;week&quot;:&quot;2025-05-26&quot;,&quot;downloads&quot;:862},{&quot;week&quot;:&quot;2025-06-02&quot;,&quot;downloads&quot;:942},{&quot;week&quot;:&quot;2025-06-09&quot;,&quot;downloads&quot;:872},{&quot;week&quot;:&quot;2025-06-16&quot;,&quot;downloads&quot;:759},{&quot;week&quot;:&quot;2025-06-23&quot;,&quot;downloads&quot;:1260},{&quot;week&quot;:&quot;2025-06-30&quot;,&quot;downloads&quot;:809},{&quot;week&quot;:&quot;2025-07-07&quot;,&quot;downloads&quot;:655},{&quot;week&quot;:&quot;2025-07-14&quot;,&quot;downloads&quot;:807},{&quot;week&quot;:&quot;2025-07-21&quot;,&quot;downloads&quot;:1387},{&quot;week&quot;:&quot;2025-07-28&quot;,&quot;downloads&quot;:1093},{&quot;week&quot;:&quot;2025-08-04&quot;,&quot;downloads&quot;:1284},{&quot;week&quot;:&quot;2025-08-11&quot;,&quot;downloads&quot;:1145},{&quot;week&quot;:&quot;2025-08-18&quot;,&quot;downloads&quot;:1769},{&quot;week&quot;:&quot;2025-08-25&quot;,&quot;downloads&quot;:1044},{&quot;week&quot;:&quot;2025-09-01&quot;,&quot;downloads&quot;:1125},{&quot;week&quot;:&quot;2025-09-08&quot;,&quot;downloads&quot;:764},{&quot;week&quot;:&quot;2025-09-15&quot;,&quot;downloads&quot;:1165},{&quot;week&quot;:&quot;2025-09-22&quot;,&quot;downloads&quot;:1089},{&quot;week&quot;:&quot;2025-09-29&quot;,&quot;downloads&quot;:598},{&quot;week&quot;:&quot;2025-10-06&quot;,&quot;downloads&quot;:3558},{&quot;week&quot;:&quot;2025-10-13&quot;,&quot;downloads&quot;:2433},{&quot;week&quot;:&quot;2025-10-20&quot;,&quot;downloads&quot;:3646},{&quot;week&quot;:&quot;2025-10-27&quot;,&quot;downloads&quot;:3050},{&quot;week&quot;:&quot;2025-11-03&quot;,&quot;downloads&quot;:3312},{&quot;week&quot;:&quot;2025-11-10&quot;,&quot;downloads&quot;:4466},{&quot;week&quot;:&quot;2025-11-17&quot;,&quot;downloads&quot;:8506},{&quot;week&quot;:&quot;2025-11-24&quot;,&quot;downloads&quot;:6357},{&quot;week&quot;:&quot;2025-12-01&quot;,&quot;downloads&quot;:5324},{&quot;week&quot;:&quot;2025-12-08&quot;,&quot;downloads&quot;:5180},{&quot;week&quot;:&quot;2025-12-15&quot;,&quot;downloads&quot;:4599},{&quot;week&quot;:&quot;2025-12-22&quot;,&quot;downloads&quot;:1978},{&quot;week&quot;:&quot;2025-12-29&quot;,&quot;downloads&quot;:1961},{&quot;week&quot;:&quot;2026-01-05&quot;,&quot;downloads&quot;:4013},{&quot;week&quot;:&quot;2026-01-12&quot;,&quot;downloads&quot;:5065},{&quot;week&quot;:&quot;2026-01-19&quot;,&quot;downloads&quot;:3957},{&quot;week&quot;:&quot;2026-01-26&quot;,&quot;downloads&quot;:4655},{&quot;week&quot;:&quot;2026-02-02&quot;,&quot;downloads&quot;:3986},{&quot;week&quot;:&quot;2026-02-09&quot;,&quot;downloads&quot;:4774},{&quot;week&quot;:&quot;2026-02-16&quot;,&quot;downloads&quot;:4312},{&quot;week&quot;:&quot;2026-02-23&quot;,&quot;downloads&quot;:3214},{&quot;week&quot;:&quot;2026-03-02&quot;,&quot;downloads&quot;:5899},{&quot;week&quot;:&quot;2026-03-09&quot;,&quot;downloads&quot;:5685},{&quot;week&quot;:&quot;2026-03-16&quot;,&quot;downloads&quot;:5421},{&quot;week&quot;:&quot;2026-03-23&quot;,&quot;downloads&quot;:5070},{&quot;week&quot;:&quot;2026-03-30&quot;,&quot;downloads&quot;:4944},{&quot;week&quot;:&quot;2026-04-06&quot;,&quot;downloads&quot;:6020},{&quot;week&quot;:&quot;2026-04-13&quot;,&quot;downloads&quot;:5597},{&quot;week&quot;:&quot;2026-04-20&quot;,&quot;downloads&quot;:4939},{&quot;week&quot;:&quot;2026-04-27&quot;,&quot;downloads&quot;:3622},{&quot;week&quot;:&quot;2026-05-04&quot;,&quot;downloads&quot;:1445},{&quot;week&quot;:&quot;2026-05-11&quot;,&quot;downloads&quot;:4644},{&quot;week&quot;:&quot;2026-05-18&quot;,&quot;downloads&quot;:5467},{&quot;week&quot;:&quot;2026-05-25&quot;,&quot;downloads&quot;:4909},{&quot;week&quot;:&quot;2026-06-01&quot;,&quot;downloads&quot;:6281}]">
+        <svg viewBox="0 0 1040 330" role="img" aria-label="@bandwidth/bw-webrtc-sdk weekly downloads line chart"></svg>
+        <div class="chart-tooltip" role="status"></div>
+      </div>
+              <p class="note">Bandwidth WebRTC SDK package demand signal for browser real-time communication integrations.</p>
+            </section>
+            <section class="chart-card">
+              <div class="card-head">
+                <div>
+                  <h2>bandwidth-sdk</h2>
+                  <p>OpenAPI client for bandwidth-sdk</p>
+                </div>
+                <dl class="metrics">
+                  <div><dt>Status</dt><dd>Found</dd></div>
+                  <div><dt>Created</dt><dd>2023-12-15</dd></div>
+                  <div><dt>Chart total</dt><dd>263,006</dd></div>
+                  <div><dt>Latest complete week</dt><dd>6,214</dd></div>
+                  <div><dt>Non-zero weeks</dt><dd>129</dd></div>
+                </dl>
+              </div>
+              
+      <div class="chart-toolbar">
+        <label><span>Start week</span><input class="range-start" type="date" min="2023-12-11" max="2026-06-01" value="2023-12-11" aria-label="Start week for bandwidth-sdk"></label>
+        <label><span>End week</span><input class="range-end" type="date" min="2023-12-11" max="2026-06-01" value="2026-06-01" aria-label="End week for bandwidth-sdk"></label>
+      </div>
+      <div class="chart-wrap" data-chart data-package="bandwidth-sdk" data-color="#0f766e" data-series="[{&quot;week&quot;:&quot;2023-12-11&quot;,&quot;downloads&quot;:54},{&quot;week&quot;:&quot;2023-12-18&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2023-12-25&quot;,&quot;downloads&quot;:3},{&quot;week&quot;:&quot;2024-01-01&quot;,&quot;downloads&quot;:1},{&quot;week&quot;:&quot;2024-01-08&quot;,&quot;downloads&quot;:64},{&quot;week&quot;:&quot;2024-01-15&quot;,&quot;downloads&quot;:69},{&quot;week&quot;:&quot;2024-01-22&quot;,&quot;downloads&quot;:2},{&quot;week&quot;:&quot;2024-01-29&quot;,&quot;downloads&quot;:0},{&quot;week&quot;:&quot;2024-02-05&quot;,&quot;downloads&quot;:7},{&quot;week&quot;:&quot;2024-02-12&quot;,&quot;downloads&quot;:4},{&quot;week&quot;:&quot;2024-02-19&quot;,&quot;downloads&quot;:70},{&quot;week&quot;:&quot;2024-02-26&quot;,&quot;downloads&quot;:33},{&quot;week&quot;:&quot;2024-03-04&quot;,&quot;downloads&quot;:107},{&quot;week&quot;:&quot;2024-03-11&quot;,&quot;downloads&quot;:84},{&quot;week&quot;:&quot;2024-03-18&quot;,&quot;downloads&quot;:141},{&quot;week&quot;:&quot;2024-03-25&quot;,&quot;downloads&quot;:172},{&quot;week&quot;:&quot;2024-04-01&quot;,&quot;downloads&quot;:245},{&quot;week&quot;:&quot;2024-04-08&quot;,&quot;downloads&quot;:81},{&quot;week&quot;:&quot;2024-04-15&quot;,&quot;downloads&quot;:165},{&quot;week&quot;:&quot;2024-04-22&quot;,&quot;downloads&quot;:225},{&quot;week&quot;:&quot;2024-04-29&quot;,&quot;downloads&quot;:169},{&quot;week&quot;:&quot;2024-05-06&quot;,&quot;downloads&quot;:176},{&quot;week&quot;:&quot;2024-05-13&quot;,&quot;downloads&quot;:137},{&quot;week&quot;:&quot;2024-05-20&quot;,&quot;downloads&quot;:297},{&quot;week&quot;:&quot;2024-05-27&quot;,&quot;downloads&quot;:147},{&quot;week&quot;:&quot;2024-06-03&quot;,&quot;downloads&quot;:202},{&quot;week&quot;:&quot;2024-06-10&quot;,&quot;downloads&quot;:342},{&quot;week&quot;:&quot;2024-06-17&quot;,&quot;downloads&quot;:163},{&quot;week&quot;:&quot;2024-06-24&quot;,&quot;downloads&quot;:272},{&quot;week&quot;:&quot;2024-07-01&quot;,&quot;downloads&quot;:345},{&quot;week&quot;:&quot;2024-07-08&quot;,&quot;downloads&quot;:298},{&quot;week&quot;:&quot;2024-07-15&quot;,&quot;downloads&quot;:296},{&quot;week&quot;:&quot;2024-07-22&quot;,&quot;downloads&quot;:713},{&quot;week&quot;:&quot;2024-07-29&quot;,&quot;downloads&quot;:393},{&quot;week&quot;:&quot;2024-08-05&quot;,&quot;downloads&quot;:263},{&quot;week&quot;:&quot;2024-08-12&quot;,&quot;downloads&quot;:436},{&quot;week&quot;:&quot;2024-08-19&quot;,&quot;downloads&quot;:499},{&quot;week&quot;:&quot;2024-08-26&quot;,&quot;downloads&quot;:411},{&quot;week&quot;:&quot;2024-09-02&quot;,&quot;downloads&quot;:441},{&quot;week&quot;:&quot;2024-09-09&quot;,&quot;downloads&quot;:353},{&quot;week&quot;:&quot;2024-09-16&quot;,&quot;downloads&quot;:495},{&quot;week&quot;:&quot;2024-09-23&quot;,&quot;downloads&quot;:481},{&quot;week&quot;:&quot;2024-09-30&quot;,&quot;downloads&quot;:393},{&quot;week&quot;:&quot;2024-10-07&quot;,&quot;downloads&quot;:462},{&quot;week&quot;:&quot;2024-10-14&quot;,&quot;downloads&quot;:893},{&quot;week&quot;:&quot;2024-10-21&quot;,&quot;downloads&quot;:811},{&quot;week&quot;:&quot;2024-10-28&quot;,&quot;downloads&quot;:661},{&quot;week&quot;:&quot;2024-11-04&quot;,&quot;downloads&quot;:645},{&quot;week&quot;:&quot;2024-11-11&quot;,&quot;downloads&quot;:500},{&quot;week&quot;:&quot;2024-11-18&quot;,&quot;downloads&quot;:430},{&quot;week&quot;:&quot;2024-11-25&quot;,&quot;downloads&quot;:773},{&quot;week&quot;:&quot;2024-12-02&quot;,&quot;downloads&quot;:913},{&quot;week&quot;:&quot;2024-12-09&quot;,&quot;downloads&quot;:779},{&quot;week&quot;:&quot;2024-12-16&quot;,&quot;downloads&quot;:762},{&quot;week&quot;:&quot;2024-12-23&quot;,&quot;downloads&quot;:429},{&quot;week&quot;:&quot;2024-12-30&quot;,&quot;downloads&quot;:413},{&quot;week&quot;:&quot;2025-01-06&quot;,&quot;downloads&quot;:464},{&quot;week&quot;:&quot;2025-01-13&quot;,&quot;downloads&quot;:713},{&quot;week&quot;:&quot;2025-01-20&quot;,&quot;downloads&quot;:758},{&quot;week&quot;:&quot;2025-01-27&quot;,&quot;downloads&quot;:630},{&quot;week&quot;:&quot;2025-02-03&quot;,&quot;downloads&quot;:662},{&quot;week&quot;:&quot;2025-02-10&quot;,&quot;downloads&quot;:396},{&quot;week&quot;:&quot;2025-02-17&quot;,&quot;downloads&quot;:569},{&quot;week&quot;:&quot;2025-02-24&quot;,&quot;downloads&quot;:612},{&quot;week&quot;:&quot;2025-03-03&quot;,&quot;downloads&quot;:794},{&quot;week&quot;:&quot;2025-03-10&quot;,&quot;downloads&quot;:668},{&quot;week&quot;:&quot;2025-03-17&quot;,&quot;downloads&quot;:619},{&quot;week&quot;:&quot;2025-03-24&quot;,&quot;downloads&quot;:718},{&quot;week&quot;:&quot;2025-03-31&quot;,&quot;downloads&quot;:702},{&quot;week&quot;:&quot;2025-04-07&quot;,&quot;downloads&quot;:832},{&quot;week&quot;:&quot;2025-04-14&quot;,&quot;downloads&quot;:1035},{&quot;week&quot;:&quot;2025-04-21&quot;,&quot;downloads&quot;:1272},{&quot;week&quot;:&quot;2025-04-28&quot;,&quot;downloads&quot;:842},{&quot;week&quot;:&quot;2025-05-05&quot;,&quot;downloads&quot;:906},{&quot;week&quot;:&quot;2025-05-12&quot;,&quot;downloads&quot;:1010},{&quot;week&quot;:&quot;2025-05-19&quot;,&quot;downloads&quot;:911},{&quot;week&quot;:&quot;2025-05-26&quot;,&quot;downloads&quot;:938},{&quot;week&quot;:&quot;2025-06-02&quot;,&quot;downloads&quot;:929},{&quot;week&quot;:&quot;2025-06-09&quot;,&quot;downloads&quot;:740},{&quot;week&quot;:&quot;2025-06-16&quot;,&quot;downloads&quot;:935},{&quot;week&quot;:&quot;2025-06-23&quot;,&quot;downloads&quot;:933},{&quot;week&quot;:&quot;2025-06-30&quot;,&quot;downloads&quot;:898},{&quot;week&quot;:&quot;2025-07-07&quot;,&quot;downloads&quot;:1236},{&quot;week&quot;:&quot;2025-07-14&quot;,&quot;downloads&quot;:1171},{&quot;week&quot;:&quot;2025-07-21&quot;,&quot;downloads&quot;:1325},{&quot;week&quot;:&quot;2025-07-28&quot;,&quot;downloads&quot;:1425},{&quot;week&quot;:&quot;2025-08-04&quot;,&quot;downloads&quot;:1504},{&quot;week&quot;:&quot;2025-08-11&quot;,&quot;downloads&quot;:1353},{&quot;week&quot;:&quot;2025-08-18&quot;,&quot;downloads&quot;:1508},{&quot;week&quot;:&quot;2025-08-25&quot;,&quot;downloads&quot;:1296},{&quot;week&quot;:&quot;2025-09-01&quot;,&quot;downloads&quot;:1353},{&quot;week&quot;:&quot;2025-09-08&quot;,&quot;downloads&quot;:1883},{&quot;week&quot;:&quot;2025-09-15&quot;,&quot;downloads&quot;:2004},{&quot;week&quot;:&quot;2025-09-22&quot;,&quot;downloads&quot;:2918},{&quot;week&quot;:&quot;2025-09-29&quot;,&quot;downloads&quot;:2623},{&quot;week&quot;:&quot;2025-10-06&quot;,&quot;downloads&quot;:2669},{&quot;week&quot;:&quot;2025-10-13&quot;,&quot;downloads&quot;:2404},{&quot;week&quot;:&quot;2025-10-20&quot;,&quot;downloads&quot;:1954},{&quot;week&quot;:&quot;2025-10-27&quot;,&quot;downloads&quot;:2801},{&quot;week&quot;:&quot;2025-11-03&quot;,&quot;downloads&quot;:2990},{&quot;week&quot;:&quot;2025-11-10&quot;,&quot;downloads&quot;:3654},{&quot;week&quot;:&quot;2025-11-17&quot;,&quot;downloads&quot;:3757},{&quot;week&quot;:&quot;2025-11-24&quot;,&quot;downloads&quot;:2661},{&quot;week&quot;:&quot;2025-12-01&quot;,&quot;downloads&quot;:3510},{&quot;week&quot;:&quot;2025-12-08&quot;,&quot;downloads&quot;:4601},{&quot;week&quot;:&quot;2025-12-15&quot;,&quot;downloads&quot;:5012},{&quot;week&quot;:&quot;2025-12-22&quot;,&quot;downloads&quot;:1969},{&quot;week&quot;:&quot;2025-12-29&quot;,&quot;downloads&quot;:3055},{&quot;week&quot;:&quot;2026-01-05&quot;,&quot;downloads&quot;:4431},{&quot;week&quot;:&quot;2026-01-12&quot;,&quot;downloads&quot;:4829},{&quot;week&quot;:&quot;2026-01-19&quot;,&quot;downloads&quot;:6456},{&quot;week&quot;:&quot;2026-01-26&quot;,&quot;downloads&quot;:7254},{&quot;week&quot;:&quot;2026-02-02&quot;,&quot;downloads&quot;:7548},{&quot;week&quot;:&quot;2026-02-09&quot;,&quot;downloads&quot;:13517},{&quot;week&quot;:&quot;2026-02-16&quot;,&quot;downloads&quot;:13946},{&quot;week&quot;:&quot;2026-02-23&quot;,&quot;downloads&quot;:16665},{&quot;week&quot;:&quot;2026-03-02&quot;,&quot;downloads&quot;:16094},{&quot;week&quot;:&quot;2026-03-09&quot;,&quot;downloads&quot;:8303},{&quot;week&quot;:&quot;2026-03-16&quot;,&quot;downloads&quot;:5858},{&quot;week&quot;:&quot;2026-03-23&quot;,&quot;downloads&quot;:3684},{&quot;week&quot;:&quot;2026-03-30&quot;,&quot;downloads&quot;:3712},{&quot;week&quot;:&quot;2026-04-06&quot;,&quot;downloads&quot;:4621},{&quot;week&quot;:&quot;2026-04-13&quot;,&quot;downloads&quot;:5638},{&quot;week&quot;:&quot;2026-04-20&quot;,&quot;downloads&quot;:4842},{&quot;week&quot;:&quot;2026-04-27&quot;,&quot;downloads&quot;:5560},{&quot;week&quot;:&quot;2026-05-04&quot;,&quot;downloads&quot;:5789},{&quot;week&quot;:&quot;2026-05-11&quot;,&quot;downloads&quot;:5679},{&quot;week&quot;:&quot;2026-05-18&quot;,&quot;downloads&quot;:5166},{&quot;week&quot;:&quot;2026-05-25&quot;,&quot;downloads&quot;:6351},{&quot;week&quot;:&quot;2026-06-01&quot;,&quot;downloads&quot;:6214}]">
+        <svg viewBox="0 0 1040 330" role="img" aria-label="bandwidth-sdk weekly downloads line chart"></svg>
+        <div class="chart-tooltip" role="status"></div>
+      </div>
+              <p class="note">General Bandwidth SDK demand signal. This can include non-WebRTC API usage, so it should be read separately from RTC-specific packages.</p>
+            </section>
+    <section class="source-box">
+      <h2>Source And Package Metadata</h2>
+      <table>
+        <thead><tr><th>Package</th><th>Found</th><th>Created</th><th>Modified</th><th>Description / Error</th></tr></thead>
+        <tbody>
+            <tr>
+              <td>bandwidth-rtc</td>
+              <td>yes</td>
+              <td>2026-01-15T15:59:26.749Z</td>
+              <td>2026-01-15T16:20:21.249Z</td>
+              <td>SDK for BandwidthRTC Node Applications</td>
+            </tr>
+            <tr>
+              <td>@bandwidth/bw-webrtc-sdk</td>
+              <td>yes</td>
+              <td>2023-07-11T15:43:37.680Z</td>
+              <td>2025-06-23T12:31:05.647Z</td>
+              <td>Bandwidth webrtc sdk</td>
+            </tr>
+            <tr>
+              <td>bandwidth-sdk</td>
+              <td>yes</td>
+              <td>2023-12-15T16:27:17.177Z</td>
+              <td>2026-06-02T20:54:16.006Z</td>
+              <td>OpenAPI client for bandwidth-sdk</td>
+            </tr></tbody>
+      </table>
+      <p class="subtitle">Output CSV: <code>bandwidth_npm_weekly_downloads.csv</code>. Metadata JSON: <code>bandwidth_npm_downloads_metadata.json</code>. Charts display through complete week <code>2026-06-01</code>.</p>
+    </section>
+  </main>
+  
+  <script>
+    (() => {
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const numberFormat = new Intl.NumberFormat("en-US");
+      const compactInt = (value) => value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : value >= 1000 ? `${Math.round(value / 1000)}K` : String(Math.round(value));
+      function niceYMax(value) {
+        if (value <= 0) return 1;
+        const base = 10 ** Math.floor(Math.log10(value));
+        for (const multiplier of [1, 2, 5, 10]) if (multiplier * base >= value) return multiplier * base;
+        return 10 * base;
+      }
+      function el(name, attrs = {}, text = null) {
+        const node = document.createElementNS(SVG_NS, name);
+        for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+        if (text !== null) node.textContent = text;
+        return node;
+      }
+      function filteredRows(allRows, startInput, endInput) {
+        if (!allRows.length) return [];
+        const minWeek = allRows[0].week;
+        const maxWeek = allRows[allRows.length - 1].week;
+        for (const input of [startInput, endInput]) {
+          input.min = minWeek;
+          input.max = maxWeek;
+        }
+        if (!startInput.value) startInput.value = minWeek;
+        if (!endInput.value) endInput.value = maxWeek;
+        let startWeek = startInput.value || minWeek;
+        let endWeek = endInput.value || maxWeek;
+        if (startWeek > endWeek) [startWeek, endWeek] = [endWeek, startWeek];
+        return allRows.filter((row) => row.week >= startWeek && row.week <= endWeek);
+      }
+      function svgPoint(svg, event) {
+        const point = svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        return point.matrixTransform(svg.getScreenCTM().inverse());
+      }
+      function showTooltip(wrap, event, row) {
+        const tooltip = wrap.querySelector(".chart-tooltip");
+        const rect = wrap.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        tooltip.innerHTML = `<strong>${row.week}</strong><br>${numberFormat.format(row.downloads)} downloads`;
+        tooltip.style.left = `${Math.min(Math.max(x + 14, 8), rect.width - 190)}px`;
+        tooltip.style.top = `${Math.max(y - 44, 8)}px`;
+        tooltip.classList.add("is-visible");
+      }
+      function hideHover(wrap, hoverGuide, hoverPoint) {
+        wrap.querySelector(".chart-tooltip").classList.remove("is-visible");
+        hoverGuide.setAttribute("display", "none");
+        hoverPoint.setAttribute("display", "none");
+      }
+      function renderChart(wrap) {
+        const card = wrap.closest(".chart-card");
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
+        const svg = wrap.querySelector("svg");
+        const color = wrap.dataset.color;
+        const packageName = wrap.dataset.package;
+        const rows = filteredRows(JSON.parse(wrap.dataset.series || "[]"), startInput, endInput);
+        const width = 1040, height = 330, left = 72, right = 28, top = 34, bottom = 56;
+        const plotW = width - left - right, plotH = height - top - bottom;
+        svg.textContent = "";
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.setAttribute("aria-label", `${packageName} weekly downloads line chart`);
+        svg.appendChild(el("rect", { width, height, rx: 8, fill: "#ffffff" }));
+        if (!rows.length) {
+          svg.appendChild(el("text", { x: width / 2, y: height / 2 - 10, "text-anchor": "middle", class: "empty-title" }, "No npm data"));
+          svg.appendChild(el("text", { x: width / 2, y: height / 2 + 18, "text-anchor": "middle", class: "empty-subtitle" }, "No complete-week data in this range."));
+          wrap.querySelector(".chart-tooltip").classList.remove("is-visible");
+          return;
+        }
+        const yMax = niceYMax(Math.max(...rows.map((row) => row.downloads)));
+        const xAt = (index) => rows.length === 1 ? left + plotW / 2 : left + (index / (rows.length - 1)) * plotW;
+        const yAt = (value) => top + plotH - (value / yMax) * plotH;
+        for (let tick = 0; tick < 5; tick += 1) {
+          const value = Math.round(yMax * tick / 4);
+          const y = yAt(value);
+          svg.appendChild(el("line", { x1: left, x2: left + plotW, y1: y.toFixed(1), y2: y.toFixed(1), class: "grid" }));
+          svg.appendChild(el("text", { x: left - 12, y: (y + 4).toFixed(1), "text-anchor": "end", class: "axis-label" }, compactInt(value)));
+        }
+        const tickIndexes = new Set([0, rows.length - 1]);
+        for (let i = 0; i < 6; i += 1) tickIndexes.add(Math.round(i * (rows.length - 1) / 5));
+        [...tickIndexes].sort((a, b) => a - b).forEach((index) => {
+          const x = xAt(index);
+          svg.appendChild(el("line", { x1: x.toFixed(1), x2: x.toFixed(1), y1: top + plotH, y2: top + plotH + 5, class: "tick" }));
+          svg.appendChild(el("text", { x: x.toFixed(1), y: top + plotH + 26, "text-anchor": "middle", class: "axis-label" }, rows[index].week));
+        });
+        svg.appendChild(el("line", { x1: left, x2: left + plotW, y1: top + plotH, y2: top + plotH, class: "axis" }));
+        svg.appendChild(el("line", { x1: left, x2: left, y1: top, y2: top + plotH, class: "axis" }));
+        svg.appendChild(el("polyline", { points: rows.map((row, index) => `${xAt(index).toFixed(1)},${yAt(row.downloads).toFixed(1)}`).join(" "), fill: "none", stroke: color, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+        const latest = rows[rows.length - 1];
+        const peak = rows.reduce((best, row) => row.downloads > best.downloads ? row : best, rows[0]);
+        svg.appendChild(el("text", { x: left, y: 20, class: "chart-caption" }, `Weekly downloads, ${rows[0].week} to ${latest.week}`));
+        svg.appendChild(el("text", { x: left + plotW, y: 20, "text-anchor": "end", class: "chart-caption" }, `Latest: ${latest.week} / ${numberFormat.format(latest.downloads)} | Peak: ${peak.week} / ${numberFormat.format(peak.downloads)}`));
+        const hoverGuide = el("line", { x1: left, x2: left, y1: top, y2: top + plotH, class: "hover-guide", display: "none" });
+        const hoverPoint = el("circle", { cx: left, cy: top + plotH, r: 5, fill: "#ffffff", stroke: color, "stroke-width": 2.4, class: "hover-point", display: "none" });
+        svg.appendChild(hoverGuide);
+        svg.appendChild(hoverPoint);
+        const overlay = el("rect", { x: left, y: top, width: plotW, height: plotH, fill: "transparent", class: "hover-overlay" });
+        overlay.addEventListener("pointermove", (event) => {
+          const local = svgPoint(svg, event);
+          const rawIndex = rows.length === 1 ? 0 : Math.round(((local.x - left) / plotW) * (rows.length - 1));
+          const index = Math.max(0, Math.min(rows.length - 1, rawIndex));
+          const row = rows[index], cx = xAt(index), cy = yAt(row.downloads);
+          hoverGuide.setAttribute("x1", cx.toFixed(1));
+          hoverGuide.setAttribute("x2", cx.toFixed(1));
+          hoverGuide.removeAttribute("display");
+          hoverPoint.setAttribute("cx", cx.toFixed(1));
+          hoverPoint.setAttribute("cy", cy.toFixed(1));
+          hoverPoint.removeAttribute("display");
+          showTooltip(wrap, event, row);
+        });
+        overlay.addEventListener("pointerleave", () => hideHover(wrap, hoverGuide, hoverPoint));
+        svg.appendChild(overlay);
+      }
+      document.querySelectorAll("[data-chart]").forEach((wrap) => {
+        const card = wrap.closest(".chart-card");
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
+        startInput.addEventListener("change", () => renderChart(wrap));
+        endInput.addEventListener("change", () => renderChart(wrap));
+        renderChart(wrap);
+      });
+    })();
+  </script>
+</body>
+</html>

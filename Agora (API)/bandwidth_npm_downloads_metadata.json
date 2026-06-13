@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "2026-06-13T15:30:09.629Z",
+  "vendor": "bandwidth",
+  "source": {
+    "registry": "https://registry.npmjs.org",
+    "downloads": "https://api.npmjs.org/downloads",
+    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
+    "weekly_grain": "Monday-start weeks",
+    "latest_download_day": "2026-06-12",
+    "html_chart_complete_through_week_start": "2026-06-01",
+    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
+    "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
+  },
+  "csv": {
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\bandwidth_npm_weekly_downloads.csv",
+    "rows": 153,
+    "columns": [
+      "week_start",
+      "bandwidth-rtc",
+      "@bandwidth/bw-webrtc-sdk",
+      "bandwidth-sdk"
+    ]
+  },
+  "packages": {
+    "bandwidth-rtc": {
+      "exists": true,
+      "created": "2026-01-15T15:59:26.749Z",
+      "modified": "2026-01-15T16:20:21.249Z",
+      "description": "SDK for BandwidthRTC Node Applications",
+      "error": null
+    },
+    "@bandwidth/bw-webrtc-sdk": {
+      "exists": true,
+      "created": "2023-07-11T15:43:37.680Z",
+      "modified": "2025-06-23T12:31:05.647Z",
+      "description": "Bandwidth webrtc sdk",
+      "error": null
+    },
+    "bandwidth-sdk": {
+      "exists": true,
+      "created": "2023-12-15T16:27:17.177Z",
+      "modified": "2026-06-02T20:54:16.006Z",
+      "description": "OpenAPI client for bandwidth-sdk",
+      "error": null
+    }
+  }
+}
