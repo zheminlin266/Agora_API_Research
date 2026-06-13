@@ -760,8 +760,14 @@ def main() -> None:
     raw_rows = fetch_weekly_downloads()
     rows = build_rows(raw_rows)
     write_csv(rows)
-    HTML_PATH.write_text(build_html(rows, metas, latest_day), encoding="utf-8")
     write_metadata(metas, rows, latest_day)
+    try:
+        from build_pypi_dashboard_pages import build_page
+
+        HTML_PATH.write_text(build_page(HTML_PATH.name, latest_day.isoformat()), encoding="utf-8")
+    except Exception as exc:
+        HTML_PATH.write_text(build_html(rows, metas, latest_day), encoding="utf-8")
+        print(f"warning: shared PyPI dashboard template unavailable; wrote legacy dashboard: {exc}")
     print(
         json.dumps(
             {
