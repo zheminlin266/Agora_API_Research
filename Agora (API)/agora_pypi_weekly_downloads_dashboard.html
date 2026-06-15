@@ -24,36 +24,35 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: #f7f9fd;
+      background: #f7f8fb;
       color: var(--ink);
-      font-size: 16px;
     }
     main {
       width: min(1180px, calc(100vw - 32px));
       margin: 0 auto;
-      padding: 24px 0 48px;
+      padding: 32px 0 48px;
     }
     header {
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
     h1 {
       margin: 0 0 8px;
-      font-size: clamp(30px, 4vw, 46px);
-      line-height: 1.05;
+      font-size: 30px;
+      line-height: 1.2;
       letter-spacing: 0;
     }
     .subtitle {
       margin: 0;
       max-width: 920px;
       color: var(--muted);
-      font-size: 18px;
-      line-height: 1.65;
+      font-size: 14px;
+      line-height: 1.6;
     }
     .summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin: 20px 0 28px;
+      margin: 20px 0 24px;
     }
     .summary-card, .metric-card {
       border: 1px solid var(--line);
@@ -67,71 +66,72 @@
     .label, dt {
       margin: 0;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.35;
       font-weight: 600;
     }
     .value, dd {
       margin: 4px 0 0;
       color: var(--ink);
-      font-size: 20px;
+      font-size: 18px;
       line-height: 1.2;
-      font-weight: 800;
+      font-weight: 700;
       word-break: keep-all;
     }
     .section-head {
-      margin: 30px 0 14px;
+      margin: 28px 0 16px;
+      padding: 18px 0 4px;
+      border-top: 2px solid #cbd5e1;
     }
     .section-head h2 {
       margin: 0 0 4px;
-      font-size: 26px;
+      font-size: 22px;
       line-height: 1.2;
     }
     .section-head p {
       margin: 0;
       color: var(--muted);
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1.5;
     }
     .cards {
       display: grid;
-      gap: 20px;
+      gap: 18px;
     }
     .chart-card {
       border: 1px solid var(--line);
       background: var(--panel);
       border-radius: 8px;
-      padding: 22px 20px 18px;
-      box-shadow: 0 1px 2px rgba(20, 32, 52, 0.05);
+      padding: 20px;
     }
     .card-head {
       display: grid;
       grid-template-columns: minmax(220px, 1fr) auto;
       gap: 18px;
       align-items: start;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
     .package-title {
       margin: 0 0 4px;
-      font-size: 25px;
-      line-height: 1.2;
+      font-size: 20px;
+      line-height: 1.25;
       letter-spacing: 0;
     }
     .package-role {
       margin: 0;
       color: var(--muted);
-      font-size: 16px;
-      line-height: 1.45;
+      font-size: 13px;
+      line-height: 1.5;
     }
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(86px, auto));
-      gap: 10px;
+      gap: 8px;
       align-items: stretch;
     }
     .metric-card {
       min-width: 120px;
-      padding: 10px 12px;
+      padding: 8px 10px;
     }
     .metric-card.wide {
       min-width: 170px;
@@ -140,45 +140,44 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 12px;
-      margin: 8px 0 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0 8px;
       color: var(--muted);
-      font-weight: 600;
     }
     .chart-toolbar label {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       white-space: nowrap;
+      font-size: 12px;
+      font-weight: 650;
     }
     input[type="date"] {
-      height: 34px;
       min-width: 136px;
       border: 1px solid var(--line);
-      border-radius: 7px;
+      border-radius: 6px;
       background: #fff;
       color: var(--ink);
-      padding: 4px 10px;
+      padding: 6px 9px;
       font: inherit;
-      font-size: 14px;
+      font-size: 13px;
       box-shadow: 0 1px 1px rgba(20, 32, 52, 0.04);
     }
     .chart-wrap {
       position: relative;
       overflow-x: auto;
-      padding-bottom: 6px;
     }
     svg {
       display: block;
       width: 100%;
-      min-width: 780px;
+      min-width: 760px;
       height: auto;
-      overflow: visible;
     }
     .axis text {
       fill: #60708c;
       font-size: 12px;
-      font-weight: 650;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
     .axis line, .axis path {
       stroke: #cfd8e6;
@@ -186,13 +185,13 @@
       shape-rendering: crispEdges;
     }
     .grid-line {
-      stroke: var(--grid);
+      stroke: #e7ecf2;
       stroke-width: 1;
       shape-rendering: crispEdges;
     }
     .chart-line {
       fill: none;
-      stroke-width: 3.2;
+      stroke-width: 2.6;
       stroke-linejoin: round;
       stroke-linecap: round;
     }
@@ -210,19 +209,20 @@
       pointer-events: none;
     }
     .caption {
-      margin: 4px 0 0;
-      color: #43526d;
-      font-size: 15px;
-      font-weight: 750;
-      text-align: right;
+      display: none;
+    }
+    .chart-caption {
+      fill: #475467;
+      font-size: 12px;
+      font-weight: 650;
     }
     .note {
-      margin-top: 14px;
-      border-left: 4px solid var(--blue);
+      margin-top: 12px;
+      border-left: 3px solid var(--blue);
       background: var(--note);
-      padding: 12px 14px 12px 16px;
+      padding: 10px 12px;
       color: #2e3f5c;
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.65;
     }
     .tooltip {
@@ -250,11 +250,11 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
-      padding: 18px 18px 8px;
+      padding: 14px 16px;
     }
     .source-box h2 {
       margin: 0 0 8px;
-      font-size: 22px;
+      font-size: 20px;
     }
     .source-box p {
       margin: 0 0 12px;
@@ -266,11 +266,11 @@
       width: 100%;
       border-collapse: collapse;
       min-width: 760px;
-      font-size: 14px;
+      font-size: 13px;
     }
     th, td {
       border-top: 1px solid var(--grid);
-      padding: 10px 8px;
+      padding: 9px 8px;
       text-align: left;
       vertical-align: top;
     }
@@ -279,6 +279,7 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      background: #fbfcfe;
     }
     td.num {
       text-align: right;
@@ -294,13 +295,14 @@
       vertical-align: baseline;
     }
     @media (max-width: 900px) {
-      main { width: min(100% - 24px, 1180px); padding-top: 18px; }
+      main { width: min(100vw - 20px, 1180px); padding-top: 20px; }
       .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .card-head { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .metric-card, .metric-card.wide { min-width: 0; }
       .chart-toolbar { justify-content: flex-start; flex-wrap: wrap; }
       .caption { text-align: left; }
+      h1 { font-size: 24px; }
     }
     @media (max-width: 560px) {
       main { width: min(100% - 18px, 1180px); }
@@ -469,7 +471,7 @@
             '<label>End week <input class="range-end" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + chartEnd + '" aria-label="End week for ' + pkg.name + '"></label>',
           '</div>',
           '<div class="caption"></div>',
-          '<div class="chart-wrap" data-color="' + pkg.color + '"><svg viewBox="0 0 1040 300" role="img" aria-label="Weekly downloads for ' + pkg.name + '"></svg></div>',
+          '<div class="chart-wrap" data-color="' + pkg.color + '"><svg viewBox="0 0 1040 330" role="img" aria-label="Weekly downloads for ' + pkg.name + '"></svg></div>',
           '<div class="note">' + pkg.note + '</div>'
         ].join("");
         section.querySelector(".chart-wrap").dataset.series = JSON.stringify(series.slice(series.indexOf(created)));
@@ -506,12 +508,12 @@
       const peak = maxPoint(pointsSource);
       card.querySelector(".caption").textContent = "Latest: " + latest.date + " / " + fmt(latest.value) + " | Peak: " + peak.date + " / " + fmt(peak.value);
 
-      const left = 68;
-      const right = 22;
-      const top = 14;
-      const bottom = 44;
+      const left = 72;
+      const right = 28;
+      const top = 34;
+      const bottom = 56;
       const width = 1040 - left - right;
-      const height = 300 - top - bottom;
+      const height = 330 - top - bottom;
       const minTime = parseDate(pointsSource[0].date).getTime();
       const maxTime = parseDate(pointsSource[pointsSource.length - 1].date).getTime();
       const rawMax = Math.max.apply(null, pointsSource.map(function(point) { return point.value; }).concat([1]));
@@ -527,7 +529,7 @@
       const yTicks = makeTicks(yMax, 4);
       const xTicks = makeXTicks(pointsSource, 5);
       const color = wrap.dataset.color || "#2563eb";
-      let html = "";
+      let html = '<rect width="1040" height="330" rx="8" fill="#ffffff"></rect>';
       yTicks.forEach(function(tick) {
         const y = yFor(tick, yMax, top, height);
         html += '<line class="grid-line" x1="' + left + '" x2="' + (left + width) + '" y1="' + y + '" y2="' + y + '"></line>';
@@ -536,9 +538,11 @@
       html += '<g class="axis"><line x1="' + left + '" x2="' + (left + width) + '" y1="' + (top + height) + '" y2="' + (top + height) + '"></line><line x1="' + left + '" x2="' + left + '" y1="' + top + '" y2="' + (top + height) + '"></line></g>';
       xTicks.forEach(function(tick) {
         const x = xFor(tick.date, minTime, maxTime, left, width);
-        html += '<g class="axis"><line x1="' + x + '" x2="' + x + '" y1="' + (top + height) + '" y2="' + (top + height + 7) + '"></line><text x="' + x + '" y="' + (top + height + 28) + '" text-anchor="middle">' + tick.date + '</text></g>';
+        html += '<g class="axis"><line x1="' + x + '" x2="' + x + '" y1="' + (top + height) + '" y2="' + (top + height + 5) + '"></line><text x="' + x + '" y="' + (top + height + 26) + '" text-anchor="middle">' + tick.date + '</text></g>';
       });
       html += '<path class="chart-line" stroke="' + color + '" d="' + linePath(chartPoints) + '"></path>';
+      html += '<text x="' + left + '" y="20" class="chart-caption">Weekly downloads, ' + pointsSource[0].date + ' to ' + latest.date + '</text>';
+      html += '<text x="' + (left + width) + '" y="20" text-anchor="end" class="chart-caption">Latest: ' + latest.date + ' / ' + fmt(latest.value) + ' | Peak: ' + peak.date + ' / ' + fmt(peak.value) + '</text>';
       html += '<line class="hover-guide" x1="0" x2="0" y1="' + top + '" y2="' + (top + height) + '"></line>';
       html += '<circle class="hover-point" r="5" stroke="' + color + '"></circle>';
       svg.innerHTML = html;
