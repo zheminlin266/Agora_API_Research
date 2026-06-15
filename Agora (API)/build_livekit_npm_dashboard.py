@@ -455,10 +455,8 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
         total = sum(value for _, value in series) if series else None
         latest = series[-1][1] if series else None
         peak = max(series, key=lambda item: item[1]) if series else None
-        non_zero = sum(1 for _, value in series if value > 0)
         meta = metas[package]
         created = meta.created.isoformat() if meta.created else "-"
-        status = "Found" if meta.exists else "Missing"
         peak_label = f"{peak[0]} / {format_int(peak[1])}" if peak else "-"
         chart = interactive_chart_shell(package, series, colors[package])
         return f"""
@@ -468,12 +466,10 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
                   <h2>{html.escape(package)}</h2>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>{status}</dd></div>
                   <div><dt>Created</dt><dd>{created}</dd></div>
                   <div><dt>Chart total</dt><dd>{format_int(total)}</dd></div>
                   <div><dt>Latest complete week</dt><dd>{format_int(latest)}</dd></div>
                   <div><dt>Peak week</dt><dd>{html.escape(peak_label)}</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>{format_int(non_zero)}</dd></div>
                 </dl>
               </div>
               {chart}
@@ -591,7 +587,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     .card-head p {{ margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }}
     .metrics {{
       display: grid;
-      grid-template-columns: repeat(3, minmax(86px, auto));
+      grid-template-columns: repeat(4, minmax(86px, auto));
       gap: 8px;
       margin: 0;
     }}
