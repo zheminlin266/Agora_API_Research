@@ -1,15 +1,15 @@
 {
-  "generated_at_utc": "2026-06-13T15:30:09.629Z",
+  "generated_at_utc": "2026-06-15T01:45:39.887Z",
   "vendor": "bandwidth",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
-    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
-    "weekly_grain": "Monday-start weeks",
+    "range_limit_note": "npm downloads API 按 548 天分段查询。",
+    "weekly_grain": "周一开始的自然周",
     "latest_download_day": "2026-06-12",
     "html_chart_complete_through_week_start": "2026-06-01",
-    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
-    "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
+    "html_chart_policy": "HTML 折线图排除最新未完整周；CSV 保留全部周度汇总。",
+    "caveat": "npm 下载量包含自动化、镜像、机器人和缓存影响。"
   },
   "csv": {
     "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\bandwidth_npm_weekly_downloads.csv",
@@ -26,21 +26,21 @@
       "exists": true,
       "created": "2026-01-15T15:59:26.749Z",
       "modified": "2026-01-15T16:20:21.249Z",
-      "description": "SDK for BandwidthRTC Node Applications",
+      "description": "BandwidthRTC Node 应用 SDK。",
       "error": null
     },
     "@bandwidth/bw-webrtc-sdk": {
       "exists": true,
       "created": "2023-07-11T15:43:37.680Z",
       "modified": "2025-06-23T12:31:05.647Z",
-      "description": "Bandwidth webrtc sdk",
+      "description": "Bandwidth WebRTC SDK，用于浏览器实时通信集成。",
       "error": null
     },
     "bandwidth-sdk": {
       "exists": true,
       "created": "2023-12-15T16:27:17.177Z",
       "modified": "2026-06-02T20:54:16.006Z",
-      "description": "OpenAPI client for bandwidth-sdk",
+      "description": "Bandwidth SDK 的 OpenAPI 客户端，覆盖范围可能不限于 WebRTC。",
       "error": null
     }
   }

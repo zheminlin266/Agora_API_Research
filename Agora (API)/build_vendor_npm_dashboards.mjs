@@ -21,12 +21,19 @@ const VENDORS = {
       "@twilio/video-processors",
       "twilio",
     ],
+    descriptions: {
+      "twilio-video": "Twilio Video JavaScript 浏览器端 SDK。",
+      "@twilio/voice-sdk": "Twilio JavaScript Voice SDK，用于浏览器和应用内语音通话集成。",
+      "@twilio/video-react-native-sdk": "Twilio Video 的 React Native WebRTC SDK。",
+      "@twilio/video-processors": "Twilio Video 的 JavaScript 视频处理库，用于背景处理等视频效果。",
+      twilio: "Twilio 通用 Node.js 辅助库，覆盖范围不限于实时音视频 API。",
+    },
     notes: {
-      "twilio-video": "Browser video SDK demand signal for Twilio Programmable Video integrations. Weekly npm downloads include automated installs and should be read as developer interest, not usage.",
-      "@twilio/voice-sdk": "JavaScript Voice SDK demand signal for browser and app voice calling integrations. Watch direction and release-related shifts more than absolute values.",
-      "@twilio/video-react-native-sdk": "React Native video SDK signal for mobile-oriented Twilio Video integrations. A missing or low series can reflect package lifecycle, not necessarily product demand.",
-      "@twilio/video-processors": "Video preprocessing package for effects such as background processing. This helps separate add-on media processing interest from core video SDK demand.",
-      twilio: "General Twilio Node.js helper library. It is broad and can reflect many Twilio APIs beyond RTC, so compare it separately from video and voice SDK packages.",
+      "twilio-video": "浏览器视频 SDK 的需求信号，主要对应 Twilio Programmable Video 集成。周度 npm 下载量包含自动化安装，应理解为开发者兴趣，而不是实际使用量。",
+      "@twilio/voice-sdk": "JavaScript Voice SDK 的需求信号，反映浏览器和应用内语音通话集成的开发者关注度。观察趋势和版本发布前后的变化比绝对值更重要。",
+      "@twilio/video-react-native-sdk": "面向移动端 Twilio Video 集成的 React Native 视频 SDK 信号。序列缺失或读数较低可能来自包生命周期变化，不一定代表产品需求偏弱。",
+      "@twilio/video-processors": "用于背景处理等效果的视频预处理包，有助于把附加媒体处理兴趣与核心视频 SDK 需求区分开。",
+      twilio: "Twilio 通用 Node.js 辅助库，覆盖多类 Twilio API，不只代表 RTC；应与视频和语音 SDK 包分开比较。",
     },
   },
   bandwidth: {
@@ -35,10 +42,15 @@ const VENDORS = {
     html: "bandwidth_npm_downloads_dashboard.html",
     metadata: "bandwidth_npm_downloads_metadata.json",
     packages: ["bandwidth-rtc", "@bandwidth/bw-webrtc-sdk", "bandwidth-sdk"],
+    descriptions: {
+      "bandwidth-rtc": "BandwidthRTC Node 应用 SDK。",
+      "@bandwidth/bw-webrtc-sdk": "Bandwidth WebRTC SDK，用于浏览器实时通信集成。",
+      "bandwidth-sdk": "Bandwidth SDK 的 OpenAPI 客户端，覆盖范围可能不限于 WebRTC。",
+    },
     notes: {
-      "bandwidth-rtc": "Bandwidth RTC package demand signal. If npm metadata is absent, the dashboard keeps the package visible with a not-found status.",
-      "@bandwidth/bw-webrtc-sdk": "Bandwidth WebRTC SDK package demand signal for browser real-time communication integrations.",
-      "bandwidth-sdk": "General Bandwidth SDK demand signal. This can include non-WebRTC API usage, so it should be read separately from RTC-specific packages.",
+      "bandwidth-rtc": "Bandwidth RTC 包的需求信号。如果 npm 元数据缺失，看板仍会保留该包并显示未找到状态。",
+      "@bandwidth/bw-webrtc-sdk": "Bandwidth WebRTC SDK 包的需求信号，反映浏览器实时通信集成的开发者关注度。",
+      "bandwidth-sdk": "Bandwidth 通用 SDK 的需求信号，可能包含非 WebRTC API 使用，因此应与 RTC 专用包分开解读。",
     },
   },
 };
@@ -78,9 +90,44 @@ function csvEscape(value) {
   return text;
 }
 
+function parseCsvLine(line) {
+  const values = [];
+  let current = "";
+  let quoted = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    if (quoted && char === '"' && line[index + 1] === '"') {
+      current += '"';
+      index += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      values.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  values.push(current);
+  return values;
+}
+
+function readCsv(filePath) {
+  const lines = fs.readFileSync(filePath, "utf8").trimEnd().split(/\r?\n/);
+  const columns = parseCsvLine(lines[0]);
+  return lines.slice(1).map((line) => {
+    const values = parseCsvLine(line);
+    return Object.fromEntries(columns.map((column, index) => [column, values[index] ?? ""]));
+  });
+}
+
 function formatInt(value) {
   if (value === null || value === undefined) return "-";
   return Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
+function packageDescription(config, packageName, meta) {
+  return config.descriptions?.[packageName] || meta.description || meta.error || "没有 npm registry 记录。";
 }
 
 async function fetchJson(url, retries = 6) {
@@ -233,11 +280,11 @@ function chartShell(packageName, series, color) {
   const disabled = series.length ? "" : " disabled";
   return `
       <div class="chart-toolbar">
-        <label><span>Start week</span><input class="range-start" type="date" min="${minWeek}" max="${maxWeek}" value="${minWeek}" aria-label="Start week for ${htmlEscape(packageName)}"${disabled}></label>
-        <label><span>End week</span><input class="range-end" type="date" min="${minWeek}" max="${maxWeek}" value="${maxWeek}" aria-label="End week for ${htmlEscape(packageName)}"${disabled}></label>
+        <label><span>开始周</span><input class="range-start" type="date" min="${minWeek}" max="${maxWeek}" value="${minWeek}" aria-label="${htmlEscape(packageName)} 开始周"${disabled}></label>
+        <label><span>结束周</span><input class="range-end" type="date" min="${minWeek}" max="${maxWeek}" value="${maxWeek}" aria-label="${htmlEscape(packageName)} 结束周"${disabled}></label>
       </div>
       <div class="chart-wrap" data-chart data-package="${htmlEscape(packageName)}" data-color="${color}" data-series="${htmlEscape(JSON.stringify(series))}">
-        <svg viewBox="0 0 1040 330" role="img" aria-label="${htmlEscape(packageName)} weekly downloads line chart"></svg>
+        <svg viewBox="0 0 1040 330" role="img" aria-label="${htmlEscape(packageName)} 周下载量折线图"></svg>
         <div class="chart-tooltip" role="status"></div>
       </div>`;
 }
@@ -309,11 +356,11 @@ function dashboardScript() {
         const plotW = width - left - right, plotH = height - top - bottom;
         svg.textContent = "";
         svg.setAttribute("viewBox", \`0 0 \${width} \${height}\`);
-        svg.setAttribute("aria-label", \`\${packageName} weekly downloads line chart\`);
+        svg.setAttribute("aria-label", \`\${packageName} 周下载量折线图\`);
         svg.appendChild(el("rect", { width, height, rx: 8, fill: "#ffffff" }));
         if (!rows.length) {
-          svg.appendChild(el("text", { x: width / 2, y: height / 2 - 10, "text-anchor": "middle", class: "empty-title" }, "No npm data"));
-          svg.appendChild(el("text", { x: width / 2, y: height / 2 + 18, "text-anchor": "middle", class: "empty-subtitle" }, "No complete-week data in this range."));
+          svg.appendChild(el("text", { x: width / 2, y: height / 2 - 10, "text-anchor": "middle", class: "empty-title" }, "暂无 npm 数据"));
+          svg.appendChild(el("text", { x: width / 2, y: height / 2 + 18, "text-anchor": "middle", class: "empty-subtitle" }, "当前区间没有完整周数据。"));
           wrap.querySelector(".chart-tooltip").classList.remove("is-visible");
           return;
         }
@@ -338,8 +385,8 @@ function dashboardScript() {
         svg.appendChild(el("polyline", { points: rows.map((row, index) => \`\${xAt(index).toFixed(1)},\${yAt(row.downloads).toFixed(1)}\`).join(" "), fill: "none", stroke: color, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" }));
         const latest = rows[rows.length - 1];
         const peak = rows.reduce((best, row) => row.downloads > best.downloads ? row : best, rows[0]);
-        svg.appendChild(el("text", { x: left, y: 20, class: "chart-caption" }, \`Weekly downloads, \${rows[0].week} to \${latest.week}\`));
-        svg.appendChild(el("text", { x: left + plotW, y: 20, "text-anchor": "end", class: "chart-caption" }, \`Latest: \${latest.week} / \${numberFormat.format(latest.downloads)} | Peak: \${peak.week} / \${numberFormat.format(peak.downloads)}\`));
+        svg.appendChild(el("text", { x: left, y: 20, class: "chart-caption" }, \`周下载量，\${rows[0].week} 至 \${latest.week}\`));
+        svg.appendChild(el("text", { x: left + plotW, y: 20, "text-anchor": "end", class: "chart-caption" }, \`最新: \${latest.week} / \${numberFormat.format(latest.downloads)} | 峰值: \${peak.week} / \${numberFormat.format(peak.downloads)}\`));
         const hoverGuide = el("line", { x1: left, x2: left, y1: top, y2: top + plotH, class: "hover-guide", display: "none" });
         const hoverPoint = el("circle", { cx: left, cy: top + plotH, r: 5, fill: "#ffffff", stroke: color, "stroke-width": 2.4, class: "hover-point", display: "none" });
         svg.appendChild(hoverGuide);
@@ -390,18 +437,18 @@ function buildHtml(vendor, config, rows, metas, latestDay) {
               <div class="card-head">
                 <div>
                   <h2>${htmlEscape(packageName)}</h2>
-                  <p>${htmlEscape(meta.description || meta.error || "No npm registry record.")}</p>
+                  <p>${htmlEscape(packageDescription(config, packageName, meta))}</p>
                 </div>
                 <dl class="metrics">
-                  <div><dt>Status</dt><dd>${meta.exists ? "Found" : "Not found"}</dd></div>
-                  <div><dt>Created</dt><dd>${meta.createdRaw ? htmlEscape(meta.createdRaw.slice(0, 10)) : "-"}</dd></div>
-                  <div><dt>Chart total</dt><dd>${formatInt(total)}</dd></div>
-                  <div><dt>Latest complete week</dt><dd>${formatInt(latest)}</dd></div>
-                  <div><dt>Non-zero weeks</dt><dd>${formatInt(nonZero)}</dd></div>
+                  <div><dt>状态</dt><dd>${meta.exists ? "已找到" : "未找到"}</dd></div>
+                  <div><dt>创建日期</dt><dd>${meta.createdRaw ? htmlEscape(meta.createdRaw.slice(0, 10)) : "-"}</dd></div>
+                  <div><dt>图表合计</dt><dd>${formatInt(total)}</dd></div>
+                  <div><dt>最新完整周</dt><dd>${formatInt(latest)}</dd></div>
+                  <div><dt>非零周数</dt><dd>${formatInt(nonZero)}</dd></div>
                 </dl>
               </div>
               ${chartShell(packageName, series, colors[index % colors.length])}
-              <p class="note">${htmlEscape(config.notes[packageName] || "Read weekly npm downloads as directional developer demand, not customer count or runtime usage.")}</p>
+              <p class="note">${htmlEscape(config.notes[packageName] || "周度 npm 下载量适合作为开发者需求方向性指标，不应直接等同于客户数或运行时使用量。")}</p>
             </section>`;
   });
   const metadataRows = config.packages.map((packageName) => {
@@ -409,19 +456,19 @@ function buildHtml(vendor, config, rows, metas, latestDay) {
     return `
             <tr>
               <td>${htmlEscape(packageName)}</td>
-              <td>${meta.exists ? "yes" : "no"}</td>
+              <td>${meta.exists ? "是" : "否"}</td>
               <td>${htmlEscape(meta.createdRaw || "-")}</td>
               <td>${htmlEscape(meta.modifiedRaw || "-")}</td>
-              <td>${htmlEscape(meta.description || meta.error || "")}</td>
+              <td>${htmlEscape(packageDescription(config, packageName, meta))}</td>
             </tr>`;
   });
 
   return `<!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${htmlEscape(config.displayName)} npm Weekly Downloads Dashboard</title>
+  <title>${htmlEscape(config.displayName)} npm 周下载量看板</title>
   <style>
     :root { --ink: #162033; --muted: #596579; --line: #dbe2ea; --soft: #f5f7fb; --panel: #ffffff; --accent: #2563eb; }
     * { box-sizing: border-box; }
@@ -477,23 +524,23 @@ function buildHtml(vendor, config, rows, metas, latestDay) {
 <body>
   <main>
     <header>
-      <h1>${htmlEscape(config.displayName)} npm Weekly Downloads Dashboard</h1>
-      <p class="subtitle">Data comes from the official npm downloads API, aggregated by Monday-start weeks. CSV files retain the latest incomplete week; HTML charts show complete weeks only. npm downloads include CI, mirrors, bots, and cache effects, so they are best used as directional developer-demand signals rather than customer counts or runtime usage.</p>
+      <h1>${htmlEscape(config.displayName)} npm 周下载量看板</h1>
+      <p class="subtitle">数据来自官方 npm downloads API，并按周一开始的自然周汇总。CSV 文件保留最新未完整周；HTML 图表只展示完整周。npm 下载量包含 CI、镜像、机器人和缓存影响，因此更适合作为开发者需求的方向性信号，而不是客户数量或实际运行使用量。</p>
     </header>
     <section class="summary" aria-label="dashboard summary">
-      <div><span>CSV rows</span><strong>${rows.length}</strong></div>
-      <div><span>Week range</span><strong>${firstWeek} to ${lastWeek}</strong></div>
-      <div><span>Chart through</span><strong>${chartLastWeek}</strong></div>
-      <div><span>Latest npm day</span><strong>${isoDate(latestDay)}</strong></div>
+      <div><span>CSV 行数</span><strong>${rows.length}</strong></div>
+      <div><span>周度范围</span><strong>${firstWeek} 至 ${lastWeek}</strong></div>
+      <div><span>图表截至</span><strong>${chartLastWeek}</strong></div>
+      <div><span>最新 npm 日期</span><strong>${isoDate(latestDay)}</strong></div>
     </section>
     ${cards.join("")}
     <section class="source-box">
-      <h2>Source And Package Metadata</h2>
+      <h2>来源与包元数据</h2>
       <table>
-        <thead><tr><th>Package</th><th>Found</th><th>Created</th><th>Modified</th><th>Description / Error</th></tr></thead>
+        <thead><tr><th>包名</th><th>是否找到</th><th>创建时间</th><th>更新时间</th><th>说明 / 错误</th></tr></thead>
         <tbody>${metadataRows.join("")}</tbody>
       </table>
-      <p class="subtitle">Output CSV: <code>${htmlEscape(config.csv)}</code>. Metadata JSON: <code>${htmlEscape(config.metadata)}</code>. Charts display through complete week <code>${chartLastWeek}</code>.</p>
+      <p class="subtitle">输出 CSV: <code>${htmlEscape(config.csv)}</code>。元数据 JSON: <code>${htmlEscape(config.metadata)}</code>。图表显示至完整周 <code>${chartLastWeek}</code>。</p>
     </section>
   </main>
   ${dashboardScript()}
@@ -509,12 +556,12 @@ function writeMetadata(vendor, config, metas, rows, latestDay) {
     source: {
       registry: NPM_REGISTRY,
       downloads: NPM_DOWNLOADS,
-      range_limit_note: `npm downloads API is queried in ${MAX_RANGE_DAYS}-day chunks.`,
-      weekly_grain: "Monday-start weeks",
+      range_limit_note: `npm downloads API 按 ${MAX_RANGE_DAYS} 天分段查询。`,
+      weekly_grain: "周一开始的自然周",
       latest_download_day: isoDate(latestDay),
       html_chart_complete_through_week_start: isoDate(latestCompleteWeekStart(latestDay)),
-      html_chart_policy: "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
-      caveat: "npm download counts include automation, mirrors, robots, and cache effects.",
+      html_chart_policy: "HTML 折线图排除最新未完整周；CSV 保留全部周度汇总。",
+      caveat: "npm 下载量包含自动化、镜像、机器人和缓存影响。",
     },
     csv: {
       path: path.join(ROOT, config.csv),
@@ -525,7 +572,7 @@ function writeMetadata(vendor, config, metas, rows, latestDay) {
       exists: meta.exists,
       created: meta.createdRaw,
       modified: meta.modifiedRaw,
-      description: meta.description,
+      description: packageDescription(config, name, meta),
       error: meta.error,
     }])),
   };
@@ -559,9 +606,44 @@ async function buildVendor(vendor, latestDay) {
   };
 }
 
-const latestDay = await latestDownloadDay();
-const results = [];
-for (const vendor of Object.keys(VENDORS)) {
-  results.push(await buildVendor(vendor, latestDay));
+function buildVendorFromExisting(vendor) {
+  const config = VENDORS[vendor];
+  const metadata = JSON.parse(fs.readFileSync(path.join(ROOT, config.metadata), "utf8"));
+  const rows = readCsv(path.join(ROOT, config.csv));
+  const metas = Object.fromEntries(config.packages.map((packageName) => {
+    const packageMeta = metadata.packages?.[packageName] || {};
+    return [packageName, {
+      exists: Boolean(packageMeta.exists),
+      created: packageMeta.created ? new Date(packageMeta.created) : null,
+      createdRaw: packageMeta.created || null,
+      modifiedRaw: packageMeta.modified || null,
+      description: packageMeta.description || "",
+      error: packageMeta.error || null,
+    }];
+  }));
+  const latestDay = toDate(metadata.source?.latest_download_day || rows.at(-1)?.week_start || isoDate(new Date()));
+  fs.writeFileSync(path.join(ROOT, config.html), buildHtml(vendor, config, rows, metas, latestDay), "utf8");
+  writeMetadata(vendor, config, metas, rows, latestDay);
+  return {
+    vendor,
+    csv: path.join(ROOT, config.csv),
+    html: path.join(ROOT, config.html),
+    metadata: path.join(ROOT, config.metadata),
+    rows: rows.length,
+  };
 }
-console.log(JSON.stringify({ latest_download_day: isoDate(latestDay), results }, null, 2));
+
+const fromExisting = process.argv.includes("--from-existing");
+const results = [];
+let latestDay = null;
+if (fromExisting) {
+  for (const vendor of Object.keys(VENDORS)) {
+    results.push(buildVendorFromExisting(vendor));
+  }
+} else {
+  latestDay = await latestDownloadDay();
+  for (const vendor of Object.keys(VENDORS)) {
+    results.push(await buildVendor(vendor, latestDay));
+  }
+}
+console.log(JSON.stringify({ mode: fromExisting ? "from-existing" : "refresh", latest_download_day: latestDay ? isoDate(latestDay) : null, results }, null, 2));

@@ -1,15 +1,15 @@
 {
-  "generated_at_utc": "2026-06-13T15:30:01.149Z",
+  "generated_at_utc": "2026-06-15T01:45:39.885Z",
   "vendor": "twilio",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
-    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
-    "weekly_grain": "Monday-start weeks",
+    "range_limit_note": "npm downloads API 按 548 天分段查询。",
+    "weekly_grain": "周一开始的自然周",
     "latest_download_day": "2026-06-12",
     "html_chart_complete_through_week_start": "2026-06-01",
-    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
-    "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
+    "html_chart_policy": "HTML 折线图排除最新未完整周；CSV 保留全部周度汇总。",
+    "caveat": "npm 下载量包含自动化、镜像、机器人和缓存影响。"
   },
   "csv": {
     "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\twilio_npm_weekly_downloads.csv",
@@ -28,35 +28,35 @@
       "exists": true,
       "created": "2016-10-04T00:35:38.307Z",
       "modified": "2026-04-29T17:49:52.308Z",
-      "description": "Twilio Video JavaScript Library",
+      "description": "Twilio Video JavaScript 浏览器端 SDK。",
       "error": null
     },
     "@twilio/voice-sdk": {
       "exists": true,
       "created": "2021-07-09T17:14:17.395Z",
       "modified": "2026-05-11T17:34:49.297Z",
-      "description": "Twilio's JavaScript Voice SDK",
+      "description": "Twilio JavaScript Voice SDK，用于浏览器和应用内语音通话集成。",
       "error": null
     },
     "@twilio/video-react-native-sdk": {
       "exists": true,
       "created": "2025-11-12T10:16:11.897Z",
       "modified": "2026-04-21T21:40:57.594Z",
-      "description": "Twilio Video WebRTC for React Native.",
+      "description": "Twilio Video 的 React Native WebRTC SDK。",
       "error": null
     },
     "@twilio/video-processors": {
       "exists": true,
       "created": "2021-06-16T21:12:22.963Z",
       "modified": "2026-04-22T18:33:23.132Z",
-      "description": "Twilio Video Processors JavaScript Library",
+      "description": "Twilio Video 的 JavaScript 视频处理库，用于背景处理等视频效果。",
       "error": null
     },
     "twilio": {
       "exists": true,
       "created": "2011-03-08T00:34:18.576Z",
       "modified": "2026-05-07T16:42:29.589Z",
-      "description": "A Twilio helper library",
+      "description": "Twilio 通用 Node.js 辅助库，覆盖范围不限于实时音视频 API。",
       "error": null
     }
   }
