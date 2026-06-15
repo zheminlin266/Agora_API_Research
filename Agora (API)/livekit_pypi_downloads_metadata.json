@@ -4,8 +4,8 @@
     "download_provider": "ClickPy public ClickHouse endpoint",
     "download_endpoint": "https://sql-clickhouse.clickhouse.com/",
     "metadata_provider": "PyPI JSON API",
-    "source_last_date": "2026-06-12",
-    "generated_at_utc": "2026-06-13T07:07:56+00:00"
+    "source_last_date": "2026-06-14",
+    "generated_at_utc": "2026-06-15T07:26:33+00:00"
   },
   "packages": {
     "livekit": {
@@ -63,7 +63,7 @@
     "rows": 158,
     "first_week_start": "2023-06-05",
     "last_week_start": "2026-06-08",
-    "latest_complete_week_start": "2026-06-01",
+    "latest_complete_week_start": "2026-06-08",
     "columns": [
       "week_start",
       "livekit",
