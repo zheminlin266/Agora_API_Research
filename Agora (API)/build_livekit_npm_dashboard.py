@@ -243,11 +243,11 @@ def series_for_package(
 
 def package_note(package: str) -> str:
     notes = {
-        "livekit-client": "Core JavaScript client SDK for browser and Node-based LiveKit applications. This is the broadest developer demand signal among the selected packages.",
-        "@livekit/components-react": "React component layer for building LiveKit video, audio, and room UI. It captures higher-level React adoption on top of the client SDK.",
-        "@livekit/react-native": "React Native SDK for mobile LiveKit applications. It is useful for reading cross-platform mobile integration demand.",
-        "@livekit/agents": "JavaScript/TypeScript LiveKit Agents framework package for realtime AI agents, voice workflows, and server-side agent applications.",
-        "@livekit/agents-plugin-silero": "Silero plugin for LiveKit Agents voice activity detection. It is a narrower AI-agent ecosystem signal and should be read alongside @livekit/agents.",
+        "livekit-client": "功能：面向浏览器和 Node 环境 LiveKit 应用的核心 JavaScript client SDK。它是所选包中最宽口径的开发者需求信号。",
+        "@livekit/components-react": "功能：用于构建 LiveKit 视频、音频和房间 UI 的 React 组件层。它反映基于 client SDK 之上的高层 React 采用情况。",
+        "@livekit/react-native": "功能：面向移动端 LiveKit 应用的 React Native SDK。它适合观察跨平台移动集成需求。",
+        "@livekit/agents": "功能：JavaScript/TypeScript LiveKit Agents 框架包，面向实时 AI agent、语音工作流和服务端 agent 应用。",
+        "@livekit/agents-plugin-silero": "功能：LiveKit Agents 的 Silero 语音活动检测插件。它是更窄口径的 AI agent 生态信号，应与 @livekit/agents 一起观察。",
     }
     return notes[package]
 
@@ -466,7 +466,6 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
               <div class="card-head">
                 <div>
                   <h2>{html.escape(package)}</h2>
-                  <p>{html.escape(package_note(package))}</p>
                 </div>
                 <dl class="metrics">
                   <div><dt>Status</dt><dd>{status}</dd></div>
@@ -478,6 +477,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
                 </dl>
               </div>
               {chart}
+              <p class="note">{html.escape(package_note(package))}</p>
             </section>
             """
 
@@ -666,6 +666,15 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     .chart-tooltip.is-visible {{ opacity: 1; transform: translateY(0); }}
     .chart-tooltip strong {{ display: block; font-size: 12px; margin-bottom: 3px; }}
     .chart-tooltip span {{ display: block; color: var(--muted); font-size: 12px; }}
+    .note {{
+      margin: 12px 0 0;
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.65;
+      background: var(--soft);
+      border-left: 3px solid var(--accent);
+      padding: 10px 12px;
+    }}
     .source-box {{ margin-top: 18px; }}
     .source-box h2 {{ margin-bottom: 10px; }}
     table {{
