@@ -114,7 +114,7 @@ function parseCsvLine(line) {
 
 function readCsv(filePath) {
   const lines = fs.readFileSync(filePath, "utf8").trimEnd().split(/\r?\n/);
-  const columns = parseCsvLine(lines[0]);
+  const columns = parseCsvLine(lines[0]).map((column) => column.replace(/^\uFEFF/, ""));
   return lines.slice(1).map((line) => {
     const values = parseCsvLine(line);
     return Object.fromEntries(columns.map((column, index) => [column, values[index] ?? ""]));
