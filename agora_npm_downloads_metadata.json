@@ -11,7 +11,7 @@
     "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
   },
   "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\agora_npm_weekly_downloads.csv",
+    "path": "agora_npm_weekly_downloads.csv",
     "rows": 470,
     "columns": [
       "week_start",

@@ -12,7 +12,7 @@
     "caveat": "npm 下载量包含自动化、镜像、机器人和缓存影响。"
   },
   "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_repo\\Agora (API)\\twilio_npm_weekly_downloads.csv",
+    "path": "twilio_npm_weekly_downloads.csv",
     "rows": 597,
     "columns": [
       "week_start",
