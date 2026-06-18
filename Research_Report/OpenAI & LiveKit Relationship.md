@@ -1,4 +1,4 @@
-﻿# OpenAI 与 LiveKit 合作研究报告
+# OpenAI 与 LiveKit 合作研究报告
 
 ## 执行摘要
 
