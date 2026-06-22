@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-06-22T02:16:17.640Z",
+  "generated_at_utc": "2026-06-22T05:57:09.491Z",
   "vendor": "twilio",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API 按 548 天分段查询。",
     "weekly_grain": "周一开始的自然周",
-    "latest_download_day": "2026-06-20",
-    "html_chart_complete_through_week_start": "2026-06-08",
+    "latest_download_day": "2026-06-21",
+    "html_chart_complete_through_week_start": "2026-06-15",
     "html_chart_policy": "HTML 折线图排除最新未完整周；CSV 保留全部周度汇总。",
     "caveat": "npm 下载量包含自动化、镜像、机器人和缓存影响。"
   },
