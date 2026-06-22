@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-22T06:08:47.470541+00:00",
+  "generated_at_utc": "2026-06-22T08:10:27.117978+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
@@ -11,7 +11,7 @@
     "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
   },
   "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\agora_npm_weekly_downloads.csv",
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\Agora_API_Research\\agora_npm_weekly_downloads.csv",
     "rows": 471,
     "columns": [
       "week_start",

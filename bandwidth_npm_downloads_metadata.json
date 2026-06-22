@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-22T05:57:19.326Z",
+  "generated_at_utc": "2026-06-22T08:14:38.747Z",
   "vendor": "bandwidth",
   "source": {
     "registry": "https://registry.npmjs.org",
@@ -12,7 +12,7 @@
     "caveat": "npm 下载量包含自动化、镜像、机器人和缓存影响。"
   },
   "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\bandwidth_npm_weekly_downloads.csv",
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\Agora_API_Research\\bandwidth_npm_weekly_downloads.csv",
     "rows": 154,
     "columns": [
       "week_start",

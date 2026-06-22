@@ -5,7 +5,7 @@
     "download_endpoint": "https://sql-clickhouse.clickhouse.com/",
     "metadata_provider": "PyPI JSON API",
     "source_last_date": "2026-06-21",
-    "generated_at_utc": "2026-06-22T02:18:38+00:00"
+    "generated_at_utc": "2026-06-22T08:13:28+00:00"
   },
   "packages": {
     "livekit": {
