@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2026-06-22T02:12:41.651712+00:00",
+  "generated_at_utc": "2026-06-22T06:08:47.470541+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-06-20",
-    "html_chart_complete_through_week_start": "2026-06-08",
+    "latest_download_day": "2026-06-21",
+    "html_chart_complete_through_week_start": "2026-06-15",
     "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
     "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
   },
