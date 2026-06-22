@@ -1,18 +1,18 @@
 {
-  "generated_at_utc": "2026-06-15T07:06:33.261459+00:00",
+  "generated_at_utc": "2026-06-22T02:12:41.651712+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-06-14",
+    "latest_download_day": "2026-06-20",
     "html_chart_complete_through_week_start": "2026-06-08",
     "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
     "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
   },
   "csv": {
-    "path": "agora_npm_weekly_downloads.csv",
-    "rows": 470,
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\agora_npm_weekly_downloads.csv",
+    "rows": 471,
     "columns": [
       "week_start",
       "agora-rtc-sdk-ng",
@@ -72,7 +72,7 @@
     "agora-agent-server-sdk": {
       "exists": true,
       "created": "2026-03-14T10:14:36.708Z",
-      "modified": "2026-06-05T18:51:55.927Z",
+      "modified": "2026-06-17T17:30:12.761Z",
       "description": "Compatibility shim for the renamed agora-agents package.",
       "error": null
     },

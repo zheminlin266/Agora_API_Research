@@ -748,6 +748,7 @@ def write_metadata(metas: dict[str, PackageMeta], rows: list[dict[str, int | str
             "first_week_start": rows[0]["week_start"],
             "last_week_start": rows[-1]["week_start"],
             "latest_complete_week_start": rows[complete_idx]["week_start"],
+            "html_chart_policy": "HTML line charts use complete-week metrics; CSV retains all weekly aggregates.",
             "columns": CSV_COLUMNS,
         },
     }

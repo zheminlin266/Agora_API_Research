@@ -1,19 +1,19 @@
 {
-  "generated_at_utc": "2026-06-15T07:26:14.868235+00:00",
+  "generated_at_utc": "2026-06-22T02:14:49.363519+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API is queried in 548-day chunks. Larger single requests are truncated by the API.",
     "latest_day_policy": "Uses the later of npm's aggregate last-day endpoint and UTC yesterday because package range data can be newer than the aggregate endpoint.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-06-14",
-    "html_chart_complete_through_week_start": "2026-06-08",
+    "latest_download_day": "2026-06-21",
+    "html_chart_complete_through_week_start": "2026-06-15",
     "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
     "caveat": "npm download counts include automation, mirrors, robots, cache effects, and dependency installs."
   },
   "csv": {
-    "path": "livekit_npm_weekly_downloads.csv",
-    "rows": 282,
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\livekit_npm_weekly_downloads.csv",
+    "rows": 283,
     "columns": [
       "week_start",
       "livekit-client",
@@ -43,24 +43,24 @@
     "@livekit/react-native": {
       "exists": true,
       "created": "2023-01-12T09:33:05.080Z",
-      "modified": "2026-05-26T16:27:27.938Z",
-      "latest_version": "2.11.0",
+      "modified": "2026-06-18T18:05:33.837Z",
+      "latest_version": "2.11.1",
       "description": "LiveKit for React Native",
       "error": null
     },
     "@livekit/agents": {
       "exists": true,
       "created": "2024-05-21T08:53:35.047Z",
-      "modified": "2026-06-13T00:53:05.758Z",
-      "latest_version": "1.4.6",
+      "modified": "2026-06-19T23:45:12.335Z",
+      "latest_version": "1.4.8",
       "description": "LiveKit Agents - Node.js",
       "error": null
     },
     "@livekit/agents-plugin-silero": {
       "exists": true,
       "created": "2024-11-10T15:13:39.024Z",
-      "modified": "2026-06-13T00:53:19.438Z",
-      "latest_version": "1.4.6",
+      "modified": "2026-06-19T23:45:24.672Z",
+      "latest_version": "1.4.8",
       "description": "Silero voice activity detection LiveKit Node Agents",
       "error": null
     }

@@ -1,19 +1,19 @@
 {
-  "generated_at_utc": "2026-06-15T07:27:44.186Z",
+  "generated_at_utc": "2026-06-22T02:16:27.149Z",
   "vendor": "bandwidth",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API 按 548 天分段查询。",
     "weekly_grain": "周一开始的自然周",
-    "latest_download_day": "2026-06-14",
+    "latest_download_day": "2026-06-20",
     "html_chart_complete_through_week_start": "2026-06-08",
     "html_chart_policy": "HTML 折线图排除最新未完整周；CSV 保留全部周度汇总。",
     "caveat": "npm 下载量包含自动化、镜像、机器人和缓存影响。"
   },
   "csv": {
-    "path": "bandwidth_npm_weekly_downloads.csv",
-    "rows": 153,
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\bandwidth_npm_weekly_downloads.csv",
+    "rows": 154,
     "columns": [
       "week_start",
       "bandwidth-rtc",
