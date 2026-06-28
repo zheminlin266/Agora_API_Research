@@ -6,315 +6,172 @@
   <title>Agora PyPI 周下载量看板</title>
   <style>
     :root {
-      color-scheme: light;
-      --ink: #12213a;
-      --muted: #5d6b85;
-      --line: #dbe3ee;
-      --grid: #e8edf5;
+      --bg: #f5f7fa;
       --panel: #ffffff;
-      --soft: #f5f7fb;
-      --note: #f2f5fa;
+      --panel-soft: #f9fafb;
+      --ink: #1f242b;
+      --muted: #667085;
+      --line: #d9e1ea;
+      --line-soft: #ecf1f6;
+      --teal: #126c73;
+      --copper: #a45a2a;
       --blue: #2563eb;
-      --green: #126c73;
-      --gold: #a45a2a;
-      --violet: #5661a6;
-      --rose: #805a7a;
-      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --shadow: 0 10px 28px rgba(31, 36, 43, 0.07);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: #f7f8fb;
       color: var(--ink);
-    }
-    main {
-      width: min(1180px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 32px 0 48px;
-    }
-    header {
-      margin-bottom: 22px;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
-      line-height: 1.2;
-      letter-spacing: 0;
-    }
-    .subtitle {
-      margin: 0;
-      max-width: 920px;
-      color: var(--muted);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
       font-size: 14px;
-      line-height: 1.6;
+    }
+    .shell { max-width: 1440px; margin: 0 auto; padding: 24px; }
+    header, .chart-card, .summary-card, .source-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    header { padding: 24px 26px; }
+    .kicker {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin: 0; }
+    h1 { margin-top: 7px; font-size: 32px; line-height: 1.16; letter-spacing: 0; }
+    .lede { margin-top: 10px; max-width: 980px; color: var(--muted); line-height: 1.6; }
+    .interpretation {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--copper);
+      background: var(--panel-soft);
+      color: #334155;
+      line-height: 1.62;
+    }
+    .source-line { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; color: var(--muted); }
+    .source-line span {
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      border-radius: 999px;
+      padding: 6px 10px;
+      white-space: nowrap;
     }
     .summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin: 20px 0 24px;
+      margin-top: 16px;
     }
-    .summary-card, .metric-card {
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 8px;
-      box-shadow: 0 1px 1px rgba(20, 32, 52, 0.04);
-    }
-    .summary-card {
-      padding: 14px 16px;
-    }
-    .label, dt {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-      font-weight: 600;
-    }
-    .value, dd {
-      margin: 4px 0 0;
-      color: var(--ink);
-      font-size: 18px;
-      line-height: 1.2;
-      font-weight: 700;
-      word-break: keep-all;
-    }
-    .section-head {
-      margin: 28px 0 16px;
-      padding: 18px 0 4px;
-      border-top: 2px solid #cbd5e1;
-    }
-    .section-head h2 {
-      margin: 0 0 4px;
-      font-size: 22px;
-      line-height: 1.2;
-    }
-    .section-head p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    .cards {
-      display: grid;
-      gap: 18px;
-    }
-    .chart-card {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 8px;
-      padding: 20px;
-    }
-    .card-head {
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) auto;
-      gap: 18px;
-      align-items: start;
-      margin-bottom: 10px;
-    }
-    .package-title {
-      margin: 0 0 4px;
-      font-size: 20px;
-      line-height: 1.25;
-      letter-spacing: 0;
-    }
-    .package-role {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(86px, auto));
-      gap: 8px;
-      align-items: stretch;
-    }
-    .metric-card {
-      min-width: 120px;
-      padding: 8px 10px;
-    }
-    .metric-card.wide {
-      min-width: 170px;
-    }
-    .chart-toolbar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 10px 0 8px;
-      color: var(--muted);
-    }
-    .chart-toolbar label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-      font-size: 12px;
-      font-weight: 650;
-    }
+    .summary-card { padding: 14px; box-shadow: none; }
+    .summary-card span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .summary-card strong { display: block; font-size: 20px; line-height: 1.15; overflow-wrap: anywhere; }
+    .chart-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+    .chart-card { padding: 18px; min-width: 0; }
+    .card-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: start; }
+    .eyebrow { color: var(--muted); font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .package-title { display: flex; align-items: center; gap: 8px; font-size: 20px; line-height: 1.2; letter-spacing: 0; overflow-wrap: anywhere; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+    .card-metrics { display: grid; grid-template-columns: repeat(4, minmax(110px, 1fr)); gap: 8px; margin: 0; }
+    .card-metrics div { border: 1px solid var(--line-soft); background: var(--panel-soft); border-radius: 8px; padding: 10px; }
+    .card-metrics dt { color: var(--muted); font-size: 11px; margin-bottom: 5px; }
+    .card-metrics dd { margin: 0; font-weight: 750; font-size: 14px; overflow-wrap: anywhere; }
+    .chart-toolbar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin: 14px 0 10px; }
+    .chart-toolbar label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
     input[type="date"] {
       min-width: 136px;
       border: 1px solid var(--line);
       border-radius: 6px;
       background: #fff;
       color: var(--ink);
-      padding: 6px 9px;
+      padding: 6px 8px;
       font: inherit;
       font-size: 13px;
-      box-shadow: 0 1px 1px rgba(20, 32, 52, 0.04);
     }
-    .chart-wrap {
-      position: relative;
-      overflow-x: auto;
-    }
-    svg {
-      display: block;
-      width: 100%;
-      min-width: 760px;
-      height: auto;
-    }
-    .axis text {
-      fill: #60708c;
-      font-size: 12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-    .axis line, .axis path {
-      stroke: #cfd8e6;
-      stroke-width: 1;
-      shape-rendering: crispEdges;
-    }
-    .grid-line {
-      stroke: #e7ecf2;
-      stroke-width: 1;
-      shape-rendering: crispEdges;
-    }
-    .chart-line {
-      fill: none;
-      stroke-width: 2.6;
-      stroke-linejoin: round;
-      stroke-linecap: round;
-    }
-    .hover-guide {
-      stroke: #94a3b8;
-      stroke-width: 1;
-      stroke-dasharray: 4 4;
-      opacity: 0;
+    .chart-wrap { position: relative; width: 100%; min-width: 0; overflow-x: auto; }
+    .chart-wrap svg { display: block; width: 100%; min-width: 900px; height: auto; }
+    .axis { stroke: #c8d3df; stroke-width: 1; }
+    .grid { stroke: var(--line-soft); stroke-width: 1; }
+    .tick { stroke: #c8d3df; stroke-width: 1; }
+    .axis-label { fill: #667085; font-size: 11px; }
+    .chart-caption { fill: #475467; font-size: 12px; }
+    .empty-title { fill: #334155; font-size: 14px; font-weight: 700; }
+    .empty-subtitle { fill: #667085; font-size: 12px; }
+    .hover-overlay { cursor: crosshair; }
+    .hover-guide { stroke: #94a3b8; stroke-width: 1; stroke-dasharray: 4 4; pointer-events: none; }
+    .hover-point { pointer-events: none; }
+    .chart-tooltip {
+      position: absolute;
+      z-index: 5;
+      min-width: 170px;
       pointer-events: none;
-    }
-    .hover-point {
-      fill: #fff;
-      stroke-width: 3;
       opacity: 0;
-      pointer-events: none;
-    }
-    .caption {
-      display: none;
-    }
-    .chart-caption {
-      fill: #475467;
+      transform: translateY(3px);
+      transition: opacity 120ms ease, transform 120ms ease;
+      background: rgba(15, 23, 42, 0.92);
+      color: white;
+      border-radius: 8px;
+      padding: 9px 10px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
       font-size: 12px;
-      font-weight: 650;
+      line-height: 1.45;
     }
+    .chart-tooltip.is-visible { opacity: 1; transform: translateY(0); }
+    .chart-tooltip strong { display: block; font-size: 13px; margin-bottom: 2px; }
     .note {
       margin-top: 12px;
-      border-left: 3px solid var(--blue);
-      background: var(--note);
-      padding: 10px 12px;
-      color: #2e3f5c;
-      font-size: 14px;
-      line-height: 1.65;
-    }
-    .source-box {
-      margin-top: 28px;
-      border: 1px solid var(--line);
+      color: #334155;
+      line-height: 1.58;
+      background: var(--panel-soft);
+      border: 1px solid var(--line-soft);
       border-radius: 8px;
-      background: #fff;
-      padding: 14px 16px;
+      padding: 12px;
     }
-    .source-box h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
-    .source-box p {
-      margin: 0 0 12px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
+    .source-box { margin-top: 16px; padding: 18px; }
+    .source-box h2 { font-size: 20px; line-height: 1.2; margin-bottom: 8px; }
+    .source-box p { color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
     .table-wrap { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 760px;
-      font-size: 13px;
-    }
-    th, td {
-      border-top: 1px solid var(--grid);
-      padding: 9px 8px;
-      text-align: left;
-      vertical-align: top;
-    }
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      background: #fbfcfe;
-    }
-    td.num {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .swatch {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 7px;
-      vertical-align: baseline;
-    }
-    @media (max-width: 900px) {
-      main { width: min(100vw - 20px, 1180px); padding-top: 20px; }
+    table { width: 100%; border-collapse: collapse; min-width: 860px; font-size: 13px; }
+    th, td { border-top: 1px solid var(--line-soft); padding: 10px 8px; text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: var(--panel-soft); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: baseline; }
+    @media (max-width: 1050px) {
       .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .card-head { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .metric-card, .metric-card.wide { min-width: 0; }
-      .chart-toolbar { justify-content: flex-start; flex-wrap: wrap; }
-      .caption { text-align: left; }
-      h1 { font-size: 24px; }
+      .card-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-    @media (max-width: 560px) {
-      main { width: min(100% - 18px, 1180px); }
-      .summary, .metrics { grid-template-columns: 1fr; }
-      .chart-card { padding: 18px 12px 14px; }
-      .chart-toolbar { gap: 8px; }
+    @media (max-width: 640px) {
+      .shell { padding: 16px; }
+      header, .chart-card, .source-box { padding: 14px; }
+      h1 { font-size: 26px; }
+      .summary, .card-metrics { grid-template-columns: 1fr; }
+      .chart-toolbar { justify-content: flex-start; flex-wrap: wrap; }
       .chart-toolbar label { width: 100%; justify-content: space-between; }
       input[type="date"] { flex: 1; min-width: 0; }
-      svg { min-width: 680px; }
     }
   </style>
-  <link rel="stylesheet" href="dashboard_range_controls.css?v=20260628-6">
+  <link rel="stylesheet" href="dashboard_range_controls.css?v=20260628-7">
 </head>
 <body>
-  <main>
+  <main class="shell">
     <header>
-      <h1>Agora PyPI 周下载量看板</h1>
-      <p class="subtitle">跟踪 Agora Python 相关包的周度 PyPI 下载量，用于观察后端、token server、测试和部署需求信号。数据来自 ClickPy / PyPI 下载日志，图表仅展示已完整结束的周，避免把当前未完成周误判为需求回落。</p>
+      <div class="kicker">Agora / PyPI Weekly Downloads</div>
+      <h1>Agora Python Package Download Signals</h1>
+      <p class="lede">跟踪 Agora Python 相关包的周度 PyPI 下载量，用于观察后端、token server、测试和部署需求信号。PyPI 下载会受到 CI/CD、镜像缓存和自动化安装影响，更适合做方向性指标，而不是直接代表客户数或真实用量。</p>
+      <div class="interpretation"><strong>如何理解：</strong>token builder、server SDK、legacy Python SDK 和 realtime AI package 分别对应鉴权、服务端管理、历史生态和实时 AI 实验需求。读图时应比较各包趋势和峰值出现时间，而不是只看单周绝对值。</div>
+      <div class="source-line" id="sourceLine" aria-label="data coverage"></div>
+      <section class="summary" id="summary" aria-label="Dashboard summary"></section>
     </header>
 
-    <section class="summary" id="summary" aria-label="Dashboard summary"></section>
-
-    <section class="section-head">
-      <h2>Python Packages</h2>
-      <p>每个包独立展示完整周下载趋势，可在图上悬停查看周度数值，也可以调整起止周观察不同阶段。</p>
-    </section>
-
-    <section class="cards" id="cards"></section>
+    <section class="chart-grid" id="cards" aria-label="Python package charts"></section>
 
     <section class="source-box">
       <h2>数据来源和包说明</h2>
-      <p>PyPI 下载量可能包含 CI、镜像、测试和重复安装，仅作为开发者需求方向信号。</p>
+      <p>PyPI 下载量可能包含 CI、镜像、测试和重复安装，仅作为开发者需求方向信号。图表仅展示已完整结束的周，避免把当前未完成周误判为需求回落。</p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -405,19 +262,39 @@
         return (idx === 0 ? "M" : "L") + point.x.toFixed(2) + " " + point.y.toFixed(2);
       }).join(" ");
     }
+    function renderSourceLine() {
+      const completeWeekEnd = addDays(parseDate(chartEnd), 6).toISOString().slice(0, 10);
+      const chips = [
+        "CSV rows: " + fmt(DATA.length),
+        "Week range: " + chartStart + " to " + chartEnd,
+        "Source latest date: " + SOURCE_LAST_DATE,
+        "Latest complete week: " + chartEnd + " to " + completeWeekEnd
+      ];
+      document.getElementById("sourceLine").innerHTML = chips.map(function(chip) {
+        return "<span>" + chip + "</span>";
+      }).join("");
+    }
     function renderSummary() {
       const totalDownloads = PACKAGES.reduce(function(sum, pkg) {
         return sum + total(packageRows(pkg.key));
       }, 0);
-      const completeWeekEnd = addDays(parseDate(chartEnd), 6).toISOString().slice(0, 10);
+      const latestWeekTotal = PACKAGES.reduce(function(sum, pkg) {
+        const series = packageRows(pkg.key);
+        return sum + series[series.length - 1].value;
+      }, 0);
+      const largestLatest = PACKAGES.reduce(function(best, pkg) {
+        const series = packageRows(pkg.key);
+        const latest = series[series.length - 1].value;
+        return latest > best.value ? { name: pkg.name, value: latest } : best;
+      }, { name: "", value: -1 });
       const cards = [
-        ["数据周数", fmt(CHART_DATA.length)],
-        ["周度范围", chartStart + " - " + chartEnd],
-        ["图表截至", chartEnd + "（完整周至 " + completeWeekEnd + "）"],
-        ["完整周累计下载", fmt(totalDownloads)]
+        ["Cumulative downloads", fmt(totalDownloads)],
+        ["Latest full week total", fmt(latestWeekTotal)],
+        ["Data weeks", fmt(CHART_DATA.length)],
+        ["Largest latest-week package", largestLatest.name]
       ];
       document.getElementById("summary").innerHTML = cards.map(function(card) {
-        return '<article class="summary-card"><p class="label">' + card[0] + '</p><p class="value">' + card[1] + '</p></article>';
+        return '<article class="summary-card"><span>' + card[0] + '</span><strong>' + card[1] + '</strong></article>';
       }).join("");
     }
     function renderCards() {
@@ -429,30 +306,35 @@
         const latest = series[series.length - 1];
         const peak = maxPoint(series);
         const pkgTotal = total(series);
+        const chartSeries = series.slice(series.indexOf(created)).map(function(point) {
+          return { week: point.date, downloads: point.value };
+        });
         const section = document.createElement("section");
         section.className = "chart-card";
         section.innerHTML = [
           '<div class="card-head">',
             '<div>',
-              '<h3 class="package-title">' + pkg.name + '</h3>',
-              '<p class="package-role">' + pkg.role + '</p>',
+              '<p class="eyebrow">' + pkg.role + ' ? Found</p>',
+              '<h2 class="package-title"><span class="dot" style="background:' + pkg.color + '"></span>' + pkg.name + '</h2>',
             '</div>',
-            '<dl class="metrics">',
-              '<div class="metric-card wide"><dt>Created</dt><dd>' + created.date + '</dd></div>',
-              '<div class="metric-card"><dt>Chart total</dt><dd>' + fmt(pkgTotal) + '</dd></div>',
-              '<div class="metric-card wide"><dt>Latest complete week</dt><dd>' + fmt(latest.value) + '</dd></div>',
-              '<div class="metric-card wide"><dt>Peak week</dt><dd>' + peak.date + ' / ' + fmt(peak.value) + '</dd></div>',
+            '<dl class="card-metrics">',
+              '<div><dt>Created</dt><dd>' + created.date + '</dd></div>',
+              '<div><dt>Chart total</dt><dd data-chart-total>' + fmt(pkgTotal) + '</dd></div>',
+              '<div><dt>Latest full week</dt><dd>' + fmt(latest.value) + '</dd></div>',
+              '<div><dt>Peak week</dt><dd>' + peak.date + ' / ' + fmt(peak.value) + '</dd></div>',
             '</dl>',
           '</div>',
           '<div class="chart-toolbar">',
-            '<label>Start week <input class="range-start" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + created.date + '" aria-label="Start week for ' + pkg.name + '"></label>',
-            '<label>End week <input class="range-end" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + chartEnd + '" aria-label="End week for ' + pkg.name + '"></label>',
+            '<label><span>Start week</span><input class="range-start" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + created.date + '" aria-label="Start week for ' + pkg.name + '"></label>',
+            '<label><span>End week</span><input class="range-end" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + chartEnd + '" aria-label="End week for ' + pkg.name + '"></label>',
           '</div>',
-          '<div class="caption"></div>',
-          '<div class="chart-wrap" data-color="' + pkg.color + '"><svg viewBox="0 0 1040 330" role="img" aria-label="Weekly downloads for ' + pkg.name + '"></svg></div>',
-          '<div class="note">' + pkg.note + '</div>'
+          '<div class="chart-wrap" data-chart data-package="' + pkg.name + '" data-color="' + pkg.color + '" data-default-years="2">',
+            '<svg viewBox="0 0 1040 330" role="img" aria-label="Weekly downloads for ' + pkg.name + '"></svg>',
+            '<div class="chart-tooltip" role="status"></div>',
+          '</div>',
+          '<p class="note">' + pkg.note + '</p>'
         ].join("");
-        section.querySelector(".chart-wrap").dataset.series = JSON.stringify(series.slice(series.indexOf(created)));
+        section.querySelector(".chart-wrap").dataset.series = JSON.stringify(chartSeries);
         cards.appendChild(section);
       });
     }
@@ -559,14 +441,13 @@
       });
     }
     function renderAll() {
+      renderSourceLine();
       renderSummary();
       renderCards();
       renderTable();
-      document.querySelectorAll(".chart-card").forEach(renderChart);
-      wireInteractions();
     }
     renderAll();
   </script>
-  <script src="dashboard_range_controls.js?v=20260628-6"></script>
+  <script src="dashboard_range_controls.js?v=20260628-7"></script>
 </body>
 </html>
