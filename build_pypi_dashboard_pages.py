@@ -434,6 +434,7 @@ def build_html(config: PageConfig) -> str:
       .chart-toolbar {{ justify-content: flex-start; flex-wrap: wrap; }}
     }}
   </style>
+  <link rel="stylesheet" href="dashboard_range_controls.css">
 </head>
 <body>
   <main class="shell">
@@ -632,6 +633,7 @@ def build_html(config: PageConfig) -> str:
       }});
     }})();
   </script>
+  <script src="dashboard_range_controls.js"></script>
 </body>
 </html>
 """

@@ -248,9 +248,7 @@ def write_csv(rows: list[dict[str, str]]) -> None:
 
 def latest_complete_week_start(latest_day: date) -> date:
     current_week = week_start(latest_day)
-    if latest_day >= current_week + timedelta(days=6):
-        return current_week
-    return current_week - timedelta(days=7)
+    return current_week if latest_day.weekday() == 6 else current_week - timedelta(days=7)
 
 
 def series_for_package(
@@ -258,15 +256,12 @@ def series_for_package(
     package: str,
     complete_through: date | None = None,
 ) -> list[tuple[str, int]]:
-    series = []
-    for row in rows:
-        row_week = date.fromisoformat(row["week_start"])
-        if complete_through is not None and row_week > complete_through:
-            continue
-        value = row.get(package, "")
-        if value != "":
-            series.append((row["week_start"], int(value)))
-    return series
+    return [
+        (row["week_start"], int(value))
+        for row in rows
+        if complete_through is None or date.fromisoformat(row["week_start"]) <= complete_through
+        if (value := row.get(package, "")) != ""
+    ]
 
 
 def svg_line_chart(package: str, series: list[tuple[str, int]], color: str) -> str:
@@ -360,21 +355,32 @@ def interactive_chart_shell(package: str, series: list[tuple[str, int]], color: 
     safe_package = html.escape(package)
     min_week = html.escape(series[0][0]) if series else ""
     max_week = html.escape(series[-1][0]) if series else ""
+    slider_max = max(len(series) - 1, 0)
     disabled = " disabled" if not series else ""
     return f"""
-      <div class="chart-toolbar">
-        <label>
-          <span>Start week</span>
-          <input class="range-start" type="date" min="{min_week}" max="{max_week}" value="{min_week}" aria-label="Start week for {safe_package}"{disabled}>
-        </label>
-        <label>
-          <span>End week</span>
-          <input class="range-end" type="date" min="{min_week}" max="{max_week}" value="{max_week}" aria-label="End week for {safe_package}"{disabled}>
-        </label>
-      </div>
-      <div class="chart-wrap" data-chart data-package="{safe_package}" data-color="{html.escape(color)}" data-series="{data}">
+      <div class="chart-wrap" data-chart data-package="{safe_package}" data-color="{html.escape(color)}" data-default-years="2" data-series="{data}">
         <svg viewBox="0 0 1040 330" role="img" aria-label="{safe_package} weekly downloads line chart"></svg>
         <div class="chart-tooltip" role="status"></div>
+      </div>
+      <div class="range-panel">
+        <div class="range-brush" data-range-brush>
+          <input class="range-slider range-min" type="range" min="0" max="{slider_max}" value="0" aria-label="Drag start week for {safe_package}"{disabled}>
+          <input class="range-slider range-max" type="range" min="0" max="{slider_max}" value="{slider_max}" aria-label="Drag end week for {safe_package}"{disabled}>
+        </div>
+        <div class="range-labels" aria-hidden="true">
+          <span class="range-min-label">{min_week}</span>
+          <span class="range-max-label">{max_week}</span>
+        </div>
+        <div class="chart-toolbar">
+          <label>
+            <span>Start week</span>
+            <input class="range-start" type="date" min="{min_week}" max="{max_week}" value="" aria-label="Start week for {safe_package}"{disabled}>
+          </label>
+          <label>
+            <span>End week</span>
+            <input class="range-end" type="date" min="{min_week}" max="{max_week}" value="" aria-label="End week for {safe_package}"{disabled}>
+          </label>
+        </div>
       </div>
     """
 
@@ -410,6 +416,112 @@ def interactive_dashboard_script() -> str:
         }
         if (text !== null) node.textContent = text;
         return node;
+      }
+
+      function dateKey(day) {
+        const year = day.getFullYear();
+        const month = String(day.getMonth() + 1).padStart(2, "0");
+        const date = String(day.getDate()).padStart(2, "0");
+        return `${year}-${month}-${date}`;
+      }
+
+      function mondayStart(day) {
+        const copy = new Date(day);
+        copy.setDate(copy.getDate() - ((copy.getDay() + 6) % 7));
+        return dateKey(copy);
+      }
+
+      // ponytail: O(n) scans are fine for sub-500 weekly rows; add an index map if this grows materially.
+      function rowIndexForWeek(allRows, week, preferEnd = false) {
+        if (preferEnd) {
+          for (let index = allRows.length - 1; index >= 0; index -= 1) {
+            if (allRows[index].week <= week) return index;
+          }
+          return 0;
+        }
+        const index = allRows.findIndex((row) => row.week >= week);
+        return index === -1 ? allRows.length - 1 : index;
+      }
+
+      function defaultStartWeek(allRows, years) {
+        const today = new Date();
+        const cutoff = new Date(today.getFullYear() - years, today.getMonth(), today.getDate());
+        const target = mondayStart(cutoff);
+        if (target > allRows[allRows.length - 1].week) {
+          return allRows[Math.max(0, allRows.length - years * 52)].week;
+        }
+        return allRows[rowIndexForWeek(allRows, target)].week;
+      }
+
+      function updateBrush(card, allRows) {
+        const brush = card.querySelector("[data-range-brush]");
+        const startRange = card.querySelector(".range-min");
+        const endRange = card.querySelector(".range-max");
+        const startLabel = card.querySelector(".range-min-label");
+        const endLabel = card.querySelector(".range-max-label");
+        const max = Math.max(1, allRows.length - 1);
+        const start = Number(startRange.value);
+        const end = Number(endRange.value);
+        brush.style.setProperty("--range-left", `${(start / max) * 100}%`);
+        brush.style.setProperty("--range-right", `${100 - (end / max) * 100}%`);
+        startLabel.textContent = allRows[start]?.week || "";
+        endLabel.textContent = allRows[end]?.week || "";
+      }
+
+      function syncSlidersFromDates(card, allRows) {
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
+        const startRange = card.querySelector(".range-min");
+        const endRange = card.querySelector(".range-max");
+        let start = rowIndexForWeek(allRows, startInput.value || allRows[0].week);
+        let end = rowIndexForWeek(allRows, endInput.value || allRows[allRows.length - 1].week, true);
+        if (start > end) [start, end] = [end, start];
+        startRange.value = start;
+        endRange.value = end;
+        startInput.value = allRows[start].week;
+        endInput.value = allRows[end].week;
+        updateBrush(card, allRows);
+      }
+
+      function syncDatesFromSliders(card, allRows, activeRange) {
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
+        const startRange = card.querySelector(".range-min");
+        const endRange = card.querySelector(".range-max");
+        let start = Number(startRange.value);
+        let end = Number(endRange.value);
+        if (start > end) {
+          if (activeRange === startRange) end = start;
+          else start = end;
+        }
+        startRange.value = start;
+        endRange.value = end;
+        startInput.value = allRows[start].week;
+        endInput.value = allRows[end].week;
+        updateBrush(card, allRows);
+      }
+
+      function prepareRangeControls(card, wrap, allRows) {
+        if (!allRows.length) return;
+        const startInput = card.querySelector(".range-start");
+        const endInput = card.querySelector(".range-end");
+        const startRange = card.querySelector(".range-min");
+        const endRange = card.querySelector(".range-max");
+        for (const input of [startInput, endInput]) {
+          input.min = allRows[0].week;
+          input.max = allRows[allRows.length - 1].week;
+        }
+        for (const input of [startRange, endRange]) {
+          input.min = 0;
+          input.max = allRows.length - 1;
+          input.step = 1;
+        }
+        if (!card.dataset.rangeReady) {
+          startInput.value = defaultStartWeek(allRows, Number(wrap.dataset.defaultYears || 2));
+          endInput.value = allRows[allRows.length - 1].week;
+          card.dataset.rangeReady = "1";
+        }
+        syncSlidersFromDates(card, allRows);
       }
 
       function filteredRows(allRows, startInput, endInput) {
@@ -463,6 +575,7 @@ def interactive_dashboard_script() -> str:
         const color = wrap.dataset.color;
         const packageName = wrap.dataset.package;
         const allRows = JSON.parse(wrap.dataset.series || "[]");
+        prepareRangeControls(card, wrap, allRows);
         const rows = filteredRows(allRows, startInput, endInput);
         const width = 1040;
         const height = 330;
@@ -510,6 +623,8 @@ def interactive_dashboard_script() -> str:
         svg.appendChild(el("line", { x1: left, x2: left, y1: top, y2: top + plotH, class: "axis" }));
 
         const points = rows.map((row, index) => `${xAt(index).toFixed(1)},${yAt(row.downloads).toFixed(1)}`).join(" ");
+        const areaPoints = `${left},${top + plotH} ${points} ${left + plotW},${top + plotH}`;
+        svg.appendChild(el("polygon", { points: areaPoints, fill: color, opacity: 0.10 }));
         svg.appendChild(el("polyline", { points, fill: "none", stroke: color, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" }));
 
         const latest = rows[rows.length - 1];
@@ -569,8 +684,18 @@ def interactive_dashboard_script() -> str:
         const card = wrap.closest(".chart-card");
         const startInput = card.querySelector(".range-start");
         const endInput = card.querySelector(".range-end");
+        const startRange = card.querySelector(".range-min");
+        const endRange = card.querySelector(".range-max");
         startInput.addEventListener("change", () => renderChart(wrap));
         endInput.addEventListener("change", () => renderChart(wrap));
+        startRange.addEventListener("input", () => {
+          syncDatesFromSliders(card, JSON.parse(wrap.dataset.series || "[]"), startRange);
+          renderChart(wrap);
+        });
+        endRange.addEventListener("input", () => {
+          syncDatesFromSliders(card, JSON.parse(wrap.dataset.series || "[]"), endRange);
+          renderChart(wrap);
+        });
         renderChart(wrap);
       });
     })();
@@ -820,7 +945,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
-      margin: 10px 0 8px;
+      margin: 8px 0 0;
     }}
     .chart-toolbar label {{
       display: inline-flex;
@@ -838,6 +963,83 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       color: var(--ink);
       font-size: 13px;
       padding: 6px 9px;
+    }}
+    .range-panel {{
+      margin: 10px 0 4px;
+      padding: 0 10px;
+    }}
+    .range-brush {{
+      --range-left: 0%;
+      --range-right: 0%;
+      position: relative;
+      height: 34px;
+    }}
+    .range-brush::before,
+    .range-brush::after {{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 14px;
+      height: 8px;
+      border-radius: 999px;
+    }}
+    .range-brush::before {{
+      background: #e2e8f0;
+    }}
+    .range-brush::after {{
+      left: var(--range-left);
+      right: var(--range-right);
+      background: #93c5fd;
+    }}
+    .range-slider {{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 34px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      pointer-events: none;
+    }}
+    .range-slider::-webkit-slider-runnable-track {{
+      height: 8px;
+      background: transparent;
+    }}
+    .range-slider::-moz-range-track {{
+      height: 8px;
+      background: transparent;
+    }}
+    .range-slider::-webkit-slider-thumb {{
+      width: 12px;
+      height: 28px;
+      margin-top: -10px;
+      appearance: none;
+      border: 1px solid #64748b;
+      border-radius: 4px;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+      cursor: ew-resize;
+      pointer-events: auto;
+    }}
+    .range-slider::-moz-range-thumb {{
+      width: 12px;
+      height: 28px;
+      border: 1px solid #64748b;
+      border-radius: 4px;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+      cursor: ew-resize;
+      pointer-events: auto;
+    }}
+    .range-labels {{
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }}
     .chart-wrap {{
       width: 100%;
@@ -954,6 +1156,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       h1 {{ font-size: 24px; }}
     }}
   </style>
+  <link rel="stylesheet" href="dashboard_range_controls.css">
 </head>
 <body>
   <main>
@@ -1001,6 +1204,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     </section>
   </main>
   {dashboard_script}
+  <script src="dashboard_range_controls.js"></script>
 </body>
 </html>
 """

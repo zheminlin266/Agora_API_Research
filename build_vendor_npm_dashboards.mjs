@@ -520,6 +520,7 @@ function buildHtml(vendor, config, rows, metas, latestDay) {
       h1 { font-size: 24px; }
     }
   </style>
+  <link rel="stylesheet" href="dashboard_range_controls.css">
 </head>
 <body>
   <main>
@@ -544,6 +545,7 @@ function buildHtml(vendor, config, rows, metas, latestDay) {
     </section>
   </main>
   ${dashboardScript()}
+  <script src="dashboard_range_controls.js"></script>
 </body>
 </html>
 `;
