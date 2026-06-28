@@ -1,3 +1,7 @@
+.chart-wrap {
+  overflow-y: hidden;
+}
+
 .range-panel {
   margin: 10px 0 4px;
   padding: 0 10px;
