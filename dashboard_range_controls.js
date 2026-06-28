@@ -61,9 +61,32 @@
     return node;
   }
 
+  function renderBrushPreview(brush, allRows) {
+    const svg = brush.querySelector(".range-preview");
+    if (!svg) return;
+    const width = 1000, height = 40, top = 7, bottom = 6;
+    const plotH = height - top - bottom;
+    const maxValue = niceYMax(Math.max(...allRows.map((row) => row.downloads), 1));
+    const xAt = (index) => allRows.length === 1 ? width / 2 : (index / (allRows.length - 1)) * width;
+    const yAt = (value) => top + plotH - (value / maxValue) * plotH;
+    const points = allRows.map((row, index) => `${xAt(index).toFixed(1)},${yAt(row.downloads).toFixed(1)}`).join(" ");
+    svg.textContent = "";
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.appendChild(el("polygon", {
+      points: `0,${height - bottom} ${points} ${width},${height - bottom}`,
+      class: "range-preview-area",
+    }));
+    svg.appendChild(el("polyline", {
+      points,
+      class: "range-preview-line",
+    }));
+  }
+
   function ensureControls(card, wrap, allRows) {
     const minWeek = allRows[0].week;
     const maxWeek = allRows[allRows.length - 1].week;
+    const usePreviewBrush = wrap.dataset.brushPreview === "defillama";
     let toolbar = card.querySelector(".chart-toolbar");
     if (!toolbar) {
       toolbar = document.createElement("div");
@@ -92,6 +115,7 @@
       panel.className = "range-panel";
       wrap.insertAdjacentElement("afterend", panel);
     }
+    panel.classList.toggle("is-preview", usePreviewBrush);
 
     let brush = panel.querySelector("[data-range-brush]");
     if (!brush) {
@@ -103,6 +127,20 @@
         <input class="range-slider range-max" type="range" aria-label="Drag end week">
       `;
       panel.appendChild(brush);
+    }
+    brush.classList.toggle("is-preview", usePreviewBrush);
+    if (usePreviewBrush && !brush.querySelector(".range-preview-frame")) {
+      const preview = document.createElement("div");
+      preview.className = "range-preview-frame";
+      preview.setAttribute("aria-hidden", "true");
+      preview.innerHTML = `
+        <svg class="range-preview"></svg>
+        <div class="range-preview-dim range-preview-dim-left"></div>
+        <div class="range-preview-dim range-preview-dim-right"></div>
+        <div class="range-preview-window"></div>
+      `;
+      brush.prepend(preview);
+      renderBrushPreview(brush, allRows);
     }
 
     let labels = panel.querySelector(".range-labels");

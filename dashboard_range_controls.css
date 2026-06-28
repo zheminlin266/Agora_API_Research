@@ -114,3 +114,112 @@
 .chart-toolbar {
   margin-top: 8px;
 }
+
+.range-panel.is-preview {
+  margin-top: 14px;
+  padding: 0;
+}
+
+.range-panel.is-preview .range-brush {
+  --preview-top: 5px;
+  --preview-bottom: 5px;
+  height: 42px;
+  border: 1px solid #48515d;
+  border-radius: 2px;
+  background: #15191f;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 2px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.range-panel.is-preview .range-brush::before,
+.range-panel.is-preview .range-brush::after {
+  display: none;
+}
+
+.range-preview-frame,
+.range-preview,
+.range-preview-dim,
+.range-preview-window {
+  position: absolute;
+  inset: 0;
+}
+
+.range-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.range-preview-area {
+  fill: rgba(148, 163, 184, 0.22);
+}
+
+.range-preview-line {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.80);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.range-preview-dim {
+  background: rgba(8, 11, 15, 0.62);
+  pointer-events: none;
+}
+
+.range-preview-dim-left {
+  right: calc(100% - var(--range-left));
+}
+
+.range-preview-dim-right {
+  left: calc(100% - var(--range-right));
+}
+
+.range-preview-window {
+  left: var(--range-left);
+  right: var(--range-right);
+  border: 1px solid rgba(226, 232, 240, 0.72);
+  border-top-color: rgba(255, 255, 255, 0.55);
+  background: rgba(59, 130, 246, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  pointer-events: none;
+}
+
+.range-panel.is-preview .range-slider {
+  height: 42px;
+}
+
+.range-panel.is-preview .range-slider::-webkit-slider-runnable-track {
+  height: 42px;
+}
+
+.range-panel.is-preview .range-slider::-moz-range-track {
+  height: 42px;
+}
+
+.range-panel.is-preview .range-slider::-webkit-slider-thumb {
+  width: 8px;
+  height: 30px;
+  margin-top: 6px;
+  border: 1px solid #9aa4b2;
+  border-radius: 3px;
+  background:
+    linear-gradient(90deg, transparent 0 3px, #d8dee8 3px 4px, transparent 4px),
+    linear-gradient(180deg, #f7f9fc 0%, #aab4c2 100%);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.30), 0 2px 6px rgba(0, 0, 0, 0.30);
+}
+
+.range-panel.is-preview .range-slider::-moz-range-thumb {
+  width: 8px;
+  height: 30px;
+  border: 1px solid #9aa4b2;
+  border-radius: 3px;
+  background:
+    linear-gradient(90deg, transparent 0 3px, #d8dee8 3px 4px, transparent 4px),
+    linear-gradient(180deg, #f7f9fc 0%, #aab4c2 100%);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.30), 0 2px 6px rgba(0, 0, 0, 0.30);
+}
+
+.range-panel.is-preview .range-labels {
+  margin-top: 8px;
+  padding: 0 2px;
+}

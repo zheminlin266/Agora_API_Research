@@ -154,7 +154,7 @@
       input[type="date"] { flex: 1; min-width: 0; }
     }
   </style>
-  <link rel="stylesheet" href="dashboard_range_controls.css?v=20260628-7">
+  <link rel="stylesheet" href="dashboard_range_controls.css?v=20260628-8">
 </head>
 <body>
   <main class="shell">
@@ -300,7 +300,7 @@
     function renderCards() {
       const cards = document.getElementById("cards");
       cards.innerHTML = "";
-      PACKAGES.forEach(function(pkg) {
+      PACKAGES.forEach(function(pkg, pkgIndex) {
         const series = packageRows(pkg.key);
         const created = firstNonZero(series);
         const latest = series[series.length - 1];
@@ -328,7 +328,7 @@
             '<label><span>Start week</span><input class="range-start" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + created.date + '" aria-label="Start week for ' + pkg.name + '"></label>',
             '<label><span>End week</span><input class="range-end" type="date" min="' + created.date + '" max="' + chartEnd + '" value="' + chartEnd + '" aria-label="End week for ' + pkg.name + '"></label>',
           '</div>',
-          '<div class="chart-wrap" data-chart data-package="' + pkg.name + '" data-color="' + pkg.color + '" data-default-years="2">',
+          '<div class="chart-wrap" data-chart data-package="' + pkg.name + '" data-color="' + pkg.color + '" data-default-years="2"' + (pkgIndex === 0 ? ' data-brush-preview="defillama"' : '') + '>',
             '<svg viewBox="0 0 1040 330" role="img" aria-label="Weekly downloads for ' + pkg.name + '"></svg>',
             '<div class="chart-tooltip" role="status"></div>',
           '</div>',
@@ -448,6 +448,6 @@
     }
     renderAll();
   </script>
-  <script src="dashboard_range_controls.js?v=20260628-7"></script>
+  <script src="dashboard_range_controls.js?v=20260628-8"></script>
 </body>
 </html>
