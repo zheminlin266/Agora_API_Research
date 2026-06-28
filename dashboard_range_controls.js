@@ -252,6 +252,7 @@
 
     const overlay = el("rect", { x: left, y: top, width: plotW, height: plotH, fill: "transparent", class: "hover-overlay" });
     overlay.addEventListener("pointermove", (event) => {
+      event.stopPropagation();
       const local = svgPoint(svg, event);
       const rawIndex = rows.length === 1 ? 0 : Math.round(((local.x - left) / plotW) * (rows.length - 1));
       const index = Math.max(0, Math.min(rows.length - 1, rawIndex));
@@ -265,7 +266,11 @@
       hoverPoint.removeAttribute("display");
       showTooltip(wrap, event, row);
     });
-    overlay.addEventListener("pointerleave", () => hideHover(wrap, hoverGuide, hoverPoint));
+    overlay.addEventListener("mousemove", (event) => event.stopPropagation());
+    overlay.addEventListener("pointerleave", (event) => {
+      event.stopPropagation();
+      hideHover(wrap, hoverGuide, hoverPoint);
+    });
     svg.appendChild(overlay);
   }
 
@@ -312,6 +317,7 @@
   }
 
   function enhanceAllCharts() {
+    document.getElementById("tooltip")?.remove();
     document.querySelectorAll("[data-chart], .chart-wrap[data-series]").forEach(enhanceChart);
   }
 
