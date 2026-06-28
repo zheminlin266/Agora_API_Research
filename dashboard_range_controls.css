@@ -3,44 +3,49 @@
 }
 
 .range-panel {
-  margin: 10px 0 4px;
+  margin: 12px 0 6px;
   padding: 0 10px;
 }
 
 .range-brush {
   --range-left: 0%;
   --range-right: 0%;
+  --thumb-half: 8px;
   position: relative;
-  height: 34px;
+  height: 42px;
+  border-radius: 12px;
 }
 
 .range-brush::before,
 .range-brush::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 14px;
+  top: 17px;
   height: 8px;
   border-radius: 999px;
 }
 
 .range-brush::before {
-  background: #e2e8f0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #edf2f7 0%, #d9e2ec 100%);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.10);
 }
 
 .range-brush::after {
-  left: var(--range-left);
-  right: var(--range-right);
-  background: #93c5fd;
+  left: calc(var(--range-left) + var(--thumb-half));
+  right: calc(var(--range-right) + var(--thumb-half));
+  background: linear-gradient(90deg, #7ab8ff 0%, #2f7df6 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 3px 8px rgba(37, 99, 235, 0.22);
 }
 
 .range-slider {
   position: absolute;
   left: 0;
   top: 0;
+  z-index: 2;
   width: 100%;
-  height: 34px;
+  height: 42px;
   margin: 0;
   appearance: none;
   background: transparent;
@@ -50,35 +55,51 @@
 .range-slider::-webkit-slider-runnable-track {
   height: 8px;
   background: transparent;
+  border: 0;
 }
 
 .range-slider::-moz-range-track {
   height: 8px;
   background: transparent;
+  border: 0;
 }
 
 .range-slider::-webkit-slider-thumb {
-  width: 12px;
+  width: 16px;
   height: 28px;
   margin-top: -10px;
   appearance: none;
-  border: 1px solid #64748b;
-  border-radius: 4px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+  border: 1px solid #8aa0b8;
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, transparent 0 5px, #c7d2e1 5px 6px, transparent 6px 10px, #c7d2e1 10px 11px, transparent 11px),
+    linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.14), 0 6px 14px rgba(15, 23, 42, 0.16);
   cursor: ew-resize;
   pointer-events: auto;
 }
 
 .range-slider::-moz-range-thumb {
-  width: 12px;
+  width: 16px;
   height: 28px;
-  border: 1px solid #64748b;
-  border-radius: 4px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+  border: 1px solid #8aa0b8;
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, transparent 0 5px, #c7d2e1 5px 6px, transparent 6px 10px, #c7d2e1 10px 11px, transparent 11px),
+    linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.14), 0 6px 14px rgba(15, 23, 42, 0.16);
   cursor: ew-resize;
   pointer-events: auto;
+}
+
+.range-slider:focus-visible::-webkit-slider-thumb {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 6px 14px rgba(15, 23, 42, 0.16);
+}
+
+.range-slider:focus-visible::-moz-range-thumb {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 6px 14px rgba(15, 23, 42, 0.16);
 }
 
 .range-labels {
