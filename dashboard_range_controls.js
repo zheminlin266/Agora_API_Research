@@ -125,8 +125,16 @@
       brush.innerHTML = `
         <input class="range-slider range-min" type="range" aria-label="Drag start week">
         <input class="range-slider range-max" type="range" aria-label="Drag end week">
+        <span class="range-handle-tip range-handle-tip-start" aria-hidden="true"></span>
+        <span class="range-handle-tip range-handle-tip-end" aria-hidden="true"></span>
       `;
       panel.appendChild(brush);
+    }
+    if (!brush.querySelector(".range-handle-tip-start")) {
+      brush.insertAdjacentHTML("beforeend", `
+        <span class="range-handle-tip range-handle-tip-start" aria-hidden="true"></span>
+        <span class="range-handle-tip range-handle-tip-end" aria-hidden="true"></span>
+      `);
     }
     brush.classList.toggle("is-preview", usePreviewBrush);
     if (usePreviewBrush && !brush.querySelector(".range-preview-frame")) {
@@ -176,6 +184,12 @@
     const end = Number(controls.endRange.value);
     controls.brush.style.setProperty("--range-left", `${(start / max) * 100}%`);
     controls.brush.style.setProperty("--range-right", `${100 - (end / max) * 100}%`);
+    controls.brush.style.setProperty("--range-start-center", `${(start / max) * 100}%`);
+    controls.brush.style.setProperty("--range-end-center", `${(end / max) * 100}%`);
+    controls.brush.dataset.startEdge = start / max < 0.08 ? "left" : "";
+    controls.brush.dataset.endEdge = end / max > 0.92 ? "right" : "";
+    controls.brush.querySelector(".range-handle-tip-start").textContent = allRows[start]?.week || "";
+    controls.brush.querySelector(".range-handle-tip-end").textContent = allRows[end]?.week || "";
     controls.panel.querySelector(".range-min-label").textContent = allRows[start]?.week || "";
     controls.panel.querySelector(".range-max-label").textContent = allRows[end]?.week || "";
   }
@@ -344,12 +358,28 @@
     controls.endInput.addEventListener("change", redraw);
     controls.startRange.addEventListener("input", () => {
       syncDatesFromSliders(controls, allRows, controls.startRange);
+      controls.brush.dataset.activeHandle = "start";
       renderChart(wrap, controls, allRows);
     });
     controls.endRange.addEventListener("input", () => {
       syncDatesFromSliders(controls, allRows, controls.endRange);
+      controls.brush.dataset.activeHandle = "end";
       renderChart(wrap, controls, allRows);
     });
+    const setHandle = (name) => { controls.brush.dataset.activeHandle = name; };
+    const clearHandle = () => { delete controls.brush.dataset.activeHandle; };
+    const clearHandleIfIdle = (event) => { if (!event.buttons) clearHandle(); };
+    controls.startRange.addEventListener("pointerenter", () => setHandle("start"));
+    controls.startRange.addEventListener("pointerdown", () => setHandle("start"));
+    controls.startRange.addEventListener("focus", () => setHandle("start"));
+    controls.startRange.addEventListener("pointerleave", clearHandleIfIdle);
+    controls.startRange.addEventListener("blur", clearHandle);
+    controls.endRange.addEventListener("pointerenter", () => setHandle("end"));
+    controls.endRange.addEventListener("pointerdown", () => setHandle("end"));
+    controls.endRange.addEventListener("focus", () => setHandle("end"));
+    controls.endRange.addEventListener("pointerleave", clearHandleIfIdle);
+    controls.endRange.addEventListener("blur", clearHandle);
+    window.addEventListener("pointerup", clearHandle);
     wrap.dataset.rangeEnhanced = "1";
     renderChart(wrap, controls, allRows);
   }

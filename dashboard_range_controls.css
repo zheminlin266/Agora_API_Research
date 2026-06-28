@@ -10,6 +10,8 @@
 .range-brush {
   --range-left: 0%;
   --range-right: 0%;
+  --range-start-center: 0%;
+  --range-end-center: 100%;
   --thumb-half: 8px;
   position: relative;
   height: 42px;
@@ -102,6 +104,46 @@
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 6px 14px rgba(15, 23, 42, 0.16);
 }
 
+.range-handle-tip {
+  position: absolute;
+  top: 3px;
+  z-index: 4;
+  width: max-content;
+  padding: 3px 7px;
+  border: 1px solid rgba(148, 163, 184, 0.42);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 7px 18px rgba(15, 23, 42, 0.13);
+  color: var(--ink, #001b3f);
+  font: 600 11px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.range-handle-tip-start {
+  left: var(--range-start-center);
+  transform: translateX(calc(-100% - 10px));
+}
+
+.range-handle-tip-end {
+  left: var(--range-end-center);
+  transform: translateX(10px);
+}
+
+.range-brush[data-start-edge="left"] .range-handle-tip-start {
+  transform: translateX(10px);
+}
+
+.range-brush[data-end-edge="right"] .range-handle-tip-end {
+  transform: translateX(calc(-100% - 10px));
+}
+
+.range-brush[data-active-handle="start"] .range-handle-tip-start,
+.range-brush[data-active-handle="end"] .range-handle-tip-end {
+  opacity: 1;
+}
+
 .range-labels {
   display: flex;
   justify-content: space-between;
@@ -121,14 +163,12 @@
 }
 
 .range-panel.is-preview .range-brush {
-  --preview-top: 5px;
-  --preview-bottom: 5px;
-  height: 42px;
-  border: 1px solid #48515d;
-  border-radius: 2px;
-  background: #15191f;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 2px rgba(15, 23, 42, 0.12);
-  overflow: hidden;
+  height: 44px;
+  border: 1px solid #d9e1ea;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 1px 2px rgba(15, 23, 42, 0.06);
+  overflow: visible;
 }
 
 .range-panel.is-preview .range-brush::before,
@@ -144,25 +184,30 @@
   inset: 0;
 }
 
+.range-preview-frame {
+  overflow: hidden;
+  border-radius: 6px;
+}
+
 .range-preview {
   width: 100%;
   height: 100%;
 }
 
 .range-preview-area {
-  fill: rgba(148, 163, 184, 0.22);
+  fill: rgba(37, 99, 235, 0.10);
 }
 
 .range-preview-line {
   fill: none;
-  stroke: rgba(148, 163, 184, 0.80);
-  stroke-width: 1.6;
+  stroke: rgba(37, 99, 235, 0.58);
+  stroke-width: 1.7;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
 
 .range-preview-dim {
-  background: rgba(8, 11, 15, 0.62);
+  background: rgba(248, 250, 252, 0.76);
   pointer-events: none;
 }
 
@@ -177,46 +222,46 @@
 .range-preview-window {
   left: var(--range-left);
   right: var(--range-right);
-  border: 1px solid rgba(226, 232, 240, 0.72);
-  border-top-color: rgba(255, 255, 255, 0.55);
-  background: rgba(59, 130, 246, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(37, 99, 235, 0.44);
+  border-top-color: rgba(96, 165, 250, 0.58);
+  background: rgba(96, 165, 250, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.55);
   pointer-events: none;
 }
 
 .range-panel.is-preview .range-slider {
-  height: 42px;
+  height: 44px;
 }
 
 .range-panel.is-preview .range-slider::-webkit-slider-runnable-track {
-  height: 42px;
+  height: 44px;
 }
 
 .range-panel.is-preview .range-slider::-moz-range-track {
-  height: 42px;
+  height: 44px;
 }
 
 .range-panel.is-preview .range-slider::-webkit-slider-thumb {
-  width: 8px;
+  width: 10px;
   height: 30px;
-  margin-top: 6px;
-  border: 1px solid #9aa4b2;
-  border-radius: 3px;
+  margin-top: 7px;
+  border: 1px solid #8aa0b8;
+  border-radius: 4px;
   background:
-    linear-gradient(90deg, transparent 0 3px, #d8dee8 3px 4px, transparent 4px),
-    linear-gradient(180deg, #f7f9fc 0%, #aab4c2 100%);
-  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.30), 0 2px 6px rgba(0, 0, 0, 0.30);
+    linear-gradient(90deg, transparent 0 4px, #b8c4d3 4px 5px, transparent 5px),
+    linear-gradient(180deg, #ffffff 0%, #eef3f8 100%);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12), 0 5px 12px rgba(15, 23, 42, 0.16);
 }
 
 .range-panel.is-preview .range-slider::-moz-range-thumb {
-  width: 8px;
+  width: 10px;
   height: 30px;
-  border: 1px solid #9aa4b2;
-  border-radius: 3px;
+  border: 1px solid #8aa0b8;
+  border-radius: 4px;
   background:
-    linear-gradient(90deg, transparent 0 3px, #d8dee8 3px 4px, transparent 4px),
-    linear-gradient(180deg, #f7f9fc 0%, #aab4c2 100%);
-  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.30), 0 2px 6px rgba(0, 0, 0, 0.30);
+    linear-gradient(90deg, transparent 0 4px, #b8c4d3 4px 5px, transparent 5px),
+    linear-gradient(180deg, #ffffff 0%, #eef3f8 100%);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12), 0 5px 12px rgba(15, 23, 42, 0.16);
 }
 
 .range-panel.is-preview .range-labels {
