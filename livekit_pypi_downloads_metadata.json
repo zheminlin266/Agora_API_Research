@@ -4,15 +4,15 @@
     "download_provider": "ClickPy public ClickHouse endpoint",
     "download_endpoint": "https://sql-clickhouse.clickhouse.com/",
     "metadata_provider": "PyPI JSON API",
-    "source_last_date": "2026-06-21",
-    "generated_at_utc": "2026-06-22T08:13:28+00:00"
+    "source_last_date": "2026-06-28",
+    "generated_at_utc": "2026-06-29T08:09:34+00:00"
   },
   "packages": {
     "livekit": {
       "exists": true,
       "role": "Python SDK",
       "summary": "Python Real-time SDK for LiveKit",
-      "latest_version": "1.1.10",
+      "latest_version": "1.1.12",
       "requires_python": ">=3.9.0",
       "first_upload": "2023-06-06",
       "package_url": "https://pypi.org/project/livekit/",
@@ -24,7 +24,7 @@
       "exists": true,
       "role": "Server API",
       "summary": "Python Server API for LiveKit",
-      "latest_version": "1.1.0",
+      "latest_version": "1.1.1",
       "requires_python": ">=3.9.0",
       "first_upload": "2023-10-23",
       "package_url": "https://pypi.org/project/livekit-api/",
@@ -36,7 +36,7 @@
       "exists": true,
       "role": "Agents",
       "summary": "A powerful framework for building realtime voice AI agents",
-      "latest_version": "1.6.2",
+      "latest_version": "1.6.4",
       "requires_python": "<3.15,>=3.10",
       "first_upload": "2023-11-14",
       "package_url": "https://pypi.org/project/livekit-agents/",
@@ -60,10 +60,10 @@
   "dataset": {
     "csv": "livekit_pypi_weekly_downloads.csv",
     "html": "livekit_pypi_downloads_dashboard.html",
-    "rows": 159,
+    "rows": 160,
     "first_week_start": "2023-06-05",
-    "last_week_start": "2026-06-15",
-    "latest_complete_week_start": "2026-06-15",
+    "last_week_start": "2026-06-22",
+    "latest_complete_week_start": "2026-06-22",
     "html_chart_policy": "HTML line charts use complete-week metrics; CSV retains all weekly aggregates.",
     "columns": [
       "week_start",
