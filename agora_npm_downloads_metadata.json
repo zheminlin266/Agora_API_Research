@@ -1,18 +1,18 @@
 {
-  "generated_at_utc": "2026-06-29T08:06:45.186037+00:00",
+  "generated_at_utc": "2026-07-06T08:13:28.707935+00:00",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-06-28",
-    "html_chart_complete_through_week_start": "2026-06-22",
+    "latest_download_day": "2026-07-05",
+    "html_chart_complete_through_week_start": "2026-06-29",
     "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
     "caveat": "npm download counts include automation, mirrors, robots, and cache effects."
   },
   "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\Agora_API_Research\\agora_npm_weekly_downloads.csv",
-    "rows": 472,
+    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\fundamental_research_live\\agora_npm_weekly_downloads.csv",
+    "rows": 473,
     "columns": [
       "week_start",
       "agora-rtc-sdk-ng",
@@ -37,7 +37,7 @@
     "agora-rtc-sdk-ng": {
       "exists": true,
       "created": "2020-03-02T11:06:28.278Z",
-      "modified": "2026-06-26T06:49:41.694Z",
+      "modified": "2026-07-02T10:53:26.781Z",
       "description": "Agora WebRTC SDK for JavaScript",
       "error": null
     },
@@ -65,14 +65,14 @@
     "react-native-agora": {
       "exists": true,
       "created": "2017-06-13T10:15:31.546Z",
-      "modified": "2026-06-24T10:29:23.410Z",
+      "modified": "2026-06-30T06:43:04.000Z",
       "description": "Agora RTC SDK For React Native",
       "error": null
     },
     "agora-agent-server-sdk": {
       "exists": true,
       "created": "2026-03-14T10:14:36.708Z",
-      "modified": "2026-06-17T17:30:12.761Z",
+      "modified": "2026-06-30T13:21:41.427Z",
       "description": "Compatibility shim for the renamed agora-agents package.",
       "error": null
     },

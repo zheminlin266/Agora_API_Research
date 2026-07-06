@@ -180,6 +180,11 @@ def latest_complete_week(rows: list[dict[str, int | str]], source_last_date: str
     return complete
 
 
+def complete_rows(rows: list[dict[str, int | str]], source_last_date: str) -> list[dict[str, int | str]]:
+    complete = latest_complete_week(rows, source_last_date)
+    return [row for row in rows if str(row["week_start"]) <= complete]
+
+
 def compact(value: int | float) -> str:
     value = float(value)
     if abs(value) >= 1_000_000:
@@ -227,16 +232,17 @@ def package_cards(rows: list[dict[str, int | str]], config: PageConfig) -> str:
     cards: list[str] = []
     complete_week = latest_complete_week(rows, config.source_last_date)
     complete_idx = next(i for i, row in enumerate(rows) if row["week_start"] == complete_week)
-    min_week = str(rows[0]["week_start"])
-    max_week = str(rows[-1]["week_start"])
+    chart_rows = rows[: complete_idx + 1]
+    min_week = str(chart_rows[0]["week_start"])
+    max_week = str(chart_rows[-1]["week_start"])
     for pkg in config.packages:
-        values = [int(row[pkg.key]) for row in rows]
+        values = [int(row[pkg.key]) for row in chart_rows]
         chart_total = sum(values)
         latest_value = int(rows[complete_idx][pkg.key])
-        peak_idx = max(range(len(rows)), key=lambda i: int(rows[i][pkg.key]))
+        peak_idx = max(range(len(chart_rows)), key=lambda i: int(chart_rows[i][pkg.key]))
         status = html.escape(pkg.status)
         data_series = json.dumps(
-            [{"week": row["week_start"], "downloads": int(row[pkg.key])} for row in rows],
+            [{"week": row["week_start"], "downloads": int(row[pkg.key])} for row in chart_rows],
             ensure_ascii=False,
             separators=(",", ":"),
         ).replace("</", "<\\/")
@@ -251,7 +257,7 @@ def package_cards(rows: list[dict[str, int | str]], config: PageConfig) -> str:
           <dl class="card-metrics">
             <div><dt>Chart total</dt><dd data-chart-total>{fmt_int(chart_total)}</dd></div>
             <div><dt>Latest full week</dt><dd>{fmt_int(latest_value)}</dd></div>
-            <div><dt>Peak week</dt><dd>{html.escape(str(rows[peak_idx]["week_start"]))} / {compact(values[peak_idx])}</dd></div>
+            <div><dt>Peak week</dt><dd>{html.escape(str(chart_rows[peak_idx]["week_start"]))} / {compact(values[peak_idx])}</dd></div>
           </dl>
         </div>
         <div class="chart-toolbar">
@@ -275,7 +281,7 @@ def package_cards(rows: list[dict[str, int | str]], config: PageConfig) -> str:
 def build_html(config: PageConfig) -> str:
     rows = read_rows(config.csv_file)
     metrics = page_metrics(rows, config)
-    data_json = json.dumps(rows, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    data_json = json.dumps(complete_rows(rows, config.source_last_date), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     package_json = json.dumps(
         [{"key": pkg.key, "name": pkg.name, "role": pkg.role, "color": pkg.color, "status": pkg.status} for pkg in config.packages],
         ensure_ascii=False,
