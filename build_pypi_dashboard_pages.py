@@ -40,7 +40,7 @@ PAGES = (
         title="Agora Python Package Download Signals",
         output="agora_pypi_weekly_downloads_dashboard.html",
         csv_file="agora_pypi_weekly_downloads.csv",
-        source_last_date="2026-06-10",
+        source_last_date="2026-07-03",
         source_label="ClickPy public ClickHouse table pypi.pypi_downloads_per_day",
         source_note=(
             "PyPI 下载量是包文件被 pip、CI/CD、镜像、开发环境或自动化构建拉取的次数。"
@@ -99,7 +99,7 @@ PAGES = (
         title="LiveKit Python Package Download Signals",
         output="livekit_pypi_downloads_dashboard.html",
         csv_file="livekit_pypi_weekly_downloads.csv",
-        source_last_date="2026-06-12",
+        source_last_date="2026-07-03",
         source_label="ClickPy public ClickHouse table pypi.pypi_downloads_per_day",
         source_note=(
             "PyPI 下载量统计包文件拉取次数，会受到 CI/CD、容器构建、依赖锁定、镜像缓存和自动化安装影响。"
