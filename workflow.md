@@ -31,42 +31,42 @@
 
 - `agora-npm-dashboard-update`
   - 用于 Agora npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_agora_npm_dashboard.py`。
+  - 脚本：`scripts/build_agora_npm_dashboard.py`。
   - 输出：`agora_npm_weekly_downloads.csv`、`agora_npm_downloads_dashboard.html`、`agora_npm_downloads_metadata.json`。
   - 关键逻辑：`rtc-sdk-total = agora-rtc-sdk-ng + agora-rtc-sdk`；CSV 可保留最新不完整周；HTML 图表排除最新不完整周；HTML 需要包含 AI related 区块。
 
 - `twilio-npm-dashboard-update`
   - 用于 Twilio npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_vendor_npm_dashboards.py`。
+  - 脚本：`scripts/build_vendor_npm_dashboards.py`。
   - 输出：`twilio_npm_weekly_downloads.csv`、`twilio_npm_downloads_dashboard.html`、`twilio_npm_downloads_metadata.json`。
   - 关键逻辑：脚本会同时刷新 Twilio 和 Bandwidth；如果只提交 Twilio，需要只 stage Twilio 相关文件。
 
 - `bandwidth-npm-dashboard-update`
   - 用于 Bandwidth npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_vendor_npm_dashboards.py`。
+  - 脚本：`scripts/build_vendor_npm_dashboards.py`。
   - 输出：`bandwidth_npm_weekly_downloads.csv`、`bandwidth_npm_downloads_dashboard.html`、`bandwidth_npm_downloads_metadata.json`。
   - 关键逻辑：脚本会同时刷新 Twilio 和 Bandwidth；如果只提交 Bandwidth，需要只 stage Bandwidth 相关文件。
 
 - `livekit-npm-dashboard-update`
   - 用于 LiveKit npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_livekit_npm_dashboard.py`。
+  - 脚本：`scripts/build_livekit_npm_dashboard.py`。
   - 输出：`livekit_npm_weekly_downloads.csv`、`livekit_npm_downloads_dashboard.html`、`livekit_npm_downloads_metadata.json`。
   - 关键逻辑：metadata 需要说明 HTML 图表排除最新不完整周，CSV 保留所有周度聚合。
 
 - `agora-pypi-dashboard-update`
   - 用于 Agora PyPI 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 数据抓取脚本：`build_agora_pypi_dashboard.py`（从 ClickHouse 拉取下载量数据）。
-  - HTML 生成脚本：`build_pypi_dashboard_pages.py`（从 CSV 生成看板页面）。
+  - 数据抓取脚本：`scripts/build_agora_pypi_dashboard.py`（从 ClickHouse 拉取下载量数据）。
+  - HTML 生成脚本：`scripts/build_pypi_dashboard_pages.py`（从 CSV 生成看板页面）。
   - 输出：`agora_pypi_weekly_downloads.csv`、`agora_pypi_weekly_downloads_dashboard.html`、`agora_pypi_downloads_metadata.json`。
 
 - `livekit-pypi-dashboard-update`
   - 用于 LiveKit PyPI 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_livekit_pypi_dashboard.py`。
+  - 脚本：`scripts/build_livekit_pypi_dashboard.py`。
   - 输出：`livekit_pypi_weekly_downloads.csv`、`livekit_pypi_downloads_dashboard.html`、`livekit_pypi_downloads_metadata.json`。
 
 - `rtc-competitor-dashboard-update`
   - 用于 RTC 竞品 npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_rtc_competitor_dashboard.py`。
+  - 脚本：`scripts/build_rtc_competitor_dashboard.py`。
   - 输出：`rtc_competitor_npm_weekly_downloads.csv`、`rtc_competitor_npm_downloads_dashboard.html`、`rtc_competitor_npm_downloads_metadata.json`。
   - 跟踪包：trtc-cloud-js-sdk, zego-express-engine-webrtc, aliyun-rtc-sdk, @volcengine/rtc。
 
@@ -82,13 +82,13 @@
    - 不要回滚、覆盖或提交无关用户改动。
 
 3. 运行更新脚本
-   - Agora npm：`python build_agora_npm_dashboard.py`。
-   - Twilio/Bandwidth npm：`python build_vendor_npm_dashboards.py`。
-   - Twilio/Bandwidth 只重建页面：`python build_vendor_npm_dashboards.py --from-existing`。
-   - LiveKit npm：`python build_livekit_npm_dashboard.py`。
-   - Agora PyPI：`python build_agora_pypi_dashboard.py`（数据拉取）；`python build_pypi_dashboard_pages.py`（无网络重建 HTML）。
-   - LiveKit PyPI：`python build_livekit_pypi_dashboard.py`。
-   - RTC competitor npm：`python build_rtc_competitor_dashboard.py`。
+   - Agora npm：`python scripts/build_agora_npm_dashboard.py`。
+   - Twilio/Bandwidth npm：`python scripts/build_vendor_npm_dashboards.py`。
+   - Twilio/Bandwidth 只重建页面：`python scripts/build_vendor_npm_dashboards.py --from-existing`。
+   - LiveKit npm：`python scripts/build_livekit_npm_dashboard.py`。
+   - Agora PyPI：`python scripts/build_agora_pypi_dashboard.py`（数据拉取）；`python scripts/build_pypi_dashboard_pages.py`（无网络重建 HTML）。
+   - LiveKit PyPI：`python scripts/build_livekit_pypi_dashboard.py`。
+   - RTC competitor npm：`python scripts/build_rtc_competitor_dashboard.py`。
    - 网络失败时，按 Codex 权限流程请求 sandbox escalation 后重试同一命令。
 
 4. 数据和图表逻辑

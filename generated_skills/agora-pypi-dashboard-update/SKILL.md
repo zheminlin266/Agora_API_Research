@@ -22,7 +22,7 @@ Tracked packages:
 - Artifact folder: repository root
 - CSV: `agora_pypi_weekly_downloads.csv`
 - HTML: `agora_pypi_weekly_downloads_dashboard.html`
-- Shared page builder: `build_pypi_dashboard_pages.py`
+- Shared page builder: `scripts/build_pypi_dashboard_pages.py`
 - Skill update script: `scripts/update_agora_pypi_dashboard.py`
 - Public page: `https://zheminlin266.github.io/Agora_API_Research/agora_pypi_weekly_downloads_dashboard.html`
 
@@ -40,7 +40,7 @@ Tracked packages:
 3. If only the HTML shell needs rebuilding from the existing CSV, run from the repository root:
 
    ```powershell
-   python build_pypi_dashboard_pages.py
+   python scripts/build_pypi_dashboard_pages.py
    ```
 
    This rebuilds both Agora and LiveKit PyPI HTML pages; stage only the requested artifacts unless the user requested both.
@@ -59,7 +59,7 @@ Tracked packages:
 6. Commit only these intended files when changed:
    - `agora_pypi_weekly_downloads.csv`
    - `agora_pypi_weekly_downloads_dashboard.html`
-   - `build_pypi_dashboard_pages.py` only if intentionally changed
+   - `scripts/build_pypi_dashboard_pages.py` only if intentionally changed
 7. Push to `origin main` if a commit was created and the user asked to publish; do not use GitHub Actions for this refresh.
 8. Verify the public page returns HTTP 200 and contains the latest complete-week marker and package names.
 

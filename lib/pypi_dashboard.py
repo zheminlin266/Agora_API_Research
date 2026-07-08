@@ -253,7 +253,7 @@ def run_pypi(config: PyPIConfig) -> dict:
 
     # Generate HTML via shared pypi dashboard pages
     try:
-        from build_pypi_dashboard_pages import build_page
+        from scripts.build_pypi_dashboard_pages import build_page
         config.html_path.parent.mkdir(parents=True, exist_ok=True)
         config.html_path.write_text(build_page(config.html_path.name, latest_day.isoformat()), encoding="utf-8")
     except Exception as exc:  # noqa: BLE001

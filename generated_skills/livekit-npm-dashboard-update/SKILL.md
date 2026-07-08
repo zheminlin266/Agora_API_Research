@@ -21,7 +21,7 @@ Tracked packages:
 
 - Git repository: `D:\【07】研究\【01】企业和主题研究\51 声网 API\fundamental_research_live`
 - Artifact folder: repository root
-- Update script: `build_livekit_npm_dashboard.py`
+- Update script: `scripts/build_livekit_npm_dashboard.py`
 - CSV: `livekit_npm_weekly_downloads.csv`
 - HTML: `livekit_npm_downloads_dashboard.html`
 - Metadata: `livekit_npm_downloads_metadata.json`
@@ -34,7 +34,7 @@ Tracked packages:
 2. Run from `fundamental_research_live` with the bundled Python runtime:
 
    ```powershell
-   python build_livekit_npm_dashboard.py
+   python scripts/build_livekit_npm_dashboard.py
    ```
 
    The script queries npm registry and npm downloads APIs, then regenerates CSV, HTML, and metadata JSON.
@@ -53,7 +53,7 @@ Tracked packages:
    - `livekit_npm_weekly_downloads.csv`
    - `livekit_npm_downloads_dashboard.html`
    - `livekit_npm_downloads_metadata.json`
-   - `build_livekit_npm_dashboard.py` only if intentionally changed
+   - `scripts/build_livekit_npm_dashboard.py` only if intentionally changed
 6. Push to `origin main` if a commit was created and the user asked to publish; do not use GitHub Actions for this refresh.
 7. Verify the public page returns HTTP 200 and contains all package names plus the latest complete-week marker.
 

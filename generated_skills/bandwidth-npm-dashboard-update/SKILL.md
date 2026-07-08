@@ -19,7 +19,7 @@ Tracked packages:
 
 - Git repository: `D:\【07】研究\【01】企业和主题研究\51 声网 API\fundamental_research_live`
 - Artifact folder: repository root
-- Shared update script: `build_vendor_npm_dashboards.py`
+- Shared update script: `scripts/build_vendor_npm_dashboards.py`
 - CSV: `bandwidth_npm_weekly_downloads.csv`
 - HTML: `bandwidth_npm_downloads_dashboard.html`
 - Metadata: `bandwidth_npm_downloads_metadata.json`
@@ -32,14 +32,14 @@ Tracked packages:
 2. Run from `fundamental_research_live` with Python:
 
    ```powershell
-   python build_vendor_npm_dashboards.py
+   python scripts/build_vendor_npm_dashboards.py
    ```
 
    The script refreshes both Twilio and Bandwidth npm dashboards because they share one vendor script.
 3. If only rebuilding HTML from existing CSV/metadata is needed, run:
 
    ```powershell
-   python build_vendor_npm_dashboards.py --from-existing
+   python scripts/build_vendor_npm_dashboards.py --from-existing
    ```
 
 4. Validate Bandwidth outputs.
@@ -56,7 +56,7 @@ Tracked packages:
    - `bandwidth_npm_weekly_downloads.csv`
    - `bandwidth_npm_downloads_dashboard.html`
    - `bandwidth_npm_downloads_metadata.json`
-   - `build_vendor_npm_dashboards.py` only if intentionally changed
+   - `scripts/build_vendor_npm_dashboards.py` only if intentionally changed
 7. Leave Twilio file changes unstaged unless the user requested a multi-vendor refresh.
 8. Push to `origin main` if a commit was created and the user asked to publish; do not use GitHub Actions for this refresh.
 9. Verify the public page returns HTTP 200 and contains all package names plus the latest complete-week marker.

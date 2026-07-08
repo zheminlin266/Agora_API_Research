@@ -13,9 +13,10 @@
 
 ## Repository Layout
 
-- `lib/`: shared Python library for npm dashboard data fetching, aggregation, and HTML generation.
+- `scripts/`: dashboard update scripts (npm/PyPI data fetching, CSV/HTML/JSON generation).
+- `lib/`: shared Python libraries for npm and PyPI dashboard data fetching, aggregation, and HTML generation.
 - `Data/`: CSV source datasets.
 - `html/`: dashboard HTML pages. The root `index.html` stays at the repository root for GitHub Pages.
 - `json/`: dashboard metadata JSON files.
 - `generated_skills/`: agent skill definitions for automated dashboard updates.
-- `workflow.md`: scheduled update workflow for regenerating, validating, organizing, and publishing dashboard artifacts.
+- `workflow.md`: scheduled update workflow for regenerating, validating, and publishing dashboard artifacts.

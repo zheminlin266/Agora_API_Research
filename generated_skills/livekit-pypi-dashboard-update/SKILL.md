@@ -20,8 +20,8 @@ Tracked packages:
 
 - Git repository: `D:\【07】研究\【01】企业和主题研究\51 声网 API\fundamental_research_live`
 - Artifact folder: repository root
-- Update script: `build_livekit_pypi_dashboard.py`
-- Shared page builder: `build_pypi_dashboard_pages.py`
+- Update script: `scripts/build_livekit_pypi_dashboard.py`
+- Shared page builder: `scripts/build_pypi_dashboard_pages.py`
 - CSV: `livekit_pypi_weekly_downloads.csv`
 - HTML: `livekit_pypi_downloads_dashboard.html`
 - Metadata: `livekit_pypi_downloads_metadata.json`
@@ -34,14 +34,14 @@ Tracked packages:
 2. Run from `fundamental_research_live` with the bundled Python runtime:
 
    ```powershell
-   python build_livekit_pypi_dashboard.py
+   python scripts/build_livekit_pypi_dashboard.py
    ```
 
    The script queries ClickPy public ClickHouse and PyPI JSON metadata, then regenerates CSV, metadata, and HTML.
 3. If only the HTML shell needs rebuilding from existing CSV files, run:
 
    ```powershell
-   python build_pypi_dashboard_pages.py
+   python scripts/build_pypi_dashboard_pages.py
    ```
 
    This rebuilds both Agora and LiveKit PyPI HTML pages; stage only the requested artifacts unless the user requested both.
@@ -60,8 +60,8 @@ Tracked packages:
    - `livekit_pypi_weekly_downloads.csv`
    - `livekit_pypi_downloads_dashboard.html`
    - `livekit_pypi_downloads_metadata.json`
-   - `build_livekit_pypi_dashboard.py` only if intentionally changed
-   - `build_pypi_dashboard_pages.py` only if intentionally changed
+   - `scripts/build_livekit_pypi_dashboard.py` only if intentionally changed
+   - `scripts/build_pypi_dashboard_pages.py` only if intentionally changed
 7. Push to `origin main` if a commit was created and the user asked to publish; do not use GitHub Actions for this refresh.
 8. Verify the public page returns HTTP 200 and contains all package names plus the latest complete-week marker.
 

@@ -14,9 +14,12 @@ import json
 import sys
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from lib.npm_dashboard import VendorConfig, run, run_from_existing
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 
 # ── Twilio ─────────────────────────────────────────────────────────────────
 
