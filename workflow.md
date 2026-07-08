@@ -21,8 +21,7 @@
 
 - PowerShell：检查目录、移动文件、读取产物、做轻量校验。
 - Git：检查工作区、查看 diff、只提交本次相关文件、推送到 `origin main`。
-- Python：运行 Python dashboard 更新脚本。
-- Node.js：运行共享 npm vendor dashboard 更新脚本。
+- Python：运行所有 dashboard 更新脚本（包括 vendor 脚本，统一使用 Python）。
 - npm registry/downloads API：获取 npm 包元数据和下载量。
 - PyPI/BigQuery 或既有脚本数据源：按现有 PyPI 脚本逻辑刷新 PyPI 下载量。
 - GitHub Pages HTTP 验证：确认公开页面返回 HTTP 200，并包含关键包名、标题和最新完整周标记。
@@ -40,13 +39,13 @@
 
 - `twilio-npm-dashboard-update`
   - 用于 Twilio npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_vendor_npm_dashboards.mjs`。
+  - 脚本：`build_vendor_npm_dashboards.py`。
   - 输出：`twilio_npm_weekly_downloads.csv`、`twilio_npm_downloads_dashboard.html`、`twilio_npm_downloads_metadata.json`。
   - 关键逻辑：脚本会同时刷新 Twilio 和 Bandwidth；如果只提交 Twilio，需要只 stage Twilio 相关文件。
 
 - `bandwidth-npm-dashboard-update`
   - 用于 Bandwidth npm 周度下载 CSV、HTML dashboard、metadata JSON。
-  - 脚本：`build_vendor_npm_dashboards.mjs`。
+  - 脚本：`build_vendor_npm_dashboards.py`。
   - 输出：`bandwidth_npm_weekly_downloads.csv`、`bandwidth_npm_downloads_dashboard.html`、`bandwidth_npm_downloads_metadata.json`。
   - 关键逻辑：脚本会同时刷新 Twilio 和 Bandwidth；如果只提交 Bandwidth，需要只 stage Bandwidth 相关文件。
 
@@ -56,7 +55,7 @@
   - 输出：`livekit_npm_weekly_downloads.csv`、`livekit_npm_downloads_dashboard.html`、`livekit_npm_downloads_metadata.json`。
   - 关键逻辑：metadata 需要说明 HTML 图表排除最新不完整周，CSV 保留所有周度聚合。
 
-- `agora-pypi-dashboard-update` 或 `agora-pypi-dashboard-updater`
+- `agora-pypi-dashboard-update`
   - 用于 Agora PyPI 周度下载 CSV 和 HTML dashboard。
   - 脚本：`build_pypi_dashboard_pages.py`。
   - 输出：`agora_pypi_weekly_downloads.csv`、`agora_pypi_weekly_downloads_dashboard.html`。
@@ -79,8 +78,8 @@
 
 3. 运行更新脚本
    - Agora npm：`python build_agora_npm_dashboard.py`。
-   - Twilio/Bandwidth npm：`node "build_vendor_npm_dashboards.mjs"`。
-   - Twilio/Bandwidth 只重建页面：`node "build_vendor_npm_dashboards.mjs" --from-existing`。
+   - Twilio/Bandwidth npm：`python build_vendor_npm_dashboards.py`。
+   - Twilio/Bandwidth 只重建页面：`python build_vendor_npm_dashboards.py --from-existing`。
    - LiveKit npm：`python build_livekit_npm_dashboard.py`。
    - Agora PyPI：`python build_pypi_dashboard_pages.py`。
    - LiveKit PyPI：`python build_livekit_pypi_dashboard.py`。
