@@ -2,13 +2,11 @@
 
 ## 目标
 
-这个项目维护 Agora API 研究相关的数据看板。scheduled 更新任务需要定期刷新 npm/PyPI 下载量数据，重新生成看板文件，并按类型归档：
+这个项目维护 Agora API 研究相关的数据看板。scheduled 更新任务需要定期刷新 npm/PyPI 下载量数据，重新生成看板文件。所有脚本直接将产物写入对应目录：
 
 - `Data/`: CSV 数据文件。
 - `html/`: HTML 看板页面。根目录入口 `index.html` 例外，必须保留在项目根目录，以维持 GitHub Pages 入口。
 - `json/`: metadata JSON 文件。
-
-本次整理规则：项目根目录下已有的 `.csv` 和 `.json` 文件已经分别移动到 `Data/` 和 `json/`；看板 `.html` 文件移动到 `html/`，但根目录入口 `index.html` 保留在项目根目录。
 
 ## Scheduled 计划
 
@@ -56,14 +54,21 @@
   - 关键逻辑：metadata 需要说明 HTML 图表排除最新不完整周，CSV 保留所有周度聚合。
 
 - `agora-pypi-dashboard-update`
-  - 用于 Agora PyPI 周度下载 CSV 和 HTML dashboard。
-  - 脚本：`build_pypi_dashboard_pages.py`。
-  - 输出：`agora_pypi_weekly_downloads.csv`、`agora_pypi_weekly_downloads_dashboard.html`。
+  - 用于 Agora PyPI 周度下载 CSV、HTML dashboard、metadata JSON。
+  - 数据抓取脚本：`build_agora_pypi_dashboard.py`（从 ClickHouse 拉取下载量数据）。
+  - HTML 生成脚本：`build_pypi_dashboard_pages.py`（从 CSV 生成看板页面）。
+  - 输出：`agora_pypi_weekly_downloads.csv`、`agora_pypi_weekly_downloads_dashboard.html`、`agora_pypi_downloads_metadata.json`。
 
 - `livekit-pypi-dashboard-update`
   - 用于 LiveKit PyPI 周度下载 CSV、HTML dashboard、metadata JSON。
   - 脚本：`build_livekit_pypi_dashboard.py`。
   - 输出：`livekit_pypi_weekly_downloads.csv`、`livekit_pypi_downloads_dashboard.html`、`livekit_pypi_downloads_metadata.json`。
+
+- `rtc-competitor-dashboard-update`
+  - 用于 RTC 竞品 npm 周度下载 CSV、HTML dashboard、metadata JSON。
+  - 脚本：`build_rtc_competitor_dashboard.py`。
+  - 输出：`rtc_competitor_npm_weekly_downloads.csv`、`rtc_competitor_npm_downloads_dashboard.html`、`rtc_competitor_npm_downloads_metadata.json`。
+  - 跟踪包：trtc-cloud-js-sdk, zego-express-engine-webrtc, aliyun-rtc-sdk, @volcengine/rtc。
 
 ## 执行步骤
 
@@ -81,8 +86,9 @@
    - Twilio/Bandwidth npm：`python build_vendor_npm_dashboards.py`。
    - Twilio/Bandwidth 只重建页面：`python build_vendor_npm_dashboards.py --from-existing`。
    - LiveKit npm：`python build_livekit_npm_dashboard.py`。
-   - Agora PyPI：`python build_pypi_dashboard_pages.py`。
+   - Agora PyPI：`python build_agora_pypi_dashboard.py`（数据拉取）；`python build_pypi_dashboard_pages.py`（无网络重建 HTML）。
    - LiveKit PyPI：`python build_livekit_pypi_dashboard.py`。
+   - RTC competitor npm：`python build_rtc_competitor_dashboard.py`。
    - 网络失败时，按 Codex 权限流程请求 sandbox escalation 后重试同一命令。
 
 4. 数据和图表逻辑
@@ -97,12 +103,10 @@
    - JSON 包含源日期、完整周、图表策略。
    - 对汇总页，确认所有子看板链接仍然指向正确位置。
 
-6. 按类型归档
-   - `.csv` 放入 `Data/`。
-   - 看板 `.html` 放入 `html/`，但根目录入口 `index.html` 保留在项目根目录。
-   - `.json` 放入 `json/`。
-   - 如果脚本仍在根目录生成文件，更新完成后再次执行归档步骤。
-   - GitHub Pages 入口 `index.html` 必须保留在项目根目录；不要把它归档进 `html/`。
+6. 产出验证
+   - 脚本直接将 CSV 写入 `Data/`、HTML 写入 `html/`、JSON 写入 `json/`；无需手动归档。
+   - 验证 `Data/`、`html/`、`json/` 三个目录均存在且含预期文件。
+   - 根目录入口 `index.html` 保留在项目根目录。
 
 7. 检查 diff
    - 运行 `git diff --stat`。
@@ -126,13 +130,11 @@
 - HTML 图表包含最新不完整周：停止发布，修正过滤逻辑。
 - metadata 缺字段：停止发布，补齐 JSON 生成逻辑。
 - Git 工作区有无关改动：保留并报告，不纳入本次提交。
-- 移动文件后链接失效：更新 `index.html`、README 或 Pages 路径，直到入口可访问。
 
 ## 最小自检
 
-- `Data/`、`html/`、`json/` 存在。
-- CSV 和 JSON 都在对应目录；看板 HTML 在 `html/`，根目录入口 `index.html` 留在项目根目录。
+- `Data/`、`html/`、`json/` 存在并含预期文件。
 - 根目录保留脚本、README、样式、JS 等非数据产物。
 - 对应 skill 的 CSV/HTML/JSON 校验全部通过。
 - `git status -sb` 只显示预期变更和已知无关改动。
-- GitHub Pages 或本地入口链接没有因移动文件而断掉。
+- GitHub Pages 入口链接全部可访问。

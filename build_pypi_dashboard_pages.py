@@ -53,7 +53,7 @@ PAGES = (
         ),
         packages=(
             PackageConfig(
-                key="agora_token_builder_downloads",
+                key="agora-token-builder",
                 name="agora-token-builder",
                 role="Token Builder",
                 color="#126c73",
@@ -63,7 +63,7 @@ PAGES = (
                 ),
             ),
             PackageConfig(
-                key="agora_python_server_sdk_downloads",
+                key="agora-python-server-sdk",
                 name="agora-python-server-sdk",
                 role="Server SDK",
                 color="#a45a2a",
@@ -73,7 +73,7 @@ PAGES = (
                 ),
             ),
             PackageConfig(
-                key="agora_python_sdk_downloads",
+                key="agora-python-sdk",
                 name="agora-python-sdk",
                 role="Python SDK",
                 color="#5661a6",
@@ -83,7 +83,7 @@ PAGES = (
                 ),
             ),
             PackageConfig(
-                key="agora_realtime_ai_api_v1_downloads",
+                key="agora-realtime-ai-api-v1",
                 name="agora-realtime-ai-api-v1",
                 role="Realtime AI",
                 color="#805a7a",
@@ -158,7 +158,7 @@ PAGES = (
 
 def read_rows(csv_file: str) -> list[dict[str, int | str]]:
     rows: list[dict[str, int | str]] = []
-    with (ROOT / csv_file).open(newline="", encoding="utf-8") as handle:
+    with (ROOT / "Data" / csv_file).open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
         for row in reader:
             out: dict[str, int | str] = {"week_start": row["week_start"]}
@@ -440,7 +440,7 @@ def build_html(config: PageConfig) -> str:
       .chart-toolbar {{ justify-content: flex-start; flex-wrap: wrap; }}
     }}
   </style>
-  <link rel="stylesheet" href="dashboard_range_controls.css">
+  <link rel="stylesheet" href="../dashboard_range_controls.css">
 </head>
 <body>
   <main class="shell">
@@ -639,7 +639,7 @@ def build_html(config: PageConfig) -> str:
       }});
     }})();
   </script>
-  <script src="dashboard_range_controls.js"></script>
+  <script src="../dashboard_range_controls.js"></script>
 </body>
 </html>
 """
@@ -654,7 +654,7 @@ def build_page(output_name: str, source_last_date: str | None = None) -> str:
 
 def main() -> None:
     for config in PAGES:
-        output = ROOT / config.output
+        output = ROOT / "html" / config.output
         output.write_text(build_html(config), encoding="utf-8")
         print(f"wrote {output.name}")
 

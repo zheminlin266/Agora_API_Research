@@ -573,7 +573,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
       h1 {{ font-size: 24px; }}
     }}
   </style>
-  <link rel="stylesheet" href="dashboard_range_controls.css">
+  <link rel="stylesheet" href="../dashboard_range_controls.css">
 </head>
 <body>
   <main>
@@ -598,7 +598,7 @@ def build_html(rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest
     </section>
   </main>
   {dashboard_script}
-  <script src="dashboard_range_controls.js"></script>
+  <script src="../dashboard_range_controls.js"></script>
 </body>
 </html>"""
 
