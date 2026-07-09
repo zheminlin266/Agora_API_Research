@@ -7,8 +7,10 @@
   <style>
     :root { --ink: #162033; --muted: #596579; --line: #dbe2ea; --soft: #f5f7fb; --panel: #ffffff; --accent: #2563eb; }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f7f8fb; color: var(--ink); }
-    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 32px 0 48px; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; background: #f7f8fb; color: var(--ink); }
+    .btn-home a { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; margin-bottom: 4px; color: var(--accent); font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); transition: all .15s ease; }
+    .btn-home a:hover { border-color: var(--accent); background: rgba(37, 99, 235, 0.06); }
+    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 32px 32px 48px; }
     header { margin-bottom: 22px; }
     h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.2; letter-spacing: 0; }
     .subtitle { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
@@ -60,6 +62,7 @@
 <body>
   <main>
     <header>
+      <div class="btn-home"><a href="../index.html">← 返回首页</a></div>
       <h1>Twilio npm 周下载量看板</h1>
       <p class="subtitle">数据来自官方 npm downloads API，并按周一开始的自然周汇总。CSV 文件保留最新未完整周；HTML 图表只展示完整周。npm 下载量包含 CI、镜像、机器人和缓存影响，因此更适合作为开发者需求的方向性信号，而不是客户数量或实际运行使用量。</p>
     </header>
