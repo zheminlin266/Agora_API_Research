@@ -1,19 +1,19 @@
 {
-  "generated_at_utc": "2026-07-08T09:19:04.155823+00:00",
+  "generated_at_utc": "2026-07-14T15:00:51.226214+00:00",
   "vendor": "rtc-competitor",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-07-07",
-    "html_chart_complete_through_week_start": "2026-06-29",
+    "latest_download_day": "2026-07-13",
+    "html_chart_complete_through_week_start": "2026-07-06",
     "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
     "caveat": "npm download counts include automation, mirrors, robots, cache effects, and dependency installs."
   },
   "csv": {
     "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\Agora_API_Research\\Data\\rtc_competitor_npm_weekly_downloads.csv",
-    "rows": 328,
+    "rows": 329,
     "columns": [
       "week_start",
       "trtc-cloud-js-sdk",
@@ -26,8 +26,8 @@
     "trtc-cloud-js-sdk": {
       "exists": true,
       "created": "2022-09-02T13:54:39.581Z",
-      "modified": "2026-07-07T13:32:14.951Z",
-      "latest_version": "2.12.3",
+      "modified": "2026-07-13T07:46:06.868Z",
+      "latest_version": "2.13.0",
       "description": "Tencent Cloud RTC SDK for Web And Electron",
       "error": null
     },
@@ -50,7 +50,7 @@
     "@volcengine/rtc": {
       "exists": true,
       "created": "2022-03-30T15:19:36.405Z",
-      "modified": "2026-06-18T13:28:38.181Z",
+      "modified": "2026-07-14T02:54:15.172Z",
       "latest_version": "4.68.5",
       "description": "Volcano Engine WebRTC SDK",
       "error": null
