@@ -1,4 +1,0 @@
-interface:
-  display_name: "Bandwidth npm Dashboard Update"
-  short_description: "Update Bandwidth npm weekly downloads CSV and dashboard."
-  default_prompt: "Use $bandwidth-npm-dashboard-update to refresh the Bandwidth npm downloads CSV/dashboard, validate it, and commit/push the root artifacts in Codex, then verify the public page."

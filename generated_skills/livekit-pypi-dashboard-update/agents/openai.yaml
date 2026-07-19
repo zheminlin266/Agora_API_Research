@@ -1,4 +1,4 @@
 interface:
-  display_name: "LiveKit PyPI Dashboard Update"
-  short_description: "Update LiveKit PyPI weekly downloads CSV and dashboard."
-  default_prompt: "Use $livekit-pypi-dashboard-update to refresh the LiveKit PyPI downloads CSV/dashboard, validate it, and commit/push the root artifacts in Codex, then verify the public page."
+  display_name: "LiveKit PyPI Data Update"
+  short_description: "Refresh LiveKit PyPI data for the single-page dashboard."
+  default_prompt: "Use $livekit-pypi-dashboard-update to refresh the LiveKit PyPI CSV and metadata, validate the root dashboard, and report the result."

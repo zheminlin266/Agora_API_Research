@@ -1,0 +1,3 @@
+[submodule "Resources/audio_video_streaming"]
+	path = Resources/audio_video_streaming
+	url = https://github.com/0voice/audio_video_streaming.git
