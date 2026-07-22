@@ -28,3 +28,6 @@ Thumbs.db
 *.tmp
 *.bak
 base64_content.txt
+
+.vercel
+.env*
