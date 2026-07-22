@@ -1,0 +1,78 @@
+{
+  "generated_at_utc": "2026-07-14T14:53:17+00:00",
+  "vendor": "agora",
+  "source": {
+    "download_table": "pypi.pypi_downloads_per_day",
+    "download_provider": "ClickPy public ClickHouse endpoint",
+    "download_endpoint": "https://sql-clickhouse.clickhouse.com/",
+    "metadata_provider": "PyPI JSON API",
+    "source_last_date": "2026-07-13",
+    "weekly_grain": "Monday-start weeks",
+    "html_chart_policy": "HTML line charts use complete-week metrics; CSV retains all weekly aggregates."
+  },
+  "dataset": {
+    "csv": "agora_pypi_weekly_downloads.csv",
+    "html": "agora_pypi_weekly_downloads_dashboard.html",
+    "rows": 299,
+    "first_week_start": "2020-10-26",
+    "last_week_start": "2026-07-13",
+    "latest_complete_week_start": "2026-07-06",
+    "columns": [
+      "week_start",
+      "agora-token-builder",
+      "agora-python-server-sdk",
+      "agora-python-sdk",
+      "agora-realtime-ai-api-v1"
+    ]
+  },
+  "packages": {
+    "agora-token-builder": {
+      "exists": true,
+      "role": "Token Builder",
+      "summary": "Agora Token Builder. RTC & RTM",
+      "latest_version": "1.0.0",
+      "requires_python": "",
+      "first_upload": "2021-12-29",
+      "package_url": "https://pypi.org/project/agora-token-builder/",
+      "source_url": "https://github.com/AgoraIO-Community/python-token-builder",
+      "note": "服务端生成 Agora RTC/RTM token，用于鉴权、频道加入权限和后端接入流程。该包的持续上行通常更接近后端项目开始集成 Agora 鉴权体系的信号。",
+      "error": null
+    },
+    "agora-python-server-sdk": {
+      "exists": true,
+      "role": "Server SDK",
+      "summary": "A Python SDK for Agora Server",
+      "latest_version": "2.4.9",
+      "requires_python": ">=3.10",
+      "first_upload": "2024-09-14",
+      "package_url": "https://pypi.org/project/agora-python-server-sdk/",
+      "source_url": "https://github.com/AgoraIO-Extensions/Agora-Python-Server-SDK",
+      "note": "Python 服务端 SDK，面向房间、用户、录制、REST/服务端 API 等后台管理能力。它更能反映 Python 后端服务把 Agora 能力接入生产或测试环境的需求。",
+      "error": null
+    },
+    "agora-python-sdk": {
+      "exists": true,
+      "role": "Python SDK",
+      "summary": "Agora RTC Python SDK",
+      "latest_version": "3.4.2.1",
+      "requires_python": ">=3.6",
+      "first_upload": "2021-02-20",
+      "package_url": "https://pypi.org/project/agora-python-sdk/",
+      "source_url": "https://github.com/AgoraIO-Community/Agora-Python-SDK",
+      "note": "较早期或通用 Python SDK 包，可能包含历史依赖、测试、自动化脚本和旧项目拉取。该列适合看长期基线和老包残余需求，不适合单独代表新产品采用。",
+      "error": null
+    },
+    "agora-realtime-ai-api-v1": {
+      "exists": true,
+      "role": "Realtime AI",
+      "summary": "Agora's low latency, high performance Realtime API to work with Voice Conversational AI",
+      "latest_version": "0.0.3",
+      "requires_python": ">=3.10",
+      "first_upload": "2024-12-07",
+      "package_url": "https://pypi.org/project/agora-realtime-ai-api-v1/",
+      "source_url": "https://github.com/weedge/agora-realtime-ai-api",
+      "note": "实时 AI / 语音 AI API 相关包，面向低延迟语音交互、Agent 或实时会话实验。目前基数较小，重点看是否出现连续多周放量，而不是单周波动。",
+      "error": null
+    }
+  }
+}
