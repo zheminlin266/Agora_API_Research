@@ -13,8 +13,8 @@ from lib.npm_dashboard import VendorConfig, run
 CONFIG = VendorConfig(
     vendor="twilio",
     packages=["@twilio/voice-sdk", "twilio"],
-    csv_path=ROOT / "Data" / "twilio_npm_weekly_downloads.csv",
-    meta_path=ROOT / "json" / "twilio_npm_downloads_metadata.json",
+    csv_path=ROOT / "public" / "data" / "dev-npm-downloads" / "Data" / "twilio_npm_weekly_downloads.csv",
+    meta_path=ROOT / "public" / "data" / "dev-npm-downloads" / "json" / "twilio_npm_downloads_metadata.json",
     user_agent="codex-twilio-npm-dashboard/2.0",
 )
 

@@ -1,5 +1,5 @@
-import { AgoraHome } from "@/components/agora-home";
+import { HomePageContent } from "@/components/home-page";
 
 export default function HomePage() {
-  return <AgoraHome />;
+  return <HomePageContent />;
 }

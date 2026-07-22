@@ -13,8 +13,8 @@ from lib.npm_dashboard import VendorConfig, run
 CONFIG = VendorConfig(
     vendor="agora",
     packages=["agora-rtc-sdk-ng", "agora-rtm-sdk", "agora-rtc-react", "react-native-agora"],
-    csv_path=ROOT / "Data" / "agora_npm_weekly_downloads.csv",
-    meta_path=ROOT / "json" / "agora_npm_downloads_metadata.json",
+    csv_path=ROOT / "public" / "data" / "dev-npm-downloads" / "Data" / "agora_npm_weekly_downloads.csv",
+    meta_path=ROOT / "public" / "data" / "dev-npm-downloads" / "json" / "agora_npm_downloads_metadata.json",
     user_agent="codex-agora-npm-dashboard/2.0",
 )
 

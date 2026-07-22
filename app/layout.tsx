@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 
+import { SitePreferencesProvider } from "@/components/site-preferences";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,7 +23,7 @@ export default function RootLayout({
             document.documentElement.dataset.theme = saved === "dark" || saved === "light" ? saved : system;
           } catch {}
         `}</Script>
-        {children}
+        <SitePreferencesProvider>{children}</SitePreferencesProvider>
       </body>
     </html>
   );

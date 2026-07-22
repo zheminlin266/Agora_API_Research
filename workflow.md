@@ -1,13 +1,13 @@
-# 单页看板更新流程
+# RTC 开发者下载看板更新流程
 
 ## 目标
 
-每周刷新首页使用的六个数据集。更新任务只生成：
+刷新 `/Demand/Dev_npm_downloads/` 使用的六个周度数据集：
 
-- `Data/*.csv`
-- `json/*.json`
+- `public/data/dev-npm-downloads/Data/*.csv`
+- `public/data/dev-npm-downloads/json/*.json`
 
-`index.html`、`css/home.css` 和 `scripts/home.js` 是唯一页面层，不生成独立 HTML 子页面。
+页面层由 `app/Demand/Dev_npm_downloads/` 和 `components/download-dashboard.tsx` 维护。数据更新任务不生成 HTML、CSS 或 JavaScript 文件。
 
 ## 更新入口
 
@@ -33,13 +33,19 @@
    - 包含数据来源和生成时间；
    - 包含 `source.latest_complete_week_start`；
    - `dataset.columns` 与 CSV header 一致。
-5. 本地启动静态服务器并打开根目录页面，确认 17 张图均可加载，时间范围和深浅色切换正常。
-6. 用 `git diff --stat` 和 `git diff --check` 检查变更，只提交本次更新的数据集。
-7. 用户要求发布时再提交、推送，并验证 GitHub Pages 根页面。
+5. 运行 `npm run typecheck` 和 `npm run build`。
+6. 启动生产预览并检查：
+   - `/` 与 `/Demand/Dev_npm_downloads/` 均返回 200；
+   - 17 张图表全部加载；
+   - 中英文和明暗主题切换正常；
+   - 时间范围切换正常；
+   - 浏览器控制台无错误。
+7. 用 `git diff --stat` 和 `git diff --check` 检查变更，只提交本次数据文件。
+8. 用户要求发布时再推送，并在 `https://agora.zhemin.ltd/Demand/Dev_npm_downloads/` 验证生产页面。
 
 ## 完整周规则
 
-CSV 可以保留最新未完整周；首页以六个数据集共同可用的最近完整周为截止日。不得用部分周数据计算最新值或同比。
+CSV 可以保留最新未完整周；页面以六个数据集共同可用的最近完整周为截止日。不得用部分周数据计算最新值或同比。
 
 ## 保留范围
 

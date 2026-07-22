@@ -13,8 +13,8 @@ from lib.npm_dashboard import VendorConfig, run
 CONFIG = VendorConfig(
     vendor="tencent",
     packages=["trtc-cloud-js-sdk"],
-    csv_path=ROOT / "Data" / "rtc_competitor_npm_weekly_downloads.csv",
-    meta_path=ROOT / "json" / "rtc_competitor_npm_downloads_metadata.json",
+    csv_path=ROOT / "public" / "data" / "dev-npm-downloads" / "Data" / "rtc_competitor_npm_weekly_downloads.csv",
+    meta_path=ROOT / "public" / "data" / "dev-npm-downloads" / "json" / "rtc_competitor_npm_downloads_metadata.json",
     user_agent="codex-rtc-competitor-dashboard/2.0",
 )
 

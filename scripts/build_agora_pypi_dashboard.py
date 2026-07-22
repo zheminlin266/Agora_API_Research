@@ -13,8 +13,8 @@ from lib.pypi_dashboard import PyPIConfig, run_pypi
 CONFIG = PyPIConfig(
     vendor="agora",
     packages=["agora-token-builder", "agora-python-server-sdk"],
-    csv_path=ROOT / "Data" / "agora_pypi_weekly_downloads.csv",
-    meta_path=ROOT / "json" / "agora_pypi_downloads_metadata.json",
+    csv_path=ROOT / "public" / "data" / "dev-npm-downloads" / "Data" / "agora_pypi_weekly_downloads.csv",
+    meta_path=ROOT / "public" / "data" / "dev-npm-downloads" / "json" / "agora_pypi_downloads_metadata.json",
     user_agent="codex-agora-pypi-dashboard/2.0",
 )
 

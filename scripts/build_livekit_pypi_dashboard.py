@@ -13,8 +13,8 @@ from lib.pypi_dashboard import PyPIConfig, run_pypi
 CONFIG = PyPIConfig(
     vendor="livekit",
     packages=["livekit", "livekit-api", "livekit-agents"],
-    csv_path=ROOT / "Data" / "livekit_pypi_weekly_downloads.csv",
-    meta_path=ROOT / "json" / "livekit_pypi_downloads_metadata.json",
+    csv_path=ROOT / "public" / "data" / "dev-npm-downloads" / "Data" / "livekit_pypi_weekly_downloads.csv",
+    meta_path=ROOT / "public" / "data" / "dev-npm-downloads" / "json" / "livekit_pypi_downloads_metadata.json",
     user_agent="codex-livekit-pypi-dashboard/2.0",
 )
 

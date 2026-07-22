@@ -19,8 +19,8 @@ CONFIG = VendorConfig(
         "@livekit/agents",
         "@livekit/agents-plugin-silero",
     ],
-    csv_path=ROOT / "Data" / "livekit_npm_weekly_downloads.csv",
-    meta_path=ROOT / "json" / "livekit_npm_downloads_metadata.json",
+    csv_path=ROOT / "public" / "data" / "dev-npm-downloads" / "Data" / "livekit_npm_weekly_downloads.csv",
+    meta_path=ROOT / "public" / "data" / "dev-npm-downloads" / "json" / "livekit_npm_downloads_metadata.json",
     user_agent="codex-livekit-npm-dashboard/2.0",
 )
 
