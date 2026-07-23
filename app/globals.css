@@ -180,6 +180,7 @@ p {
   cursor: pointer;
   font-size: 14px;
   line-height: 22px;
+  text-decoration: none;
   transition: color 150ms ease, transform 150ms ease;
   user-select: none;
 }
@@ -233,8 +234,13 @@ p {
   color: var(--foreground);
   cursor: default;
   text-align: left;
+  text-decoration: none;
   transition: background-color 140ms ease;
   white-space: nowrap;
+}
+
+.nav-menu__item[href] {
+  cursor: pointer;
 }
 
 .nav-menu__item:hover,

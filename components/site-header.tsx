@@ -188,19 +188,32 @@ export function SiteHeader() {
                   if (event.pointerType === "mouse") scheduleClose();
                 }}
               >
-                <button
-                  aria-controls={panelId}
-                  aria-expanded={isOpen}
-                  aria-haspopup="true"
-                  className="nav-menu__trigger"
-                  onClick={() => {
-                    cancelClose();
-                    setOpenMenu((current) => current === item.key ? null : item.key);
-                  }}
-                  type="button"
-                >
-                  {item[language]}
-                </button>
+                {item.key === "home" ? (
+                  <a
+                    aria-controls={panelId}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    className="nav-menu__trigger"
+                    href="/"
+                    onClick={closeMenu}
+                  >
+                    {item[language]}
+                  </a>
+                ) : (
+                  <button
+                    aria-controls={panelId}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    className="nav-menu__trigger"
+                    onClick={() => {
+                      cancelClose();
+                      setOpenMenu((current) => current === item.key ? null : item.key);
+                    }}
+                    type="button"
+                  >
+                    {item[language]}
+                  </button>
+                )}
                 <div className="nav-menu__panel" id={panelId}>
                   {menuItems[language][item.key].map((menuItem) =>
                     "href" in menuItem ? (
