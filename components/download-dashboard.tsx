@@ -88,7 +88,7 @@ const copy = {
     backToTop: "返回顶部",
   },
   en: {
-    title: "RTC developer ecosystem",
+    title: "RTC Developer Ecosystem",
     intro: "Track public package downloads to understand changes in developer adoption across real-time engagement products.",
     caveat: "The dashboard covers 17 npm and PyPI packages. Every series is aggregated weekly and aligned to the latest complete week. Downloads approximate ecosystem activity; they do not equal customers or revenue.",
     summaryLabel: "Data coverage",

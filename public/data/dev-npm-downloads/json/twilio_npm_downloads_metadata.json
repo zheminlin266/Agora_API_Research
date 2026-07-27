@@ -1,65 +1,37 @@
 {
-  "generated_at_utc": "2026-07-14T15:00:16.896394+00:00",
+  "generated_at_utc": "2026-07-27T09:13:53.313501+00:00",
   "vendor": "twilio",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
-    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-07-13",
-    "html_chart_complete_through_week_start": "2026-07-06",
-    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
-    "caveat": "npm download counts include automation, mirrors, robots, cache effects, and dependency installs."
+    "latest_download_day": "2026-07-24",
+    "latest_complete_week_start": "2026-07-13",
+    "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
   },
-  "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\Agora_API_Research\\Data\\twilio_npm_weekly_downloads.csv",
-    "rows": 802,
+  "dataset": {
+    "csv": "twilio_npm_weekly_downloads.csv",
+    "rows": 803,
     "columns": [
       "week_start",
-      "twilio-video",
       "@twilio/voice-sdk",
-      "@twilio/video-react-native-sdk",
-      "@twilio/video-processors",
       "twilio"
-    ]
+    ],
+    "latest_complete_week_start": "2026-07-13"
   },
   "packages": {
-    "twilio-video": {
-      "exists": true,
-      "created": "2016-10-04T00:35:38.307Z",
-      "modified": "2026-07-07T18:21:01.130Z",
-      "latest_version": "2.35.0",
-      "description": "Twilio Video JavaScript Library",
-      "error": null
-    },
     "@twilio/voice-sdk": {
       "exists": true,
       "created": "2021-07-09T17:14:17.395Z",
-      "modified": "2026-07-07T18:08:48.803Z",
+      "modified": "2026-07-21T17:16:22.021Z",
       "latest_version": "2.18.3",
       "description": "Twilio's JavaScript Voice SDK",
-      "error": null
-    },
-    "@twilio/video-react-native-sdk": {
-      "exists": true,
-      "created": "2025-11-12T10:16:11.897Z",
-      "modified": "2026-07-07T18:21:11.774Z",
-      "latest_version": "3.5.0",
-      "description": "Twilio Video WebRTC for React Native.",
-      "error": null
-    },
-    "@twilio/video-processors": {
-      "exists": true,
-      "created": "2021-06-16T21:12:22.963Z",
-      "modified": "2026-07-07T18:20:59.585Z",
-      "latest_version": "3.2.0",
-      "description": "Twilio Video Processors JavaScript Library",
       "error": null
     },
     "twilio": {
       "exists": true,
       "created": "2011-03-08T00:34:18.576Z",
-      "modified": "2026-05-07T16:42:29.589Z",
+      "modified": "2026-07-21T17:16:28.381Z",
       "latest_version": "6.0.2",
       "description": "A Twilio helper library",
       "error": null

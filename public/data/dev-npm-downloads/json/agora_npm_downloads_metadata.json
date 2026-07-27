@@ -1,48 +1,33 @@
 {
-  "generated_at_utc": "2026-07-14T14:58:28.961409+00:00",
+  "generated_at_utc": "2026-07-27T09:13:02.850408+00:00",
   "vendor": "agora",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
-    "range_limit_note": "npm downloads API is queried in 548-day chunks.",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-07-13",
-    "html_chart_complete_through_week_start": "2026-07-06",
-    "html_chart_policy": "HTML line charts exclude the latest incomplete week; CSV retains all weekly aggregates.",
-    "caveat": "npm download counts include automation, mirrors, robots, cache effects, and dependency installs."
+    "latest_download_day": "2026-07-24",
+    "latest_complete_week_start": "2026-07-13",
+    "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
   },
-  "csv": {
-    "path": "D:\\【07】研究\\【01】企业和主题研究\\51 声网 API\\Agora_API_Research\\Data\\agora_npm_weekly_downloads.csv",
-    "rows": 475,
+  "dataset": {
+    "csv": "agora_npm_weekly_downloads.csv",
+    "rows": 476,
     "columns": [
       "week_start",
       "agora-rtc-sdk-ng",
-      "agora-rtc-sdk",
-      "rtc-sdk-total",
       "agora-rtm-sdk",
       "agora-rtc-react",
-      "react-native-agora",
-      "agora-agent-server-sdk",
-      "agora-agent-client-toolkit",
-      "agora-agent-uikit",
-      "agora-conversational-ai-denoiser"
-    ]
+      "react-native-agora"
+    ],
+    "latest_complete_week_start": "2026-07-13"
   },
   "packages": {
     "agora-rtc-sdk-ng": {
       "exists": true,
       "created": "2020-03-02T11:06:28.278Z",
-      "modified": "2026-07-13T07:19:15.365Z",
+      "modified": "2026-07-21T07:45:57.496Z",
       "latest_version": "4.24.6",
       "description": "Agora WebRTC SDK for JavaScript",
-      "error": null
-    },
-    "agora-rtc-sdk": {
-      "exists": true,
-      "created": "2018-04-10T08:35:15.112Z",
-      "modified": "2023-10-26T08:08:43.626Z",
-      "latest_version": "3.6.11",
-      "description": "AgoraRTC SDK for web",
       "error": null
     },
     "agora-rtm-sdk": {
@@ -68,47 +53,6 @@
       "latest_version": "4.6.2",
       "description": "Agora RTC SDK For React Native",
       "error": null
-    },
-    "agora-agent-server-sdk": {
-      "exists": true,
-      "created": "2026-03-14T10:14:36.708Z",
-      "modified": "2026-06-30T13:21:41.427Z",
-      "latest_version": "2.4.0",
-      "description": "Compatibility shim for the renamed agora-agents package.",
-      "error": null
-    },
-    "agora-agent-client-toolkit": {
-      "exists": true,
-      "created": "2026-03-15T11:48:05.077Z",
-      "modified": "2026-07-10T06:15:27.612Z",
-      "latest_version": "2.9.0",
-      "description": "Agora Agent Client Toolkit — real-time voice agent integration for web",
-      "error": null
-    },
-    "agora-agent-uikit": {
-      "exists": true,
-      "created": "2026-03-20T03:41:49.381Z",
-      "modified": "2026-04-10T14:55:17.400Z",
-      "latest_version": "1.1.0",
-      "description": "React component library for building conversational, voice, video, and biomarker AI interfaces with Agora",
-      "error": null
-    },
-    "agora-conversational-ai-denoiser": {
-      "exists": true,
-      "created": "2025-03-04T12:11:11.292Z",
-      "modified": "2025-03-05T08:03:59.832Z",
-      "latest_version": "1.0.0-beta2",
-      "description": "Agora AI Denoiser for Web SDK in Conversational AI Scenarios",
-      "error": null
-    }
-  },
-  "derived_columns": {
-    "rtc-sdk-total": {
-      "formula": "sum(agora-rtc-sdk-ng+agora-rtc-sdk)",
-      "sources": [
-        "agora-rtc-sdk-ng",
-        "agora-rtc-sdk"
-      ]
     }
   }
 }
