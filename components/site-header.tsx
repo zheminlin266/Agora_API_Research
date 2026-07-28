@@ -17,30 +17,40 @@ const navigation: Array<{ key: MenuKey; zh: string; en: string }> = [
 
 const menuItems = {
   zh: {
-    home: [{ title: "标题 1" }, { title: "标题 2" }, { title: "标题 3" }],
+    home: [],
     demand: [
-      { title: "RTC Dev npm downloads", href: "/Demand/Dev_npm_downloads/" },
-      { title: "标题 2" },
-      { title: "标题 3" },
+      { title: "RTC行业需求", href: "/Demand/RTC_industry_demand/" },
+      { title: "RTC Dev npm Download", href: "/Demand/Dev_npm_downloads/" },
     ],
-    supply: [{ title: "标题 1" }, { title: "标题 2" }, { title: "标题 3" }],
-    agora: [{ title: "标题 1" }, { title: "标题 2" }, { title: "标题 3" }],
+    supply: [
+      { title: "RTC 行业供给", href: "/Supply/RTC_supply/" },
+      { title: "AI对RTC业务护城河的影响", href: "/Supply/AI_RTC_moats/" },
+    ],
+    agora: [
+      { title: "声网客户场景和竞争分析", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
+      { title: "Whatnot & Agora直播合作", href: "/Agora/Whatnot_Agora_Partnership/" },
+    ],
   },
   en: {
-    home: [{ title: "Title 1" }, { title: "Title 2" }, { title: "Title 3" }],
+    home: [],
     demand: [
-      { title: "RTC Dev npm downloads", href: "/Demand/Dev_npm_downloads/" },
-      { title: "Title 2" },
-      { title: "Title 3" },
+      { title: "RTC Industry Demand", href: "/Demand/RTC_industry_demand/" },
+      { title: "RTC Dev npm Download", href: "/Demand/Dev_npm_downloads/" },
     ],
-    supply: [{ title: "Title 1" }, { title: "Title 2" }, { title: "Title 3" }],
-    agora: [{ title: "Title 1" }, { title: "Title 2" }, { title: "Title 3" }],
+    supply: [
+      { title: "RTC Industry Supply", href: "/Supply/RTC_supply/" },
+      { title: "Impact of AI on RTC Business Moats", href: "/Supply/AI_RTC_moats/" },
+    ],
+    agora: [
+      { title: "Agora Customer Scenarios & Competitive Analysis", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
+      { title: "Whatnot & Agora Livestream Partnership", href: "/Agora/Whatnot_Agora_Partnership/" },
+    ],
   },
 } as const;
 
 const labels = {
   zh: {
-    brand: "Agora Research 首页",
+    brand: "Agora Equity Research 首页",
     navigation: "主导航",
     settings: "页面设置",
     switchLanguage: "切换为英文",
@@ -48,7 +58,7 @@ const labels = {
     switchToDark: "切换为深色模式",
   },
   en: {
-    brand: "Agora Research home",
+    brand: "Agora Equity Research home",
     navigation: "Primary navigation",
     settings: "Page settings",
     switchLanguage: "Switch to Chinese",
@@ -80,6 +90,7 @@ export function SiteHeader() {
   const [headerHidden, setHeaderHidden] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverOpenedMenu = useRef<MenuKey | null>(null);
   const lastScrollY = useRef(0);
   const text = labels[language];
 
@@ -92,12 +103,14 @@ export function SiteHeader() {
 
   function closeMenu() {
     cancelClose();
+    hoverOpenedMenu.current = null;
     setOpenMenu(null);
   }
 
   function scheduleClose() {
     cancelClose();
     closeTimer.current = setTimeout(() => {
+      hoverOpenedMenu.current = null;
       setOpenMenu(null);
       closeTimer.current = null;
     }, 280);
@@ -159,13 +172,15 @@ export function SiteHeader() {
           <span className="site-brand__mark">
             <Image alt="" aria-hidden="true" height={32} priority src={agoraLogo} width={32} />
           </span>
-          <span>Agora Research</span>
+          <span>Agora Equity Research</span>
         </a>
 
         <nav aria-label={text.navigation} className="site-nav" ref={navRef}>
           {navigation.map((item) => {
             const isOpen = openMenu === item.key;
             const panelId = `${item.key}-menu-panel`;
+            const items = menuItems[language][item.key];
+            const hasPanel = items.length > 0;
 
             return (
               <div
@@ -181,6 +196,7 @@ export function SiteHeader() {
                 onPointerEnter={(event) => {
                   if (event.pointerType === "mouse") {
                     cancelClose();
+                    hoverOpenedMenu.current = item.key;
                     setOpenMenu(item.key);
                   }
                 }}
@@ -190,9 +206,6 @@ export function SiteHeader() {
               >
                 {item.key === "home" ? (
                   <a
-                    aria-controls={panelId}
-                    aria-expanded={isOpen}
-                    aria-haspopup="true"
                     className="nav-menu__trigger"
                     href="/"
                     onClick={closeMenu}
@@ -201,12 +214,16 @@ export function SiteHeader() {
                   </a>
                 ) : (
                   <button
-                    aria-controls={panelId}
-                    aria-expanded={isOpen}
-                    aria-haspopup="true"
+                    aria-controls={hasPanel ? panelId : undefined}
+                    aria-expanded={hasPanel ? isOpen : undefined}
                     className="nav-menu__trigger"
                     onClick={() => {
                       cancelClose();
+                      if (hoverOpenedMenu.current === item.key) {
+                        hoverOpenedMenu.current = null;
+                        setOpenMenu(item.key);
+                        return;
+                      }
                       setOpenMenu((current) => current === item.key ? null : item.key);
                     }}
                     type="button"
@@ -214,19 +231,13 @@ export function SiteHeader() {
                     {item[language]}
                   </button>
                 )}
-                <div className="nav-menu__panel" id={panelId}>
-                  {menuItems[language][item.key].map((menuItem) =>
-                    "href" in menuItem ? (
-                      <a className="nav-menu__item" href={menuItem.href} key={menuItem.title}>
-                        <span>{menuItem.title}</span>
-                      </a>
-                    ) : (
-                      <button className="nav-menu__item" key={menuItem.title} type="button">
-                        <span>{menuItem.title}</span>
-                      </button>
-                    ),
-                  )}
-                </div>
+                {hasPanel && <div className="nav-menu__panel" id={panelId}>
+                  {items.map((menuItem) => (
+                    <a className="nav-menu__item" href={menuItem.href} key={menuItem.title}>
+                      <span>{menuItem.title}</span>
+                    </a>
+                  ))}
+                </div>}
               </div>
             );
           })}

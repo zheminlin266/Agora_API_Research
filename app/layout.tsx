@@ -6,7 +6,7 @@ import { SitePreferencesProvider } from "@/components/site-preferences";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Agora Research",
+  title: "Agora Equity Research",
   description: "聚焦实时互动行业需求、供给格局与声网竞争优势的独立研究。",
 };
 
