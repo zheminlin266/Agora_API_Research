@@ -1774,3 +1774,26 @@ p {
   background: transparent;
   color: var(--foreground);
 }
+
+
+/* Site-wide content-aware article tables */
+.article-table-wrap {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.article-table,
+.article-table--wide {
+  width: 100%;
+  min-width: 0;
+  table-layout: auto;
+}
+
+.article-table th,
+.article-table td {
+  width: auto !important;
+  white-space: normal !important;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
