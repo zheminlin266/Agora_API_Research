@@ -26,6 +26,7 @@ const menuItems = {
     supply: [
       { title: "RTC 行业供给", href: "/Supply/RTC_supply/" },
       { title: "AI对RTC业务护城河的影响", href: "/Supply/AI_RTC_moats/" },
+      { title: "OpenAI 与 LiveKit 关系", href: "/Supply/OpenAI_LiveKit_Relationship/" },
     ],
     agora: [
       { title: "声网客户场景和竞争分析", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
@@ -44,6 +45,7 @@ const menuItems = {
     supply: [
       { title: "RTC Industry Supply", href: "/Supply/RTC_supply/" },
       { title: "Impact of AI on RTC Business Moats", href: "/Supply/AI_RTC_moats/" },
+      { title: "OpenAI and LiveKit Relationship", href: "/Supply/OpenAI_LiveKit_Relationship/" },
     ],
     agora: [
       { title: "Agora Customer Scenarios & Competitive Analysis", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
