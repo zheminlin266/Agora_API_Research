@@ -1754,3 +1754,11 @@ p {
     line-height: 18px;
   }
 }
+
+
+/* Normalize article-table cell wrapping */
+.article-table th,
+.article-table td {
+  white-space: normal !important;
+  word-break: break-word;
+}
