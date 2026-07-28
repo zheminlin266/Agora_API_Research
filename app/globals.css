@@ -1832,7 +1832,7 @@ p {
 
 .article-table--relationship th:nth-child(1),
 .article-table--relationship td:nth-child(1) {
-  width: 12% !important;
+  width: 10% !important;
 }
 
 .article-table--relationship th:nth-child(2),
@@ -1842,12 +1842,12 @@ p {
 
 .article-table--relationship th:nth-child(3),
 .article-table--relationship td:nth-child(3) {
-  width: 28% !important;
+  width: 23% !important;
 }
 
 .article-table--relationship th:nth-child(4),
 .article-table--relationship td:nth-child(4) {
-  width: 20% !important;
+  width: 27% !important;
 }
 
 .article-table--relationship th:nth-child(5),
