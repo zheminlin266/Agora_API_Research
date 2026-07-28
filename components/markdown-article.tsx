@@ -203,6 +203,7 @@ function getTableClass(headers: string[]) {
 }
 type MarkdownArticleProps = {
   markdown: string;
+  language?: "zh" | "en";
   articleTitle?: string;
   publicationDateLabel?: string;
   backToTopLabel?: string;
@@ -211,6 +212,7 @@ type MarkdownArticleProps = {
 
 export function MarkdownArticle({
   markdown,
+  language = "zh",
   articleTitle,
   publicationDateLabel = "2026年7月",
   backToTopLabel = "返回顶部",
@@ -244,6 +246,19 @@ export function MarkdownArticle({
               return <Heading id={getHeadingId(block.content, index)} key={`heading-${index}`}>{renderInline(block.content, `heading-${index}`)}</Heading>;
             }
             if (block.kind === "paragraph") {
+              if (block.content.includes("agora-share-repurchase-quarterly.html")) {
+                const chartLanguage = language === "en" ? "en" : "zh";
+                return (
+                  <div className="article-chart-embed" key={`chart-${index}`}>
+                    <iframe
+                      height="560"
+                      loading="lazy"
+                      src={`/agora-share-repurchase-quarterly.html?embed=1&lang=${chartLanguage}`}
+                      title={chartLanguage === "en" ? "Interactive quarterly share repurchase chart" : "季度回购交互图表"}
+                    />
+                  </div>
+                );
+              }
               return <p key={`paragraph-${index}`}>{renderInline(block.content, `paragraph-${index}`)}</p>;
             }
             if (block.kind === "ordered-list") return <div key={`ordered-${index}`}>{renderList(block.items, true)}</div>;

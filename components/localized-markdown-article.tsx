@@ -36,6 +36,7 @@ export function LocalizedMarkdownArticle({
     <MarkdownArticle
       backToTopLabel={isEnglish ? "Back to top" : "返回顶部"}
       articleTitle={articleTitle}
+      language={language}
       markdown={isEnglish ? enMarkdown : zhMarkdown}
       publicationDateLabel={isEnglish ? "July 2026" : "2026年7月"}
       tocLabels={isEnglish ? {

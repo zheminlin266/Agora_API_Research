@@ -27,6 +27,8 @@ const menuItems = {
       { title: "AI对RTC业务护城河的影响", href: "/Supply/AI_RTC_moats/" },
     ],
     agora: [
+      { title: "股权结构与回购分析", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
+      { title: "员工人数变化", href: "/Agora/Employee_Headcount_Changes/" },
       { title: "声网客户场景和竞争分析", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
       { title: "Whatnot & Agora直播合作", href: "/Agora/Whatnot_Agora_Partnership/" },
     ],
@@ -42,6 +44,8 @@ const menuItems = {
       { title: "Impact of AI on RTC Business Moats", href: "/Supply/AI_RTC_moats/" },
     ],
     agora: [
+      { title: "Equity Ownership & Share Repurchase Analysis", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
+      { title: "Employee Headcount Changes", href: "/Agora/Employee_Headcount_Changes/" },
       { title: "Agora Customer Scenarios & Competitive Analysis", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
       { title: "Whatnot & Agora Livestream Partnership", href: "/Agora/Whatnot_Agora_Partnership/" },
     ],
