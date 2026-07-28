@@ -1725,3 +1725,32 @@ p {
 .article-toc__link--depth-3 {
   padding-left: 42px;
 }
+
+
+/* Responsive equal-width article tables */
+.article-table-wrap {
+  overflow-x: hidden;
+}
+
+.article-table,
+.article-table--wide {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.article-table th,
+.article-table td {
+  width: auto !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+@media (max-width: 520px) {
+  .article-table th,
+  .article-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
