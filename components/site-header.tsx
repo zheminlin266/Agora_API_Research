@@ -29,6 +29,7 @@ const menuItems = {
     agora: [
       { title: "声网客户场景和竞争分析", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
       { title: "Whatnot & Agora直播合作", href: "/Agora/Whatnot_Agora_Partnership/" },
+      { title: "声网员工人数变化", href: "/Agora/Employee_Headcount_Changes/" },
     ],
   },
   en: {
@@ -44,6 +45,7 @@ const menuItems = {
     agora: [
       { title: "Agora Customer Scenarios & Competitive Analysis", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
       { title: "Whatnot & Agora Livestream Partnership", href: "/Agora/Whatnot_Agora_Partnership/" },
+      { title: "Agora Employee Headcount Changes", href: "/Agora/Employee_Headcount_Changes/" },
     ],
   },
 } as const;
