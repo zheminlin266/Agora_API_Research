@@ -198,6 +198,7 @@ function getTableClass(headers: string[]) {
   if (firstHeader === "下游场景" || firstHeader === "downstream use case") return "article-table article-table--participant-mix";
   if (firstHeader === "年份" || firstHeader === "year") return "article-table article-table--history";
   if (firstHeader === "rtc供应层次" || firstHeader === "rtc supply layer") return "article-table article-table--supply";
+  if (firstHeader === "阶段" || firstHeader === "stage") return "article-table article-table--wide article-table--relationship";
   if (headers.length >= 5) return "article-table article-table--wide";
   return "article-table article-table--comparison";
 }

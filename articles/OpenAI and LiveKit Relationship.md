@@ -1,5 +1,5 @@
 # OpenAI and LiveKit: From Co-Developing ChatGPT Voice to a Voice-Agent Infrastructure Ecosystem
-## AI Voice and Real-Time Communications Are Not the Same Thing
+## AI Voice and Real-Time Communications
 
 AI voice has at least two layers:
 
@@ -12,7 +12,7 @@ The approach is easy to understand, but information can be lost at every step. T
 
 ## OpenAI's Development History in AI Voice
 
-### 1. 2022: First, Make the System Understand Speech — Whisper Opens the Door
+**1. 2022: First, Make the System Understand Speech — Whisper Opens the Door**
 
 On September 21, 2022, OpenAI released Whisper. Whisper is an ASR model, or in plain English, a system that tries to write down what people say as accurately as possible. It was trained on roughly 680,000 hours of multilingual, multitask audio, with an emphasis on handling accents, noise, technical vocabulary, and different languages.[OpenAI: Introducing Whisper](https://openai.com/index/whisper/)
 
@@ -22,7 +22,7 @@ At the same time, OpenAI had already begun developing Voice Engine in late 2022.
 
 The distinction is important: **Whisper mainly handles listening, while Voice Engine mainly handles speaking.** Neither one, by itself, is a complete voice agent that can understand, decide, and respond.
 
-### 2. September–November 2023: ChatGPT Voice Turns Speech into a Mass-Market Product
+**2. September–November 2023: ChatGPT Voice Turns Speech into a Mass-Market Product**
 
 On September 25, 2023, OpenAI announced that ChatGPT was beginning to gain voice and image capabilities, initially rolling them out to Plus and Enterprise users. The early Voice Mode used a three-part pipeline: Whisper transcribed the user's speech, GPT-3.5 or GPT-4 generated the answer, and a TTS model converted the answer back into speech.[OpenAI: ChatGPT Can Now See, Hear, and Speak](https://openai.com/index/chatgpt-can-now-see-hear-and-speak/)
 
@@ -32,7 +32,7 @@ In November 2023, OpenAI released a TTS API (an application programming interfac
 
 On November 21, 2023, ChatGPT Voice became available to all users.[ChatGPT Release Notes](https://help.openai.com/en/articles/6825453-chatgpt-release-notes) This was the point when voice moved from a research demonstration into a high-frequency consumer product. It also forced OpenAI to confront real-world issues involving latency, interruptions, accents, background noise, emotional reliance, and voice safety.
 
-### 3. March 2024: Voice Engine Is Previewed, but Not Released Broadly
+**3. March 2024: Voice Engine Is Previewed, but Not Released Broadly**
 
 On March 29, 2024, OpenAI publicly described a small-scale preview of Voice Engine. The model could use text and a 15-second voice sample to generate natural-sounding speech that resembled the original speaker. A small group of trusted partners tested it for reading assistance, education, and video translation.[OpenAI: Navigating the Challenges and Opportunities of Synthetic Voices](https://openai.com/index/navigating-the-challenges-and-opportunities-of-synthetic-voices/)
 
@@ -40,7 +40,7 @@ OpenAI also made clear that Voice Engine would not be broadly released at that p
 
 This revealed two separate paths in OpenAI's voice strategy. Preset voices were easier to control and more suitable for product deployment. Custom voices were more powerful but carried greater risks, so they remained mainly in small-scale research and partner testing.
 
-### 4. May 2024: GPT-4o Moves Voice from an Add-On Module into the Model Itself
+**4. May 2024: GPT-4o Moves Voice from an Add-On Module into the Model Itself**
 
 On May 13, 2024, OpenAI released GPT-4o. The “o” stands for omni, meaning that the model can accept combinations of text, audio, images, and video, and can produce combinations of text, audio, and images.[OpenAI: Hello GPT-4o](https://openai.com/index/hello-gpt-4o/)
 
@@ -50,19 +50,19 @@ The old pipeline was better at preserving what a person said than how they said 
 
 GPT-4o was not fully opened up on launch day. OpenAI initially released the text and image capabilities while continuing to work on the infrastructure, product experience, and safety measures needed for audio. Advanced Voice Mode (the lower-latency voice experience with interruptions and more natural delivery) was rolled out later in stages.
 
-### 5. July–September 2024: Advanced Voice Mode Moves from a Demo to Real Users
+**5. July–September 2024: Advanced Voice Mode Moves from a Demo to Real Users**
 
 On July 30, 2024, OpenAI began rolling out Advanced Voice Mode to a small number of ChatGPT Plus users as an alpha test (a limited early test). The first rollout focused on voice; it did not mean that every video, screen-sharing, and other capability shown in the May demonstration was launching at the same time.[TechCrunch coverage of the first rollout](https://techcrunch.com/2024/07/30/openai-releases-chatgpts-super-realistic-voice-feature/)
 
 By September 2024, Advanced Voice Mode had expanded to more paid users. The central challenge was no longer just generating a voice. The system also had to determine whether it could be interrupted while speaking, whether the user had finished, whether a pause or a noise should be treated as a new instruction, whether the conversation could resume from the correct context after an interruption, and whether the voice sounded natural without creating an excessive impersonation risk.
 
-### 6. October 1, 2024: Realtime API Gives Developers Access to Real-Time Voice
+**6. October 1, 2024: Realtime API Gives Developers Access to Real-Time Voice**
 
 On October 1, 2024, OpenAI released the public beta of the Realtime API. Developers could maintain a live connection that allowed GPT-4o to receive audio and produce audio in real time, without having to assemble Whisper, a text model, and TTS themselves. The Realtime API also supported function calling (letting the model ask an external program to perform an action, such as checking an order, changing an appointment, or querying a database) and user interruptions.[OpenAI: Introducing the Realtime API](https://openai.com/index/introducing-the-realtime-api/)
 
 OpenAI also said that it had worked with LiveKit and Agora on audio components for echo cancellation, reconnection, and sound isolation, and with Twilio to connect the Realtime API to telephony. This shows that OpenAI did not initially try to own every client and communications problem itself. Instead, it used multiple infrastructure partners to connect its models to real applications.
 
-### 7. October 3, 2024: The OpenAI–LiveKit Partnership Becomes Public
+**7. October 3, 2024: The OpenAI–LiveKit Partnership Becomes Public**
 
 On October 3, 2024, LiveKit formally announced its partnership with OpenAI and described how to turn the end-to-end technology behind ChatGPT Advanced Voice into a developer-facing API.[LiveKit: OpenAI and LiveKit Partner to Turn Advanced Voice into an API](https://livekit.com/blog/openai-livekit-partnership-advanced-voice-realtime-api)
 
@@ -76,13 +76,13 @@ LiveKit disclosed the architecture:
 
 The important point is that LiveKit does not replace OpenAI in running GPT-4o. Instead, LiveKit handles the “last mile” and the continuous runtime: connecting user devices, keeping audio usable over imperfect networks, and managing buffering, interruptions, reconnections, load balancing (distributing new sessions across suitable agent instances), and telephony.
 
-### 8. December 2024: OpenAI Adds a Direct WebRTC Path That Does Not Require LiveKit
+**8. December 2024: OpenAI Adds a Direct WebRTC Path That Does Not Require LiveKit**
 
 On December 17, 2024, OpenAI added direct WebRTC support to the Realtime API. WebRTC is a real-time audio and video standard widely used by browsers and mobile clients. Previously, developers often used a layer such as LiveKit to connect their server and client; now they could use OpenAI's own WebRTC integration directly.[OpenAI: o1 and New Tools for Developers](https://openai.com/index/o1-and-new-tools-for-developers/)
 
 This was an important sign that the relationship could be moving away from single-provider dependence, but it did not mean the partnership was ending. Direct WebRTC reduced the number of layers for OpenAI and for simple applications. LiveKit still offered capabilities that direct connectivity alone did not provide, including telephony, agent orchestration, state management, observability, model switching, and large-scale operations. In practice, the two paths could coexist: a small application could connect directly to OpenAI, while a more complex product could use LiveKit as its communications and orchestration layer.
 
-### 9. 2025: From One Real-Time Model to a Full Voice-Agent Product Line
+**9. 2025: From One Real-Time Model to a Full Voice-Agent Product Line**
 
 On March 20, 2025, OpenAI released `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`, and `gpt-4o-mini-tts`, among other next-generation audio models. The transcription models improved speech-to-text accuracy, while the TTS model gave developers more natural control over speaking style. OpenAI continued to recommend the Realtime API for developers seeking low-latency speech-to-speech experiences.[OpenAI: Introducing Next-Generation Audio Models](https://openai.com/index/introducing-our-next-generation-audio-models/)
 
@@ -90,7 +90,7 @@ On August 28, 2025, the Realtime API became generally available, or GA (formally
 
 This marked a shift in OpenAI's strategy: the goal was no longer merely to let ChatGPT talk. It was to let voice agents do useful work—answer calls, look up information, call tools, process orders, communicate across languages, and keep the conversation moving while actions were being performed.
 
-### 10. 2026: Toward Continuous Conversation, Real-Time Translation, and More Capable Action
+**10. 2026: Toward Continuous Conversation, Real-Time Translation, and More Capable Action**
 
 On May 7, 2026, OpenAI released GPT-Realtime-2, GPT-Realtime-Translate, and GPT-Realtime-Whisper for stronger real-time reasoning, live translation, and streaming transcription, respectively.[OpenAI: Advancing Voice Intelligence with New Models in the API](https://openai.com/index/advancing-voice-intelligence-with-new-models-in-the-api/)
 
@@ -102,19 +102,19 @@ OpenAI's evolution can be summarized as follows:
 
 ## LiveKit's Development: From WebRTC Infrastructure to a Voice-Agent Platform
 
-### 1. 2021: Starting with Open-Source Real-Time Audio and Video Infrastructure
+**1. 2021: Starting with Open-Source Real-Time Audio and Video Infrastructure**
 
 LiveKit publicly launched on July 7, 2021. It was not initially an AI company. It was an open-source real-time audio and video infrastructure project that let developers add voice rooms, video conferencing, and livestreaming to their products without rebuilding the difficult WebRTC layer from scratch.[LiveKit: And…we're Live(Kit)!](https://livekit.com/blog/and-were-live-kit)
 
 LiveKit's core components included an SFU (Selective Forwarding Unit, a server that receives and forwards media streams so every participant does not have to connect directly to everyone else) and client SDKs for major platforms. Its job was to make media transport between people and devices reliable—not to make a model understand language.
 
-### 2. 2022: LiveKit Cloud Turns Open-Source Code into a Global Network
+**2. 2022: LiveKit Cloud Turns Open-Source Code into a Global Network**
 
 On October 24, 2022, LiveKit announced LiveKit Cloud. Cloud is the managed version of LiveKit: developers can use a globally distributed real-time media network without building, scaling, and monitoring a large WebRTC cluster themselves.[LiveKit: Announcing LiveKit Cloud](https://livekit.com/blog/announcing-livekit-cloud)
 
 An important design choice was that the open-source and cloud versions used the same APIs and SDKs, allowing developers to move between self-hosting and managed hosting. This “open source first, managed cloud second” model made LiveKit a natural infrastructure layer for AI companies and developers.
 
-### 3. 2023: Moving from Human-to-Human Communication to Human-to-AI Communication
+**3. 2023: Moving from Human-to-Human Communication to Human-to-AI Communication**
 
 In a later Series B retrospective, LiveKit said that it launched ChatGPT Voice Mode together with OpenAI in September 2023 and released LiveKit Agents around the same time. Its detailed public blog post introducing Agents, however, was published on January 18, 2024.[LiveKit: Series B Retrospective](https://livekit.com/blog/livekits-series-b) [LiveKit: An Open-Source Stack for Real-Time Multimodal AI](https://livekit.com/blog/open-source-realtime-multimodal-ai)
 
@@ -122,7 +122,7 @@ Taken together, these sources suggest that LiveKit was already involved in the e
 
 LiveKit Agents focused on four practical problems: receiving live audio and video; buffering, segmenting, and playing model-generated audio; deciding when a user has finished speaking through VAD (voice activity detection, which determines whether someone is currently speaking) and turn detection (deciding whether a speaking turn has ended); and managing agent connections, load, failed reconnections, and horizontal scaling.
 
-### 4. January–June 2024: Agents and the OpenAI Co-Development Experience Become Public
+**4. January–June 2024: Agents and the OpenAI Co-Development Experience Become Public**
 
 On January 18, 2024, LiveKit formally introduced Agents. The open-source framework combined real-time media, backend SDKs, plugins, task scheduling, and load balancing, and supported OpenAI, Whisper, Deepgram, ElevenLabs, and other model or voice services.[LiveKit Agents announcement](https://livekit.com/blog/open-source-realtime-multimodal-ai)
 
@@ -130,7 +130,7 @@ On June 4, 2024, LiveKit announced a $22.5 million Series A and said that it had
 
 This financing announcement is one of the most important public clues about the early relationship. It does not disclose a contract, purchase volume, or equity investment, but it does suggest that the work was more substantial than a one-off API adapter and influenced LiveKit's product direction.
 
-### 5. October 2024: LiveKit Becomes the Developer-Facing Bridge for Advanced Voice
+**5. October 2024: LiveKit Becomes the Developer-Facing Bridge for Advanced Voice**
 
 On October 3, 2024, LiveKit announced the partnership with OpenAI and released a Multimodal Agent API (an interface that brings text, audio, and image inputs and outputs into one agent workflow) built around the OpenAI Realtime API.
 
@@ -140,13 +140,13 @@ The complementarity looked like this: **the user's microphone, browser, phone, o
 
 OpenAI provided the model capability, while LiveKit provided the real-time connection and agent runtime. Developers could build something resembling Advanced Voice while still adding their own front end, business tools, and telephony system.
 
-### 6. 2025: LiveKit Expands from an OpenAI Adapter into a Multi-Model Platform
+**6. 2025: LiveKit Expands from an OpenAI Adapter into a Multi-Model Platform**
 
 On April 10, 2025, LiveKit announced its Series B, a $45 million financing round, and described its goal as building an all-in-one platform for voice AI agents. The announcement said LiveKit Cloud had served more than 100,000 developers and that Agents had expanded from an open-source framework into a product covering workflows, telephony, cloud deployment, and agent scaling.[LiveKit: Series B](https://livekit.com/blog/livekits-series-b)
 
 This was an important change in the relationship. The OpenAI partnership remained, but LiveKit was no longer designing its platform around OpenAI alone. It began treating voice agents as an independent software category and supporting developer choice across different STT, LLM (large language model, the system that understands and generates language), and TTS providers.
 
-### 7. 2026: A Full-Stack Platform for Building, Testing, Deploying, and Monitoring Agents
+**7. 2026: A Full-Stack Platform for Building, Testing, Deploying, and Monitoring Agents**
 
 On January 22, 2026, LiveKit announced its Series C at a $1 billion valuation. It described voice AI as a new class of real-time, stateful application: a conversation can last minutes or hours, and the system must keep listening, thinking, responding, and preserving context throughout the session.[LiveKit: Series C](https://livekit.com/blog/livekit-series-c)
 
@@ -165,7 +165,7 @@ As of July 2026, LiveKit's official OpenAI integration documentation still suppo
 
 ## Why the Relationship May Be Moving from Deep Cooperation to a Looser Ecosystem Tie
 
-### 1. OpenAI Has an Incentive to Bring More of the Communications Layer In-House
+**1. OpenAI Has an Incentive to Bring More of the Communications Layer In-House**
 
 At the beginning of the partnership, OpenAI needed to get GPT-4o audio to real users quickly. LiveKit already had mature WebRTC infrastructure, global network coverage, reconnection logic, and media handling, making it a natural partner.
 
@@ -177,13 +177,13 @@ As the Realtime API matured, OpenAI had three reasons to provide more direct acc
 
 Direct WebRTC appeared in December 2024, the Realtime API became production-ready in August 2025, and OpenAI continued its own GPT-Realtime and GPT-Live product lines in 2026. These are signs that OpenAI does not need to depend forever on one real-time communications provider.
 
-### 2. LiveKit Has an Incentive to Become Model-Neutral
+**2. LiveKit Has an Incentive to Become Model-Neutral**
 
 LiveKit's long-term value is not any single model's voice; it is the real-time agent infrastructure around the model. An enterprise may use OpenAI today and another model tomorrow, or combine several models: one for live conversation, another for deeper reasoning, and a third for transcription or speech synthesis, with the final experience delivered over a phone, browser, mobile app, or robot.
 
 LiveKit's public product direction reflects this. Agents has a plugin architecture, its documentation supports OpenAI, Azure OpenAI, and other providers, and its Series C announcement emphasizes hundreds of model integrations. OpenAI's success helps LiveKit, but OpenAI should not be the platform's only upstream provider.
 
-### 3. The Level of Cooperation Has Changed
+**3. The Level of Cooperation Has Changed**
 
 The early relationship looked like joint work on a specific product problem: How could ChatGPT Voice listen and speak with low latency?
 
@@ -253,7 +253,7 @@ The most reasonable characterization is: **LiveKit is an important infrastructur
 4. **Telephony and enterprise-agent capabilities:** OpenAI's expansion into SIP, contact centers, and deployment management will determine how far it moves into LiveKit's core territory.
 5. **Whether multi-model switching becomes mainstream:** If enterprises prioritize model portability, LiveKit's neutral platform value should rise. If they prefer an all-in-one OpenAI product, the value of LiveKit as an intermediate layer will face more pressure.
 
-## Final Assessment
+## Conclusion
 
 OpenAI's AI voice story did not suddenly begin with GPT-4o. It developed layer by layer: Whisper helped the system understand speech in 2022; ChatGPT brought voice to users in 2023; GPT-4o and the Realtime API turned low-latency voice interaction into a model and platform capability in 2024; OpenAI pushed voice agents toward production in 2025; and in 2026 it continued toward continuous listening and speaking, real-time translation, tool use, and background delegation for deeper work.
 

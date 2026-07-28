@@ -1824,3 +1824,33 @@ p {
   word-break: normal;
   hyphens: none;
 }
+
+/* OpenAI–LiveKit relationship stage table */
+.article-table--relationship {
+  table-layout: fixed;
+}
+
+.article-table--relationship th:nth-child(1),
+.article-table--relationship td:nth-child(1) {
+  width: 12% !important;
+}
+
+.article-table--relationship th:nth-child(2),
+.article-table--relationship td:nth-child(2) {
+  width: 15% !important;
+}
+
+.article-table--relationship th:nth-child(3),
+.article-table--relationship td:nth-child(3) {
+  width: 28% !important;
+}
+
+.article-table--relationship th:nth-child(4),
+.article-table--relationship td:nth-child(4) {
+  width: 20% !important;
+}
+
+.article-table--relationship th:nth-child(5),
+.article-table--relationship td:nth-child(5) {
+  width: 25% !important;
+}
