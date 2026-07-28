@@ -1,7 +1,4 @@
 # OpenAI and LiveKit: From Co-Developing ChatGPT Voice to a Voice-Agent Infrastructure Ecosystem
-
-July 28, 2026
-
 ## AI Voice and Real-Time Communications Are Not the Same Thing
 
 AI voice has at least two layers:
