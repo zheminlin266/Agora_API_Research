@@ -4,11 +4,11 @@ This is not a question that can be answered with complete precision. However, we
 
 | Year | U.S. Livestream Commerce Sales | YoY Growth | Data Type |
 | --- | --- | --- | --- |
-| 2021 | **Approximately $1.045 billion** | — | Back-calculated from 2022 data |
-| 2022 | **$1.82 billion** | **+74.2%** | eMarketer historical estimate |
-| 2023 | **$2.96 billion** | **+62.6%** | eMarketer historical estimate |
-| 2024 | **$9.79 billion** | **+230.2%** | eMarketer historical estimate |
-| 2025 | **$14.64 billion** | **+49.5%** | eMarketer estimate/forecast |
+| 2021 | Approximately $1.045 billion | — | Back-calculated from 2022 data |
+| 2022 | $1.82 billion | +74.2% | eMarketer historical estimate |
+| 2023 | $2.96 billion | +62.6% | eMarketer historical estimate |
+| 2024 | $9.79 billion | +230.2% | eMarketer historical estimate |
+| 2025 | $14.64 billion | +49.5% | eMarketer estimate/forecast |
 
 ### Whatnot's Growth
 

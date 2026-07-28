@@ -1752,3 +1752,75 @@ p {
 .article-toc__link--depth-3 {
   padding-left: 42px;
 }
+
+
+/* Responsive equal-width article tables */
+.article-table-wrap {
+  overflow-x: hidden;
+}
+
+.article-table,
+.article-table--wide {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.article-table th,
+.article-table td {
+  width: auto !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+@media (max-width: 520px) {
+  .article-table th,
+  .article-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+
+/* Normalize article-table cell wrapping */
+.article-table th,
+.article-table td {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+
+/* Align article tables with the text column */
+.article-table-wrap {
+  width: 100%;
+}
+
+/* Remove the active TOC item background */
+.article-toc__link.is-active {
+  background: transparent;
+  color: var(--foreground);
+}
+
+
+/* Site-wide content-aware article tables */
+.article-table-wrap {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.article-table,
+.article-table--wide {
+  width: 100%;
+  min-width: 0;
+  table-layout: auto;
+}
+
+.article-table th,
+.article-table td {
+  width: auto !important;
+  white-space: normal !important;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}

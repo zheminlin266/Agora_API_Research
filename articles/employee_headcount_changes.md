@@ -15,7 +15,7 @@ Unit: employees, measured as of December 31 of each year.
 | 2024 | 386 | 111 | 39 | 72 | **608** |
 | 2025 | 350 | 112 | 25 | 56 | **543** |
 
-The 2020 figures come from Agora's 2020 20-F. The 2021 20-F reported 797 employees in R&D, 256 in sales and marketing, 133 in customer management and services, and 125 in general and administrative functions. The 2022–2024 20-F filings continued to use the same or similar categories. The 2025 figures are also reported in the company's latest 20-F.
+The 2020 figures come from Agora’s 2020 20-F. The 2021 20-F reported 797 employees in R&D, 256 in sales and marketing, 133 in customer management and services, and 125 in general and administrative functions. The 2022–2024 20-F filings continued to use the same or similar categories. The 2025 figures are also reported in the company’s latest 20-F.
 
 ### Year-over-Year Changes in Headcount
 
@@ -50,7 +50,7 @@ The 2020 figures come from Agora's 2020 20-F. The 2021 20-F reported 797 employe
 
 ### Summary
 
-**2021 marked the peak in employee headcount.** Total headcount rose rapidly from 842 in 2020 to 1,311 in 2021, an increase of approximately 55.7%. This reflected both business expansion and the impact of Agora's 2021 acquisition of Easemob and the integration of its team. As a result, the 2021 increase was not entirely attributable to organic hiring for Agora's core RTC business. The company's subsequent sale of its Easemob customer-interaction cloud business in 2023 also affects year-over-year comparability.
+**2021 marked the peak in employee headcount.** Total headcount rose rapidly from 842 in 2020 to 1,311 in 2021, an increase of approximately 55.7%. This reflected both business expansion and the impact of Agora’s 2021 acquisition of Easemob and the integration of its team. As a result, the 2021 increase was not entirely attributable to organic hiring for Agora’s core RTC business. The company’s subsequent sale of its Easemob customer-interaction cloud business in 2023 also affects year-over-year comparability.
 
 **The organization contracted for four consecutive years from 2022 through 2025.** Total headcount declined by 310, 211, 182, and 65 employees, respectively. The pace of workforce reduction was most pronounced in 2022–2024 and slowed significantly in 2025. In its successive financial reports, the company attributed decreases in several expense categories to “optimizing the global workforce.”
 
@@ -63,8 +63,8 @@ The 2020 figures come from Agora's 2020 20-F. The 2021 20-F reported 797 employe
 
 Therefore, it would be premature to conclude that Agora has only 25 technical-support employees. Changes in job classification may account for part of the decline.
 
-**R&D remains the core of the organization.** Although R&D headcount fell from 797 to 350 employees, R&D's share of total headcount rebounded from 59.0% in 2022 to 64.5% in 2025. This suggests that the workforce reductions were not simply a retreat from technology; after shrinking overall, the company still retained an R&D-centered organizational structure.
+**R&D remains the core of the organization.** Although R&D headcount fell from 797 to 350 employees, R&D’s share of total headcount rebounded from 59.0% in 2022 to 64.5% in 2025. This suggests that the workforce reductions were not simply a retreat from technology; after shrinking overall, the company still retained an R&D-centered organizational structure.
 
-**Sales headcount was broadly stable in 2025.** Sales and marketing headcount was 111 in 2024 and 112 in 2025, marking the first year without a decline. This coincided with a return to double-digit revenue growth in Agora's overseas business in 2025 and the company's renewed focus on commercializing Conversational AI and other new use cases. That said, this is only a correlation; headcount alone cannot confirm that the company has entered a broad-based expansion cycle.
+**Sales headcount was broadly stable in 2025.** Sales and marketing headcount was 111 in 2024 and 112 in 2025, marking the first year without a decline. This coincided with a return to double-digit revenue growth in Agora’s overseas business in 2025 and the company’s renewed focus on commercializing Conversational AI and other new use cases. That said, this is only a correlation; headcount alone cannot confirm that the company has entered a broad-based expansion cycle.
 
-Overall, Agora has shifted from a **“1,300-employee, expansion-oriented organization”** in 2021 to a 2025 organization with **“approximately 540 employees, a high R&D mix, and a significantly streamlined services team.”** Its current headcount remains roughly four to five times LiveKit's estimated employee count, but the gap is concentrated primarily in R&D and the global sales organization.
+Overall, Agora has shifted from a **“1,300-employee, expansion-oriented organization”** in 2021 to a 2025 organization with **“approximately 540 employees, a high R&D mix, and a significantly streamlined services team.”** Its current headcount remains roughly four to five times LiveKit’s estimated employee count, but the gap is concentrated primarily in R&D and the global sales organization.

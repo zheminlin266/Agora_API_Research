@@ -5,11 +5,11 @@ import type { Metadata } from "next";
 import { LocalizedMarkdownArticle } from "@/components/localized-markdown-article";
 
 export const metadata: Metadata = {
-  title: "员工人数变化 | Agora Equity Research",
-  description: "声网 2020—2025 年员工人数、岗位结构和组织收缩变化。",
+  title: "声网员工人数变化 | Agora Equity Research",
+  description: "Agora 2020—2025 年员工人数、岗位结构及组织收缩分析。",
 };
 
-export default async function AgoraEmployeeHeadcountPage() {
+export default async function AgoraEmployeeHeadcountChangesPage() {
   const zhPath = path.join(process.cwd(), "articles", "员工人数变化.md");
   const enPath = path.join(process.cwd(), "articles", "employee_headcount_changes.md");
   const [zhMarkdown, enMarkdown] = await Promise.all([
@@ -20,9 +20,9 @@ export default async function AgoraEmployeeHeadcountPage() {
   return (
     <LocalizedMarkdownArticle
       enMarkdown={enMarkdown}
-      enTitle="Changes in Employee Headcount"
+      enTitle="Agora Employee Headcount Changes"
       zhMarkdown={zhMarkdown}
-      zhTitle="员工人数变化"
+      zhTitle="声网员工人数变化"
     />
   );
 }
