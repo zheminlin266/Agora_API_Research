@@ -1762,3 +1762,15 @@ p {
   white-space: normal !important;
   word-break: break-word;
 }
+
+
+/* Align article tables with the text column */
+.article-table-wrap {
+  width: 100%;
+}
+
+/* Remove the active TOC item background */
+.article-toc__link.is-active {
+  background: transparent;
+  color: var(--foreground);
+}
