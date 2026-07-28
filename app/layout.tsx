@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 
 import { SitePreferencesProvider } from "@/components/site-preferences";
 
@@ -24,6 +25,7 @@ export default function RootLayout({
           } catch {}
         `}</Script>
         <SitePreferencesProvider>{children}</SitePreferencesProvider>
+        <Analytics />
       </body>
     </html>
   );
