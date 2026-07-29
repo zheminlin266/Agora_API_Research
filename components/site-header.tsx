@@ -21,6 +21,7 @@ const menuItems = {
     demand: [
       { title: "RTC行业需求", href: "/Demand/RTC_industry_demand/" },
       { title: "美国直播电商增长情况", href: "/Demand/US_Livestream_Commerce_Growth/" },
+      { title: "AI语音对基础设施需求的特性", href: "/Demand/AI_Voice_Infrastructure/" },
       { title: "RTC开发者项目库下载量", href: "/Demand/Dev_npm_downloads/" },
     ],
     supply: [
@@ -41,6 +42,7 @@ const menuItems = {
     demand: [
       { title: "RTC Industry Demand", href: "/Demand/RTC_industry_demand/" },
       { title: "U.S. Livestream Commerce Growth", href: "/Demand/US_Livestream_Commerce_Growth/" },
+      { title: "AI Voice Infrastructure Requirements", href: "/Demand/AI_Voice_Infrastructure/" },
       { title: "RTC Dev npm Download", href: "/Demand/Dev_npm_downloads/" },
     ],
     supply: [

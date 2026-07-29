@@ -13,6 +13,7 @@ type ArticleBlock =
   | { kind: "heading"; level: number; content: string }
   | { kind: "paragraph"; content: string }
   | { kind: "image"; alt: string; src: string }
+  | { kind: "code"; content: string }
   | { kind: "ordered-list" | "unordered-list"; items: string[] }
   | TableBlock;
 
@@ -45,7 +46,7 @@ function normalizeInlineMarkdown(value: string) {
 }
 
 function isBlockStart(line: string) {
-  return isHeading(line) || isListItem(line) || line.trim().startsWith("|");
+  return isHeading(line) || isListItem(line) || line.trim().startsWith("|") || line.trim().startsWith("```");
 }
 
 function parseBlocks(markdown: string): ArticleBlock[] {
@@ -67,6 +68,17 @@ function parseBlocks(markdown: string): ArticleBlock[] {
       continue;
     }
 
+    if (line.trim().startsWith("```")) {
+      const codeLines: string[] = [];
+      index += 1;
+      while (index < lines.length && !lines[index].trim().startsWith("```")) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      blocks.push({ kind: "code", content: codeLines.join("\n") });
+      continue;
+    }
     const image = line.match(/^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/);
     if (image) {
       blocks.push({ kind: "image", alt: image[1], src: image[2] });
@@ -272,6 +284,7 @@ export function MarkdownArticle({
               }
               return <p key={`paragraph-${index}`}>{renderInline(block.content, `paragraph-${index}`)}</p>;
             }
+            if (block.kind === "code") return <pre key={`code-${index}`}><code>{block.content}</code></pre>;
             if (block.kind === "image") {
               return (
                 <figure className="article-image" key={`image-${index}`}>
