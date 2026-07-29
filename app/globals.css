@@ -1888,3 +1888,14 @@ p {
 .ai-voice-infrastructure .article-table td:not(:first-child) {
   text-align: right;
 }
+
+/* Global article table column alignment */
+.article-table th:first-child,
+.article-table td:first-child {
+  text-align: left !important;
+}
+
+.article-table th:not(:first-child),
+.article-table td:not(:first-child) {
+  text-align: right !important;
+}
