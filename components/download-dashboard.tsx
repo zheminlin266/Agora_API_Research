@@ -55,7 +55,7 @@ const packages: Array<{
 
 const copy = {
   zh: {
-    title: "RTC 开发者生态",
+    title: "RTC开发者项目库下载量",
     intro: "观察公开软件包下载量，理解实时互动产品的开发者采用变化。",
     caveat: "页面汇总 17 个 npm 与 PyPI 包，所有曲线按周聚合，并统一展示到最新完整周。下载量是生态活跃度的近似指标，不等同于客户数或商业收入。",
     summaryLabel: "数据范围",

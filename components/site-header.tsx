@@ -21,7 +21,7 @@ const menuItems = {
     demand: [
       { title: "RTC行业需求", href: "/Demand/RTC_industry_demand/" },
       { title: "美国直播电商增长情况", href: "/Demand/US_Livestream_Commerce_Growth/" },
-      { title: "RTC Dev npm Download", href: "/Demand/Dev_npm_downloads/" },
+      { title: "RTC开发者项目库下载量", href: "/Demand/Dev_npm_downloads/" },
     ],
     supply: [
       { title: "RTC 行业供给", href: "/Supply/RTC_supply/" },
