@@ -1839,6 +1839,16 @@ p {
   hyphens: none;
 }
 
+.shanghai-headquarters-analysis .article-table th:not(:first-child),
+.shanghai-headquarters-analysis .article-table td:not(:first-child) {
+  text-align: right;
+}
+
+.shanghai-headquarters-analysis .article-table th:first-child,
+.shanghai-headquarters-analysis .article-table td:first-child {
+  text-align: left;
+}
+
 /* OpenAI–LiveKit relationship stage table */
 .article-table--relationship {
   table-layout: fixed;

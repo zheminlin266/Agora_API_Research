@@ -19,6 +19,7 @@ export default async function ShanghaiHeadquartersConstructionAnalysisPage() {
 
   return (
     <LocalizedMarkdownArticle
+      articleClassName="shanghai-headquarters-analysis"
       enMarkdown={enMarkdown}
       enTitle="Shanghai Headquarters Construction Analysis"
       zhMarkdown={zhMarkdown}

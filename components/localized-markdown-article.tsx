@@ -10,6 +10,7 @@ type LocalizedMarkdownArticleProps = {
   enMarkdown: string;
   zhTitle?: string;
   enTitle?: string;
+  articleClassName?: string;
 };
 
 export function LocalizedMarkdownArticle({
@@ -17,6 +18,7 @@ export function LocalizedMarkdownArticle({
   enMarkdown,
   zhTitle,
   enTitle,
+  articleClassName,
 }: LocalizedMarkdownArticleProps) {
   const { language } = useSitePreferences();
   const isEnglish = language === "en";
@@ -34,6 +36,7 @@ export function LocalizedMarkdownArticle({
 
   return (
     <MarkdownArticle
+      articleClassName={articleClassName}
       backToTopLabel={isEnglish ? "Back to top" : "返回顶部"}
       articleTitle={articleTitle}
       language={language}

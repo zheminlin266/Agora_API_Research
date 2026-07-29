@@ -214,6 +214,7 @@ type MarkdownArticleProps = {
   markdown: string;
   language?: "zh" | "en";
   articleTitle?: string;
+  articleClassName?: string;
   publicationDateLabel?: string;
   backToTopLabel?: string;
   tocLabels?: ArticleTocLabels;
@@ -223,6 +224,7 @@ export function MarkdownArticle({
   markdown,
   language = "zh",
   articleTitle,
+  articleClassName,
   publicationDateLabel = "2026年7月",
   backToTopLabel = "返回顶部",
   tocLabels,
@@ -240,7 +242,7 @@ export function MarkdownArticle({
     <>
       <SiteHeader />
       <ArticleToc items={tocItems} labels={tocLabels} />
-      <main className="site-main article-page" id="top">
+      <main className={["site-main", "article-page", articleClassName].filter(Boolean).join(" ")} id="top">
         <header className="article-header rise delay-1">
 
           <h1>{title ? renderInline(title, "article-title") : "RTC industry supply"}</h1>
