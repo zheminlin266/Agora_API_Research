@@ -20,6 +20,7 @@ export default async function AIVoiceInfrastructurePage() {
 
   return (
     <LocalizedMarkdownArticle
+      articleClassName="ai-voice-infrastructure"
       enMarkdown={enMarkdown}
       enTitle="How AI Voice Changes Infrastructure Requirements"
       zhMarkdown={zhMarkdown}

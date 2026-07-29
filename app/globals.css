@@ -1878,3 +1878,13 @@ p {
 .article-table--relationship td:nth-child(5) {
   width: 25% !important;
 }
+
+.ai-voice-infrastructure .article-table th:first-child,
+.ai-voice-infrastructure .article-table td:first-child {
+  text-align: left;
+}
+
+.ai-voice-infrastructure .article-table th:not(:first-child),
+.ai-voice-infrastructure .article-table td:not(:first-child) {
+  text-align: right;
+}
