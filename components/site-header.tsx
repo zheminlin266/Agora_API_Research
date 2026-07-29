@@ -33,6 +33,7 @@ const menuItems = {
       { title: "Whatnot & Agora直播合作", href: "/Agora/Whatnot_Agora_Partnership/" },
       { title: "股权结构与回购分析", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
       { title: "员工人数变化", href: "/Agora/Employee_Headcount_Changes/" },
+      { title: "上海总部建设分析", href: "/Agora/Shanghai_Headquarters_Construction_Analysis/" },
     ],
   },
   en: {
@@ -52,6 +53,7 @@ const menuItems = {
       { title: "Whatnot & Agora Livestream Partnership", href: "/Agora/Whatnot_Agora_Partnership/" },
       { title: "Equity Ownership & Share Repurchase Analysis", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
       { title: "Employee Headcount Changes", href: "/Agora/Employee_Headcount_Changes/" },
+      { title: "Shanghai Headquarters Construction Analysis", href: "/Agora/Shanghai_Headquarters_Construction_Analysis/" },
     ],
   },
 } as const;

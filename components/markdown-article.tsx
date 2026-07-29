@@ -12,6 +12,7 @@ type TableBlock = {
 type ArticleBlock =
   | { kind: "heading"; level: number; content: string }
   | { kind: "paragraph"; content: string }
+  | { kind: "image"; alt: string; src: string }
   | { kind: "ordered-list" | "unordered-list"; items: string[] }
   | TableBlock;
 
@@ -62,6 +63,13 @@ function parseBlocks(markdown: string): ArticleBlock[] {
     const heading = normalizeMarkdownSyntax(line).match(/^ {0,3}(#{1,6})\s+(.+?)\s*#*\s*$/);
     if (heading) {
       blocks.push({ kind: "heading", level: heading[1].length, content: heading[2] });
+      index += 1;
+      continue;
+    }
+
+    const image = line.match(/^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/);
+    if (image) {
+      blocks.push({ kind: "image", alt: image[1], src: image[2] });
       index += 1;
       continue;
     }
@@ -261,6 +269,13 @@ export function MarkdownArticle({
                 );
               }
               return <p key={`paragraph-${index}`}>{renderInline(block.content, `paragraph-${index}`)}</p>;
+            }
+            if (block.kind === "image") {
+              return (
+                <figure className="article-image" key={`image-${index}`}>
+                  <img alt={block.alt} loading="lazy" src={block.src} />
+                </figure>
+              );
             }
             if (block.kind === "ordered-list") return <div key={`ordered-${index}`}>{renderList(block.items, true)}</div>;
             if (block.kind === "unordered-list") return <div key={`unordered-${index}`}>{renderList(block.items, false)}</div>;
