@@ -6,13 +6,14 @@ import { useEffect, useRef, useState } from "react";
 import agoraLogo from "@/assets/Agora_Logo.png";
 import { useSitePreferences } from "@/components/site-preferences";
 
-type MenuKey = "home" | "demand" | "supply" | "agora";
+type MenuKey = "home" | "demand" | "supply" | "agora" | "resources";
 
 const navigation: Array<{ key: MenuKey; zh: string; en: string }> = [
   { key: "home", zh: "首页", en: "Home" },
   { key: "demand", zh: "行业需求", en: "Demand" },
   { key: "supply", zh: "行业供给", en: "Supply" },
   { key: "agora", zh: "声网", en: "Agora" },
+  { key: "resources", zh: "资源", en: "Resources" },
 ];
 
 const menuItems = {
@@ -36,6 +37,10 @@ const menuItems = {
       { title: "员工人数变化", href: "/Agora/Employee_Headcount_Changes/" },
       { title: "上海总部建设分析", href: "/Agora/Shanghai_Headquarters_Construction_Analysis/" },
     ],
+    resources: [
+      { title: "声网核心数据", href: "/Resources/Agora_Key_Metrics/" },
+      { title: "RTC Learning Materials", href: "https://github.com/zheminlin266/Agora_Research/tree/main/Resources" },
+    ],
   },
   en: {
     home: [],
@@ -56,6 +61,10 @@ const menuItems = {
       { title: "Equity Ownership & Share Repurchase Analysis", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
       { title: "Employee Headcount Changes", href: "/Agora/Employee_Headcount_Changes/" },
       { title: "Shanghai Headquarters Construction Analysis", href: "/Agora/Shanghai_Headquarters_Construction_Analysis/" },
+    ],
+    resources: [
+      { title: "Agora Key Metrics", href: "/Resources/Agora_Key_Metrics/" },
+      { title: "RTC Learning Materials", href: "https://github.com/zheminlin266/Agora_Research/tree/main/Resources" },
     ],
   },
 } as const;
