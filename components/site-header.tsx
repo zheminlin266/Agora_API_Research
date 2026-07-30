@@ -254,7 +254,13 @@ export function SiteHeader() {
                 )}
                 {hasPanel && <div className="nav-menu__panel" id={panelId}>
                   {items.map((menuItem) => (
-                    <a className="nav-menu__item" href={menuItem.href} key={menuItem.title}>
+                    <a
+                      className="nav-menu__item"
+                      href={menuItem.href}
+                      key={menuItem.title}
+                      rel={menuItem.href.startsWith("http") ? "noreferrer" : undefined}
+                      target={menuItem.href.startsWith("http") ? "_blank" : undefined}
+                    >
                       <span>{menuItem.title}</span>
                     </a>
                   ))}
