@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { BackToTop } from "@/components/back-to-top";
 import { SiteHeader } from "@/components/site-header";
 import { ArticleToc, type ArticleTocItem, type ArticleTocLabels } from "@/components/article-toc";
 
@@ -343,7 +344,7 @@ export function MarkdownArticle({
         </article>
 
         <footer className="article-footer rise delay-3">
-          <a href="#top">{backToTopLabel}</a>
+          <BackToTop label={backToTopLabel} />
         </footer>
       </main>
     </>
