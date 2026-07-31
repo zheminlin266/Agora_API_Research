@@ -1,6 +1,6 @@
 2026年2月8日，MrBeast在直播电商平台Whatnot举办了一场大型抽奖活动。直播峰值同时在线人数达到58.3万，超过55.5万人参与同一轮抽奖，平台还在24小时内迎来了数十万名新用户。最终，整场活动没有发生重大技术事故。
 
-这场直播的意义不仅在于观看人数创下纪录，也在于它验证了Whatnot和声网Agora在超大规模实时直播中的技术能力。
+这场直播的意义不仅在于观看人数创下纪录，也在于它验证了Whatnot和声网Agora在超大规模实时直播中的技术能力。技术博客原文请见[Scaling Whatnot: Behind the Largest Live Shopping Stream in US History](https://medium.com/whatnot-engineering/scaling-whatnot-behind-the-largest-live-shopping-stream-in-us-history-040a458f538c)。
 
 
 
