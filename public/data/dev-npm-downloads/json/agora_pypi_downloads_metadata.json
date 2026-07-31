@@ -1,0 +1,46 @@
+{
+  "generated_at_utc": "2026-07-31T07:41:14+00:00",
+  "vendor": "agora",
+  "source": {
+    "download_table": "pypi.pypi_downloads_per_day",
+    "download_provider": "ClickPy public ClickHouse endpoint",
+    "metadata_provider": "PyPI JSON API",
+    "source_last_date": "2026-07-30",
+    "weekly_grain": "Monday-start weeks",
+    "latest_complete_week_start": "2026-07-20"
+  },
+  "dataset": {
+    "csv": "agora_pypi_weekly_downloads.csv",
+    "rows": 244,
+    "first_week_start": "2021-11-29",
+    "last_week_start": "2026-07-27",
+    "latest_complete_week_start": "2026-07-20",
+    "columns": [
+      "week_start",
+      "agora-token-builder",
+      "agora-python-server-sdk"
+    ]
+  },
+  "packages": {
+    "agora-token-builder": {
+      "exists": true,
+      "summary": "Agora Token Builder. RTC & RTM",
+      "latest_version": "1.0.0",
+      "requires_python": "",
+      "first_upload": "2021-12-29",
+      "package_url": "https://pypi.org/project/agora-token-builder/",
+      "source_url": "https://github.com/AgoraIO-Community/python-token-builder",
+      "error": null
+    },
+    "agora-python-server-sdk": {
+      "exists": true,
+      "summary": "A Python SDK for Agora Server",
+      "latest_version": "2.4.9",
+      "requires_python": ">=3.10",
+      "first_upload": "2024-09-14",
+      "package_url": "https://pypi.org/project/agora-python-server-sdk/",
+      "source_url": "https://github.com/AgoraIO-Extensions/Agora-Python-Server-SDK",
+      "error": null
+    }
+  }
+}

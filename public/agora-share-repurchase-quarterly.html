@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta id="page-description" name="description" content="声网自 2022Q1 起按季度披露的股票回购股数与花费金额交互式折线图。" />
+    <title>声网季度回购：股数与金额</title>
+    <style>
+      :root {
+        --background: #fcfcfc;
+        --surface: #ffffff;
+        --foreground: #1a1a1a;
+        --body: #4f4f4f;
+        --muted: #8a8a8a;
+        --faint: #b8b8b8;
+        --border: #e3e3e3;
+        --hover: #eeeeee;
+        --focus: #1a1a1a;
+        --amount: #2563eb;
+        --shares: #dc2626;
+        --tooltip-shadow: rgba(26, 26, 26, 0.12);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #171717;
+          --surface: #202020;
+          --foreground: #f2f2f2;
+          --body: #c7c7c7;
+          --muted: #8d8d8d;
+          --faint: #686868;
+          --border: #343434;
+          --hover: #292929;
+          --focus: #f2f2f2;
+          --amount: #60a5fa;
+          --shares: #f87171;
+          --tooltip-shadow: rgba(0, 0, 0, 0.35);
+        }
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+      html { background: var(--background); color-scheme: light dark; }
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        font-size: 16px;
+        line-height: 1.625;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+      h1, h2, p { margin: 0; }
+      .page { width: 100%; max-width: 760px; margin: 0 auto; padding: 112px 22px 56px; }
+      .eyebrow { color: var(--muted); font-size: 12px; font-weight: 500; line-height: 19px; letter-spacing: .07em; }
+      h1 { margin-top: 4px; font-size: 22px; font-weight: 600; line-height: 28px; letter-spacing: -.025em; }
+      .intro { max-width: 700px; margin-top: 22px; color: var(--body); font-size: 16px; line-height: 24px; }
+      .summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 30px; border-block: 1px solid var(--border); }
+      .summary-item { min-width: 0; padding: 15px 0 16px; }
+      .summary-label { display: block; color: var(--muted); font-size: 12px; line-height: 18px; }
+      .summary-value { display: block; margin-top: 3px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 15px; font-weight: 500; line-height: 22px; letter-spacing: -.02em; }
+      .chart-section, .data-section { margin-top: 48px; }
+      .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+      h2 { font-size: 20px; font-weight: 600; line-height: 26px; letter-spacing: -.02em; }
+      .section-note { color: var(--muted); font-size: 13px; line-height: 20px; text-align: right; }
+      .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 17px; color: var(--body); font-size: 13px; line-height: 20px; }
+      .legend-item { display: inline-flex; align-items: center; gap: 7px; }
+      .legend-swatch { width: 22px; height: 0; border-top: 2px solid currentColor; }
+      .legend-swatch.amount { color: var(--amount); }
+      .legend-swatch.shares { color: var(--shares); }
+      .chart-wrap { position: relative; margin-top: 4px; border-bottom: 1px solid var(--border); user-select: none; }
+      #repurchase-chart { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+      .grid-line, .axis-line, .series-line, .data-point, .hover-line, .hover-point { vector-effect: non-scaling-stroke; }
+      .grid-line { stroke: var(--border); stroke-width: 1; }
+      .axis-line { stroke: var(--faint); stroke-width: 1; }
+      .axis-label { fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; }
+      .axis-title { font-size: 12px; font-weight: 500; }
+      .amount-text { fill: var(--amount); }
+      .shares-text { fill: var(--shares); }
+      .x-label { fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; text-anchor: middle; }
+      .series-line { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .amount-line { stroke: var(--amount); }
+      .shares-line { stroke: var(--shares); }
+      .data-point { fill: var(--background); stroke-width: 1.8; }
+      .amount-point { stroke: var(--amount); }
+      .shares-point { stroke: var(--shares); }
+      .hover-line { stroke: var(--muted); stroke-dasharray: 3 4; stroke-width: 1; opacity: 0; }
+      .hover-point { fill: var(--background); stroke-width: 2.4; opacity: 0; }
+      .hover-point.amount-point { stroke: var(--amount); }
+      .hover-point.shares-point { stroke: var(--shares); }
+      .is-visible { opacity: 1; }
+      .hit-area { fill: transparent; cursor: crosshair; }
+      .tooltip {
+        position: absolute;
+        z-index: 5;
+        min-width: 192px;
+        max-width: 250px;
+        padding: 11px 12px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface) 97%, transparent);
+        box-shadow: 0 12px 28px var(--tooltip-shadow);
+        color: var(--foreground);
+        font-size: 12px;
+        line-height: 19px;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(4px);
+        transition: opacity 100ms ease, transform 100ms ease;
+      }
+      .tooltip.is-visible { opacity: 1; transform: translateY(0); }
+      .tooltip strong { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 600; }
+      .tooltip-row { display: flex; justify-content: space-between; gap: 14px; }
+      .tooltip-row span:first-child { color: var(--muted); }
+      .tooltip-row span:last-child { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; white-space: nowrap; }
+      .tooltip a { display: inline-block; margin-top: 6px; color: var(--muted); }
+      .table-wrap { margin-top: 16px; overflow-x: auto; border-bottom: 1px solid var(--border); }
+      table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 14px; line-height: 22px; }
+      th, td { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+      th { color: var(--body); font-weight: 600; }
+      td { color: var(--body); }
+      td:first-child, td:nth-child(3), td:nth-child(4) { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+      td:nth-child(4) { color: var(--shares); }
+      td:nth-child(5) { color: var(--amount); }
+      .notes { margin-top: 48px; padding: 20px 22px 22px; border-left: 2px solid var(--amount); border-radius: 0 8px 8px 0; background: var(--hover); color: var(--body); font-size: 14px; line-height: 22px; }
+      .notes h2 { margin-bottom: 10px; font-size: 16px; line-height: 24px; }
+      .notes ul { margin: 0; padding-left: 20px; }
+      .notes li + li { margin-top: 6px; }
+      .sources { margin-top: 24px; }
+      .sources summary { color: var(--muted); cursor: pointer; font-size: 14px; line-height: 22px; }
+      .sources ol { margin: 12px 0 0; padding-left: 22px; }
+      .sources li { margin-top: 6px; overflow-wrap: anywhere; }
+      .sources a { color: var(--body); }
+      .footer { margin-top: 56px; color: var(--muted); font-size: 13px; line-height: 20px; }
+      :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+      @media (max-width: 800px) {
+        .page { width: auto; max-width: none; margin: 0 20px; padding: 80px 0 40px; }
+        .section-heading { display: block; }
+        .section-note { margin-top: 5px; text-align: left; }
+        .summary { gap: 14px; }
+        .chart-wrap { margin-inline: -8px; }
+        .tooltip { min-width: 176px; }
+      }
+      @media (max-width: 520px) {
+        .page { width: auto; margin: 0 16px; }
+        .summary { grid-template-columns: 1fr; gap: 0; }
+        .summary-item + .summary-item { border-top: 1px solid var(--border); }
+        .legend { gap: 10px 14px; }
+        .notes { padding-inline: 18px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { transition-duration: .01ms !important; }
+      }
+      .embed-mode .page { max-width: 760px; padding: 22px 16px 12px; }
+      .embed-mode .page > header,
+      .embed-mode .summary,
+      .embed-mode .data-section,
+      .embed-mode .notes,
+      .embed-mode .footer { display: none; }
+      .embed-mode .chart-section { margin-top: 0; }
+      .embed-mode .section-heading { padding-bottom: 10px; }
+      .embed-mode .legend { margin-top: 12px; }
+      .embed-mode .chart-wrap { margin-top: 12px; border-bottom: 0; }
+      @media (max-width: 520px) {
+        .embed-mode .page { margin: 0 8px; padding-top: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header>
+        <div class="eyebrow" id="eyebrow">AGORA · SHARE REPURCHASE</div>
+        <h1 id="page-title">声网自回购计划启动以来的季度回购</h1>
+        <p class="intro" id="page-intro">以季度业绩公告为口径，展示声网（NASDAQ: API）每个季度回购的 Class A ordinary shares（A 类普通股）数量与花费金额。鼠标移动到图上可查看具体数据点、财报日期和财报季度。</p>
+      </header>
+
+      <section class="summary" id="summary" aria-label="数据摘要">
+        <div class="summary-item"><span class="summary-label" id="coverage-label">覆盖期</span><strong class="summary-value">2022Q1 – 2026Q1</strong></div>
+        <div class="summary-item"><span class="summary-label" id="cumulative-shares-label">官方累计回购股数</span><strong class="summary-value" id="cumulative-shares-value">174.7m 股¹</strong></div>
+        <div class="summary-item"><span class="summary-label" id="cumulative-amount-label">官方累计花费金额</span><strong class="summary-value">US$156.2m¹</strong></div>
+      </section>
+
+      <section class="chart-section" aria-labelledby="chart-title">
+        <div class="section-heading"><h2 id="chart-title">季度回购股数与花费金额</h2><p class="section-note" id="chart-axis-note">金额与股数共用同一纵轴</p></div>
+        <div class="legend" id="chart-legend" aria-label="图例"><span class="legend-item"><span class="legend-swatch amount" aria-hidden="true"></span><span id="amount-legend">金额（US$ million）</span></span><span class="legend-item"><span class="legend-swatch shares" aria-hidden="true"></span><span id="shares-legend">股数（million shares）</span></span></div>
+        <div class="chart-wrap" id="chart-wrap"><svg id="repurchase-chart" viewBox="0 0 800 430" role="img" aria-label="声网季度回购金额和股数折线图"></svg><div class="tooltip" id="tooltip" role="status" aria-live="polite"></div></div>
+      </section>
+
+      <section class="data-section" aria-labelledby="data-title">
+        <div class="section-heading"><h2 id="data-title">季度明细</h2><p class="section-note" id="data-note">公告中均为 approximately（约）值</p></div>
+        <div class="table-wrap"><table><thead><tr><th id="table-quarter" scope="col">财报季度</th><th id="table-period-end" scope="col">报告期末</th><th id="table-report-date" scope="col">财报日期</th><th id="table-shares" scope="col">回购股数</th><th id="table-amount" scope="col">回购金额</th><th id="table-source" scope="col">来源</th></tr></thead><tbody id="data-table-body"></tbody></table></div>
+      </section>
+
+      <aside class="notes" aria-labelledby="notes-title">
+        <h2 id="notes-title">口径与来源说明</h2>
+        <ul>
+          <li id="note-1">股数为季度内回购的 Class A ordinary shares，单位为百万股；金额为季度内回购花费，单位为百万美元。两项均来自声网季度业绩公告中的 “Share Repurchase Program” 段落。</li>
+          <li id="note-2">公告使用 approximately（约）值；因此季度值四舍五入后相加，可能与公司在最新公告中披露的累计值存在 0.1m 的尾差。摘要中的 174.7m 股和 US$156.2m 是公司截至 2026 年 3 月 31 日披露的累计值，并非本页四舍五入季度数据的再加总。</li>
+          <li id="note-3">1 ADS（美国存托股份）代表 4 股 Class A ordinary shares；本图为避免换算误读，主图统一使用普通股股数。</li>
+          <li id="note-4">本版本按要求让金额和股数共用同一套数值刻度；由于两者单位不同，线条高度适合观察各自的时间变化，不宜直接解释为同一经济量的大小比较。</li>
+        </ul>
+        <details class="sources"><summary id="sources-summary">展开查看 17 个官方季度公告</summary><ol id="source-list"></ol></details>
+      </aside>
+
+      <p class="footer" id="footer-note">数据截至 2026Q1；下一期公告发布后，可按相同字段追加一行并更新图表数据。</p>
+    </main>
+
+    <script>
+      const DATA = [
+        { quarter: "22Q1", periodEnd: "2022-03-31", reportDate: "2022-05-23", shares: 3.5, amount: 8.0, source: "https://investor.agora.io/static-files/80dc7f18-290e-4dc0-8950-79aa4d2fd64a", sourceLabel: "2022 Q1 Financial Results" },
+        { quarter: "22Q2", periodEnd: "2022-06-30", reportDate: "2022-08-15", shares: 6.3, amount: 11.7, source: "https://investor.agora.io/static-files/35c1eecb-a8ac-41dd-9c11-0c3106aedb64", sourceLabel: "2022 Q2 Financial Results" },
+        { quarter: "22Q3", periodEnd: "2022-09-30", reportDate: "2022-11-21", shares: 3.5, amount: 3.5, source: "https://investor.agora.io/static-files/a41538f6-dd1b-4471-b789-fdb58a0cc4ef", sourceLabel: "2022 Q3 Financial Results" },
+        { quarter: "22Q4", periodEnd: "2022-12-31", reportDate: "2023-02-27", shares: 22.6, amount: 18.6, source: "https://investor.agora.io/static-files/4466843b-afb6-43bd-a146-038e0f75feee", sourceLabel: "2022 Q4 Financial Results" },
+        { quarter: "23Q1", periodEnd: "2023-03-31", reportDate: "2023-05-30", shares: 21.6, amount: 19.5, source: "https://investor.agora.io/static-files/38355d76-d6f0-48d9-bcee-5b4e7d73c5d9", sourceLabel: "2023 Q1 Financial Results" },
+        { quarter: "23Q2", periodEnd: "2023-06-30", reportDate: "2023-08-21", shares: 25.2, amount: 20.7, source: "https://investor.agora.io/static-files/b02b02ba-c926-45d3-8092-ea302eb5e545", sourceLabel: "2023 Q2 Financial Results" },
+        { quarter: "23Q3", periodEnd: "2023-09-30", reportDate: "2023-11-21", shares: 17.0, amount: 12.3, source: "https://investor.agora.io/static-files/3f24d94f-70d6-4424-8ff0-72dfd89374b5", sourceLabel: "2023 Q3 Financial Results" },
+        { quarter: "23Q4", periodEnd: "2023-12-31", reportDate: "2024-02-26", shares: 14.1, amount: 10.0, source: "https://investor.agora.io/static-files/83590651-2647-4fcc-9697-f5091ec6811d", sourceLabel: "2023 Q4 Financial Results" },
+        { quarter: "24Q1", periodEnd: "2024-03-31", reportDate: "2024-05-22", shares: 4.8, amount: 3.2, source: "https://investor.agora.io/static-files/dc734c72-0cfd-4915-807b-7c3f45cc00d5", sourceLabel: "2024 Q1 Financial Results" },
+        { quarter: "24Q2", periodEnd: "2024-06-30", reportDate: "2024-08-19", shares: 3.9, amount: 2.4, source: "https://investor.agora.io/static-files/b65b2447-57a4-4f01-b140-b4092d28c507", sourceLabel: "2024 Q2 Financial Results" },
+        { quarter: "24Q3", periodEnd: "2024-09-30", reportDate: "2024-11-25", shares: 6.8, amount: 3.9, source: "https://investor.agora.io/static-files/1cb0ef0f-966c-4e34-a685-a5212849b0aa", sourceLabel: "2024 Q3 Financial Results" },
+        { quarter: "24Q4", periodEnd: "2024-12-31", reportDate: "2025-02-24", shares: 1.3, amount: 1.4, source: "https://investor.agora.io/static-files/c5dd1003-07b8-417e-9728-d90595f3ab91", sourceLabel: "2024 Q4 Financial Results" },
+        { quarter: "25Q1", periodEnd: "2025-03-31", reportDate: "2025-05-27", shares: 1.2, amount: 1.2, source: "https://investor.agora.io/static-files/4309fa60-68df-447e-b08b-9bfe38577079", sourceLabel: "2025 Q1 Financial Results" },
+        { quarter: "25Q2", periodEnd: "2025-06-30", reportDate: "2025-08-18", shares: 13.1, amount: 10.9, source: "https://investor.agora.io/static-files/ea62fd5e-ab94-45cc-a933-0c5f3ce1fed0", sourceLabel: "2025 Q2 Financial Results" },
+        { quarter: "25Q3", periodEnd: "2025-09-30", reportDate: "2025-11-19", shares: 5.2, amount: 4.8, source: "https://investor.agora.io/static-files/8b37d17e-e68f-4bfd-aca5-195662db3a02", sourceLabel: "2025 Q3 Financial Results" },
+        { quarter: "25Q4", periodEnd: "2025-12-31", reportDate: "2026-03-02", shares: 12.0, amount: 11.1, source: "https://investor.agora.io/static-files/e210ca2f-1bba-489b-bb13-7638097e6bd5", sourceLabel: "2025 Q4 Financial Results" },
+        { quarter: "26Q1", periodEnd: "2026-03-31", reportDate: "2026-05-26", shares: 12.5, amount: 13.1, source: "https://investor.agora.io/static-files/6ed4449a-4fa1-4c5e-ba5e-6644bd0d3387", sourceLabel: "2026 Q1 Financial Results" }
+      ];
+
+      const query = new URLSearchParams(window.location.search);
+      const locale = query.get("lang") === "en" ? "en" : "zh";
+      const copy = locale === "en" ? {
+        pageTitle: "Agora quarterly share repurchases: shares and amount",
+        description: "Interactive quarterly chart of Agora's share repurchases, including shares repurchased and amount spent.",
+        eyebrow: "AGORA · SHARE REPURCHASE",
+        intro: "Using quarterly results announcements as the reporting basis, this chart shows the number of Class A ordinary shares repurchased and the amount spent by Agora (NASDAQ: API) in each quarter. Hover over the chart to see the data point, report date, and reporting quarter.",
+        summaryAria: "Data summary",
+        coverageLabel: "Coverage",
+        cumulativeSharesLabel: "Cumulative shares repurchased",
+        cumulativeSharesValue: "174.7m shares¹",
+        cumulativeAmountLabel: "Cumulative amount spent",
+        chartTitle: "Quarterly shares repurchased and amount spent",
+        sharedAxisNote: "Amount and shares use the same y-axis",
+        legendAmount: "Amount (US$ million)",
+        legendShares: "Shares (million shares)",
+        chartAria: "Agora quarterly share repurchase amount and share count line chart",
+        axisTitle: "Value (millions)",
+        dataTitle: "Quarterly detail",
+        dataNote: "All figures are approximate, as reported",
+        tableHeaders: ["Reporting quarter", "Period end", "Report date", "Shares repurchased", "Amount spent", "Source"],
+        notesTitle: "Methodology and sources",
+        notes: [
+          "Shares are Class A ordinary shares repurchased during each quarter, in millions; amount is quarterly spend, in US$ millions. Both figures come from the “Share Repurchase Program” section of Agora’s quarterly results announcements.",
+          "The announcements use approximate figures; therefore, adding rounded quarterly values may differ from the latest company-reported cumulative totals by 0.1m. The summary figures of 174.7m shares and US$156.2m are the company-reported cumulative figures as of March 31, 2026, rather than a sum of the rounded quarterly observations on this page.",
+          "One ADS represents four Class A ordinary shares. To avoid conversion confusion, the chart uses ordinary shares throughout.",
+          "As required, amount and shares use the same numeric scale. Because the units differ, vertical position is best used to assess each series over time, not to compare the two series as if they measured the same economic quantity."
+        ],
+        sourcesSummary: "View 17 official quarterly announcements",
+        footer: "Data through 1Q 2026; append the next quarter using the same fields when the next announcement is published.",
+        tooltipQuarter: "quarterly repurchase",
+        reportDate: "Report date",
+        amount: "Amount repurchased",
+        shares: "Shares repurchased",
+        viewSource: "View official announcement ↗",
+        published: "published",
+        shareUnit: "m shares",
+        amountUnit: "US$"
+      } : {
+        pageTitle: "声网季度回购：股数与金额",
+        description: "声网自 2022Q1 起按季度披露的股票回购股数与花费金额交互式折线图。",
+        eyebrow: "AGORA · SHARE REPURCHASE",
+        intro: "以季度业绩公告为口径，展示声网（NASDAQ: API）每个季度回购的 Class A ordinary shares（A 类普通股）数量与花费金额。鼠标移动到图上可查看具体数据点、财报日期和财报季度。",
+        summaryAria: "数据摘要",
+        coverageLabel: "覆盖期",
+        cumulativeSharesLabel: "官方累计回购股数",
+        cumulativeSharesValue: "174.7m 股¹",
+        cumulativeAmountLabel: "官方累计花费金额",
+        chartTitle: "季度回购股数与花费金额",
+        sharedAxisNote: "金额与股数共用同一纵轴",
+        legendAmount: "金额（US$ million）",
+        legendShares: "股数（million shares）",
+        chartAria: "声网季度回购金额和股数折线图",
+        axisTitle: "数值（百万）",
+        dataTitle: "季度明细",
+        dataNote: "公告中均为 approximately（约）值",
+        tableHeaders: ["财报季度", "报告期末", "财报日期", "回购股数", "回购金额", "来源"],
+        notesTitle: "口径与来源说明",
+        notes: [
+          "股数为季度内回购的 Class A ordinary shares，单位为百万股；金额为季度内回购花费，单位为百万美元。两项均来自声网季度业绩公告中的 “Share Repurchase Program” 段落。",
+          "公告使用 approximately（约）值；因此季度值四舍五入后相加，可能与公司在最新公告中披露的累计值存在 0.1m 的尾差。摘要中的 174.7m 股和 US$156.2m 是公司截至 2026 年 3 月 31 日披露的累计值，并非本页四舍五入季度数据的再加总。",
+          "1 ADS（美国存托股份）代表 4 股 Class A ordinary shares；本图为避免换算误读，主图统一使用普通股股数。",
+          "本版本按要求让金额和股数共用同一套数值刻度；由于两者单位不同，线条高度适合观察各自的时间变化，不宜直接解释为同一经济量的大小比较。"
+        ],
+        sourcesSummary: "展开查看 17 个官方季度公告",
+        footer: "数据截至 2026Q1；下一期公告发布后，可按相同字段追加一行并更新图表数据。",
+        tooltipQuarter: "季度回购",
+        reportDate: "财报日期",
+        amount: "回购金额",
+        shares: "回购股数",
+        viewSource: "查看官方公告 ↗",
+        published: "发布于",
+        shareUnit: "m 股",
+        amountUnit: "US$"
+      };
+
+      document.documentElement.lang = locale === "en" ? "en" : "zh-CN";
+      document.title = copy.pageTitle;
+      document.getElementById("page-description")?.setAttribute("content", copy.description);
+      if (query.get("embed") === "1") document.body.classList.add("embed-mode");
+      document.getElementById("eyebrow").textContent = copy.eyebrow;
+      document.getElementById("page-title").textContent = copy.pageTitle;
+      document.getElementById("page-intro").textContent = copy.intro;
+      document.getElementById("summary").setAttribute("aria-label", copy.summaryAria);
+      document.getElementById("coverage-label").textContent = copy.coverageLabel;
+      document.getElementById("cumulative-shares-label").textContent = copy.cumulativeSharesLabel;
+      document.getElementById("cumulative-shares-value").textContent = copy.cumulativeSharesValue;
+      document.getElementById("cumulative-amount-label").textContent = copy.cumulativeAmountLabel;
+      document.getElementById("chart-title").textContent = copy.chartTitle;
+      document.getElementById("chart-axis-note").textContent = copy.sharedAxisNote;
+      document.getElementById("chart-legend").setAttribute("aria-label", locale === "en" ? "Legend" : "图例");
+      document.getElementById("amount-legend").textContent = copy.legendAmount;
+      document.getElementById("shares-legend").textContent = copy.legendShares;
+      document.getElementById("data-title").textContent = copy.dataTitle;
+      document.getElementById("data-note").textContent = copy.dataNote;
+      ["table-quarter", "table-period-end", "table-report-date", "table-shares", "table-amount", "table-source"].forEach((id, index) => {
+        document.getElementById(id).textContent = copy.tableHeaders[index];
+      });
+      document.getElementById("notes-title").textContent = copy.notesTitle;
+      copy.notes.forEach((note, index) => { document.getElementById(`note-${index + 1}`).textContent = note; });
+      document.getElementById("sources-summary").textContent = copy.sourcesSummary;
+      document.getElementById("footer-note").textContent = copy.footer;
+
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const svg = document.getElementById("repurchase-chart");
+      const chartWrap = document.getElementById("chart-wrap");
+      const tooltip = document.getElementById("tooltip");
+      const tableBody = document.getElementById("data-table-body");
+      const sourceList = document.getElementById("source-list");
+      const W = 800, H = 430, M = { top: 28, right: 34, bottom: 66, left: 72 };
+      const innerW = W - M.left - M.right, innerH = H - M.top - M.bottom;
+      const sharedMax = 30;
+
+      function el(tag, attrs = {}, text = "") {
+        const node = document.createElementNS(SVG_NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        if (text) node.textContent = text;
+        return node;
+      }
+      function x(i) { return M.left + innerW * i / (DATA.length - 1); }
+      function yShared(value) { return M.top + innerH * (1 - value / sharedMax); }
+      function pathFor(field, yFn) { return DATA.map((row, index) => `${index === 0 ? "M" : "L"} ${x(index).toFixed(2)} ${yFn(row[field]).toFixed(2)}`).join(" "); }
+      function addText(parent, text, attrs) { parent.appendChild(el("text", attrs, text)); }
+
+      function renderChart() {
+        svg.replaceChildren();
+        svg.setAttribute("aria-label", copy.chartAria);
+        const grid = el("g"), axes = el("g"), labels = el("g"), lines = el("g"), points = el("g");
+        for (let tick = 0; tick <= sharedMax; tick += 5) {
+          const yy = yShared(tick);
+          grid.appendChild(el("line", { class: "grid-line", x1: M.left, x2: W - M.right, y1: yy, y2: yy }));
+          addText(labels, String(tick), { class: "axis-label", x: M.left - 12, y: yy + 4, "text-anchor": "end" });
+        }
+        axes.appendChild(el("line", { class: "axis-line", x1: M.left, x2: M.left, y1: M.top, y2: H - M.bottom }));
+        axes.appendChild(el("line", { class: "axis-line", x1: M.left, x2: W - M.right, y1: H - M.bottom, y2: H - M.bottom }));
+        addText(labels, copy.axisTitle, { class: "axis-title", x: M.left, y: 14, "text-anchor": "start" });
+        DATA.forEach((row, index) => {
+          const xx = x(index);
+          addText(labels, row.quarter, { class: "x-label", x: xx, y: H - M.bottom + 25 });
+          points.appendChild(el("circle", { class: "data-point amount-point", cx: xx, cy: yShared(row.amount), r: 3.1 }));
+          points.appendChild(el("circle", { class: "data-point shares-point", cx: xx, cy: yShared(row.shares), r: 3.1 }));
+        });
+        lines.appendChild(el("path", { class: "series-line amount-line", d: pathFor("amount", yShared) }));
+        lines.appendChild(el("path", { class: "series-line shares-line", d: pathFor("shares", yShared) }));
+        const hoverLine = el("line", { class: "hover-line", id: "hover-line", x1: M.left, x2: M.left, y1: M.top, y2: H - M.bottom });
+        const hoverAmount = el("circle", { class: "hover-point amount-point", id: "hover-amount", cx: M.left, cy: M.top, r: 5 });
+        const hoverShares = el("circle", { class: "hover-point shares-point", id: "hover-shares", cx: M.left, cy: M.top, r: 5 });
+        svg.append(grid, axes, lines, points, labels, hoverLine, hoverAmount, hoverShares);
+        const hitArea = el("rect", { class: "hit-area", x: M.left, y: M.top, width: innerW, height: innerH + 34 });
+        svg.appendChild(hitArea);
+        hitArea.addEventListener("pointermove", (event) => showTooltip(event, hoverLine, hoverAmount, hoverShares));
+        hitArea.addEventListener("pointerleave", hideTooltip);
+        hitArea.addEventListener("pointerdown", (event) => showTooltip(event, hoverLine, hoverAmount, hoverShares));
+      }
+
+      function showTooltip(event, hoverLine, hoverAmount, hoverShares) {
+        const rect = svg.getBoundingClientRect();
+        const localX = (event.clientX - rect.left) / rect.width * W;
+        const rawIndex = Math.round((localX - M.left) / (innerW / (DATA.length - 1)));
+        const index = Math.max(0, Math.min(DATA.length - 1, rawIndex));
+        const row = DATA[index], xx = x(index);
+        hoverLine.setAttribute("x1", xx); hoverLine.setAttribute("x2", xx);
+        hoverAmount.setAttribute("cx", xx); hoverAmount.setAttribute("cy", yShared(row.amount));
+        hoverShares.setAttribute("cx", xx); hoverShares.setAttribute("cy", yShared(row.shares));
+        hoverLine.classList.add("is-visible"); hoverAmount.classList.add("is-visible"); hoverShares.classList.add("is-visible");
+        tooltip.innerHTML = `<strong>${row.quarter} · ${copy.tooltipQuarter}</strong><div class="tooltip-row"><span>${copy.reportDate}</span><span>${row.reportDate}</span></div><div class="tooltip-row"><span>${copy.amount}</span><span>${copy.amountUnit}${row.amount.toFixed(1)}m</span></div><div class="tooltip-row"><span>${copy.shares}</span><span>${row.shares.toFixed(1)}${copy.shareUnit}</span></div><a href="${row.source}" target="_blank" rel="noreferrer">${copy.viewSource}</a>`;
+        const wrapRect = chartWrap.getBoundingClientRect();
+        const pointX = event.clientX - wrapRect.left, pointY = event.clientY - wrapRect.top;
+        const left = Math.max(8, Math.min(wrapRect.width - tooltip.offsetWidth - 8, pointX + 14));
+        const top = Math.max(8, Math.min(wrapRect.height - tooltip.offsetHeight - 8, pointY - tooltip.offsetHeight - 10));
+        tooltip.style.left = `${left}px`; tooltip.style.top = `${top}px`; tooltip.classList.add("is-visible");
+      }
+      function hideTooltip() {
+        document.getElementById("hover-line")?.classList.remove("is-visible");
+        document.getElementById("hover-amount")?.classList.remove("is-visible");
+        document.getElementById("hover-shares")?.classList.remove("is-visible");
+        tooltip.classList.remove("is-visible");
+      }
+      function renderTable() {
+        DATA.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${row.quarter}</td><td>${row.periodEnd}</td><td>${row.reportDate}</td><td>${row.shares.toFixed(1)}${copy.shareUnit}</td><td>${copy.amountUnit}${row.amount.toFixed(1)}m</td><td><a href="${row.source}" target="_blank" rel="noreferrer">${copy.viewSource}</a></td>`;
+          tableBody.appendChild(tr);
+        });
+      }
+      function renderSources() {
+        DATA.forEach((row) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${row.source}" target="_blank" rel="noreferrer">${row.sourceLabel}</a> · ${copy.published} ${row.reportDate}`;
+          sourceList.appendChild(li);
+        });
+      }
+      renderChart(); renderTable(); renderSources();
+      window.addEventListener("resize", renderChart, { passive: true });
+    </script>
+  </body>
+</html>

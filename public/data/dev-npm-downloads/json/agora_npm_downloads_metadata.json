@@ -1,0 +1,58 @@
+{
+  "generated_at_utc": "2026-07-31T07:41:06.203691+00:00",
+  "vendor": "agora",
+  "source": {
+    "registry": "https://registry.npmjs.org",
+    "downloads": "https://api.npmjs.org/downloads",
+    "weekly_grain": "Monday-start weeks",
+    "latest_download_day": "2026-07-29",
+    "latest_complete_week_start": "2026-07-20",
+    "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
+  },
+  "dataset": {
+    "csv": "agora_npm_weekly_downloads.csv",
+    "rows": 477,
+    "columns": [
+      "week_start",
+      "agora-rtc-sdk-ng",
+      "agora-rtm-sdk",
+      "agora-rtc-react",
+      "react-native-agora"
+    ],
+    "latest_complete_week_start": "2026-07-20"
+  },
+  "packages": {
+    "agora-rtc-sdk-ng": {
+      "exists": true,
+      "created": "2020-03-02T11:06:28.278Z",
+      "modified": "2026-07-21T07:45:57.496Z",
+      "latest_version": "4.24.6",
+      "description": "Agora WebRTC SDK for JavaScript",
+      "error": null
+    },
+    "agora-rtm-sdk": {
+      "exists": true,
+      "created": "2019-07-23T09:40:49.363Z",
+      "modified": "2026-04-03T10:51:21.311Z",
+      "latest_version": "2.2.4",
+      "description": "JavaScript SDK for Agora RTM",
+      "error": null
+    },
+    "agora-rtc-react": {
+      "exists": true,
+      "created": "2021-10-17T13:31:08.072Z",
+      "modified": "2025-12-17T03:50:09.444Z",
+      "latest_version": "2.5.1",
+      "description": "Agora RTC React SDK",
+      "error": null
+    },
+    "react-native-agora": {
+      "exists": true,
+      "created": "2017-06-13T10:15:31.546Z",
+      "modified": "2026-06-30T06:43:04.000Z",
+      "latest_version": "4.6.2",
+      "description": "Agora RTC SDK For React Native",
+      "error": null
+    }
+  }
+}

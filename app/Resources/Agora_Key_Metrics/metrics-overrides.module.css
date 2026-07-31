@@ -1,0 +1,11 @@
+:global(.metrics-table-frame) {
+  height: auto !important;
+  max-height: min(560px, calc(100svh - 120px)) !important;
+}
+
+@media (max-width: 820px) {
+  :global(.metrics-table-frame) {
+    height: auto !important;
+    max-height: min(560px, calc(100svh - 150px)) !important;
+  }
+}

@@ -1,0 +1,154 @@
+:global(.metrics-page) {
+  max-width: 760px;
+  padding: 88px 22px 48px;
+}
+
+:global(.metrics-header h1) {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.035em;
+}
+
+:global(.metrics-table-frame) {
+  width: min(1200px, calc(100vw - 44px));
+  max-height: calc(100svh - 120px);
+  margin-top: 28px;
+  margin-left: calc(50% - min(600px, calc(50vw - 22px)));
+  transform: none;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 10px 24px var(--shadow);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+}
+
+:global(.metrics-table) {
+  width: 1600px;
+  min-width: 1600px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+:global(.metrics-table th),
+:global(.metrics-table td) {
+  width: calc((1600px - 112px) / 20);
+  height: 18px;
+  padding: 0 4px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  text-align: center;
+}
+
+:global(.metrics-table th) {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--hover);
+  color: var(--foreground);
+  font-weight: 600;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+:global(.metrics-table td) {
+  white-space: nowrap;
+}
+
+:global(.metrics-table th:first-child),
+:global(.metrics-table td:first-child) {
+  width: 112px;
+  position: sticky;
+  left: 0;
+}
+
+:global(.metrics-table thead th:first-child) {
+  z-index: 3;
+}
+
+:global(.metrics-table tbody td:first-child) {
+  z-index: 1;
+  background: var(--surface);
+  font-weight: 500;
+}
+
+:global(.metrics-table tr > :last-child) {
+  border-right: 0;
+}
+
+:global(.metrics-table tbody tr:last-child td) {
+  border-bottom: 0;
+}
+
+:global(.metrics-table tbody tr:hover td) {
+  background: color-mix(in srgb, var(--hover) 48%, transparent);
+}
+
+:global(.metrics-table tbody tr:hover td:first-child) {
+  background: var(--hover);
+}
+
+@media (max-width: 820px) {
+  :global(.metrics-page) {
+    max-width: none;
+    padding: 132px 0 40px;
+  }
+
+  :global(.metrics-header) {
+    padding-inline: 20px;
+  }
+
+  :global(.metrics-table-frame) {
+    width: 100%;
+    max-height: calc(100svh - 150px);
+    margin-top: 24px;
+    margin-left: 0;
+    transform: none;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+}
+
+:global(.metrics-table th:nth-child(4)),
+:global(.metrics-table td:nth-child(4)) {
+  width: 88px;
+}
+
+:global(.metrics-table th:nth-child(5)),
+:global(.metrics-table td:nth-child(5)) {
+  width: 112px;
+}
+
+:global(.metrics-table th:nth-child(7)),
+:global(.metrics-table td:nth-child(7)) {
+  width: 88px;
+}
+
+:global(.metrics-table th:nth-child(15)),
+:global(.metrics-table td:nth-child(15)) {
+  width: 112px;
+}
+
+:global(.metrics-table th:nth-child(16)),
+:global(.metrics-table td:nth-child(16)) {
+  width: 96px;
+}
+
+:global(.metrics-table th:nth-child(17)),
+:global(.metrics-table td:nth-child(17)) {
+  width: 96px;
+}
+
+:global(.metrics-table th:nth-child(18)),
+:global(.metrics-table td:nth-child(18)) {
+  width: 100px;
+}

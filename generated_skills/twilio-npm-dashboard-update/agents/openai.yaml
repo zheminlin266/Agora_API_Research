@@ -1,0 +1,4 @@
+interface:
+  display_name: "Twilio npm Data Update"
+  short_description: "Refresh Twilio npm data for the single-page dashboard."
+  default_prompt: "Use $twilio-npm-dashboard-update to refresh the Twilio npm CSV and metadata, validate the root dashboard, and report the result."

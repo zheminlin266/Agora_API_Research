@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title description">
+  <title id="title">China's Loan Prime Rate change</title>
+  <desc id="description">Step chart of 1-year and over-five-year Loan Prime Rates from August 2019 to July 2026. Each point aligns to the annual-rate percentage axis at left.</desc>
+  <rect x="24" y="24" width="1232" height="672" rx="18" fill="#fbfcfe" stroke="#d9e6f0" stroke-width="2"/>
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+    <text x="88" y="80" fill="#152638" font-size="34" font-weight="700" letter-spacing="-0.5">China's Loan Prime Rate (LPR)</text>
+    <text x="88" y="112" fill="#6d7d8c" font-size="18">August 2019—July 2026</text>
+    <g transform="translate(780 68)" font-size="16" font-weight="600">
+      <path d="M0 8H30" fill="none" stroke="#099dfd" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="15" cy="8" r="4.5" fill="#099dfd" stroke="#fff" stroke-width="2"/>
+      <text x="42" y="14" fill="#405261">1-year LPR</text>
+      <path d="M145 8H175" fill="none" stroke="#e56d3c" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="160" cy="8" r="4.5" fill="#e56d3c" stroke="#fff" stroke-width="2"/>
+      <text x="187" y="14" fill="#405261">Over-five-year LPR</text>
+    </g>
+    <g stroke="#d7e1e9" stroke-width="1.2" stroke-dasharray="6 8">
+      <path d="M138 549.51H1140"/><path d="M138 498.29H1140"/><path d="M138 447.07H1140"/><path d="M138 395.85H1140"/>
+      <path d="M138 344.63H1140"/><path d="M138 293.41H1140"/><path d="M138 242.20H1140"/><path d="M138 190.98H1140"/>
+      <path d="M198.36 156V570"/><path d="M342.87 156V570"/><path d="M487.37 156V570"/><path d="M631.88 156V570"/>
+      <path d="M776.39 156V570"/><path d="M920.89 156V570"/><path d="M1065.40 156V570"/>
+    </g>
+    <g fill="#6d7d8c" font-size="18" text-anchor="end">
+      <text x="122" y="554">3.00%</text><text x="122" y="503">3.25%</text><text x="122" y="452">3.50%</text><text x="122" y="401">3.75%</text>
+      <text x="122" y="350">4.00%</text><text x="122" y="299">4.25%</text><text x="122" y="248">4.50%</text><text x="122" y="197">4.75%</text>
+    </g>
+    <path d="M138 156V570H1140" fill="none" stroke="#203444" stroke-width="1.8"/>
+    <g fill="#6d7d8c" font-size="18" text-anchor="middle">
+      <text x="198.36" y="600">2020</text><text x="342.87" y="600">2021</text><text x="487.37" y="600">2022</text><text x="631.88" y="600">2023</text>
+      <text x="776.39" y="600">2024</text><text x="920.89" y="600">2025</text><text x="1065.40" y="600">2026</text>
+    </g>
+    <text x="639" y="636" fill="#405261" font-size="18" text-anchor="middle">Date</text>
+    <text x="38" y="365" fill="#405261" font-size="18" text-anchor="middle" transform="rotate(-90 38 365)">Annual rate (%)</text>
+    <path d="M138 293.41H150.07V303.66H174.22V313.90H210.43V334.39H234.58V375.37H476.02V385.61H488.10V406.10H536.39V406.10H572.61V416.34H693.33V436.83H717.48V457.32H789.91V457.32H850.27V477.80H886.48V529.02H970.99V549.51H1140V549.51" fill="none" stroke="#099dfd" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M138 170.49H150.07V180.73H174.22V190.98H210.43V190.98H234.58V211.46H476.02V211.46H488.10V221.71H536.39V252.44H572.61V283.17H693.33V303.66H717.48V303.66H789.91V354.88H850.27V375.37H886.48V426.59H970.99V447.07H1140V447.07" fill="none" stroke="#e56d3c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="#099dfd" stroke="#fff" stroke-width="2.5">
+      <circle cx="138" cy="293.41" r="6"/><circle cx="150.07" cy="303.66" r="6"/><circle cx="174.22" cy="313.90" r="6"/><circle cx="210.43" cy="334.39" r="6"/><circle cx="234.58" cy="375.37" r="6"/>
+      <circle cx="476.02" cy="385.61" r="6"/><circle cx="488.10" cy="406.10" r="6"/><circle cx="536.39" cy="406.10" r="6"/><circle cx="572.61" cy="416.34" r="6"/><circle cx="693.33" cy="436.83" r="6"/>
+      <circle cx="717.48" cy="457.32" r="6"/><circle cx="789.91" cy="457.32" r="6"/><circle cx="850.27" cy="477.80" r="6"/><circle cx="886.48" cy="529.02" r="6"/><circle cx="970.99" cy="549.51" r="6"/><circle cx="1140" cy="549.51" r="6"/>
+    </g>
+    <g fill="#e56d3c" stroke="#fff" stroke-width="2.5">
+      <circle cx="138" cy="170.49" r="6"/><circle cx="150.07" cy="180.73" r="6"/><circle cx="174.22" cy="190.98" r="6"/><circle cx="210.43" cy="190.98" r="6"/><circle cx="234.58" cy="211.46" r="6"/>
+      <circle cx="476.02" cy="211.46" r="6"/><circle cx="488.10" cy="221.71" r="6"/><circle cx="536.39" cy="252.44" r="6"/><circle cx="572.61" cy="283.17" r="6"/><circle cx="693.33" cy="303.66" r="6"/>
+      <circle cx="717.48" cy="303.66" r="6"/><circle cx="789.91" cy="354.88" r="6"/><circle cx="850.27" cy="375.37" r="6"/><circle cx="886.48" cy="426.59" r="6"/><circle cx="970.99" cy="447.07" r="6"/><circle cx="1140" cy="447.07" r="6"/>
+    </g>
+    <g font-size="18" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#fbfcfe" stroke-width="12" stroke-linejoin="round">
+      <path d="M1060 522V545" fill="none" stroke="#099dfd" stroke-width="2" opacity="0.75"/>
+      <text x="1060" y="515" fill="#087fd0">3.00%</text>
+      <path d="M1060 399V443" fill="none" stroke="#e56d3c" stroke-width="2" opacity="0.75"/>
+      <text x="1060" y="392" fill="#c45225">3.50%</text>
+    </g>
+    <text x="88" y="664" fill="#6d7d8c" font-size="15">Each point aligns to the annual-rate scale at left; all figures are percentages.</text>
+  </g>
+</svg>
