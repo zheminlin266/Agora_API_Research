@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import { LocalizedMarkdownArticle } from "@/components/localized-markdown-article";
 
 export const metadata: Metadata = {
-  title: "声网客户场景和竞争分析 | Agora Equity Research",
-  description: "Agora 客户工作负载、买入与自建决策，以及客户迁入迁出的竞争分析。",
+  title: "声网生存空间和迁移案例 | Agora Equity Research",
+  description: "Agora 客户工作负载、买入与自建决策，以及客户迁入迁出的竞争分析，聚焦声网的生存空间和迁移案例。",
 };
 
 export default async function AgoraCustomerScenariosPage() {
@@ -20,9 +20,9 @@ export default async function AgoraCustomerScenariosPage() {
   return (
     <LocalizedMarkdownArticle
       enMarkdown={enMarkdown}
-      enTitle="Agora Customer Scenarios and Competitive Analysis"
+      enTitle="Agora's Competitive Space and Migration Cases"
       zhMarkdown={zhMarkdown}
-      zhTitle="声网客户场景和竞争分析"
+      zhTitle="声网生存空间和迁移案例"
     />
   );
 }

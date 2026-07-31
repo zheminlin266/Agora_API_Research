@@ -1,4 +1,4 @@
-# Agora Customer Scenarios and Competitive Analysis
+# Agora's Competitive Space and Migration Cases
 
 ### Core Questions
 
@@ -29,12 +29,12 @@ The gross-margin observations above are workload-level analysis, not product-lev
 
 There is no universal user-count, revenue, or concurrency threshold. A company should consider building in-house when the following conditions start to appear together:
 
-1. **Cost conditions**: RTC billing has become a significant and stable part of the product's unit economics, and the fully loaded cost of building infrastructure, paying for bandwidth, and staffing a team is clearly below the vendor's pricing.
-2. **Workload conditions**: Traffic is large enough and predictable enough to continuously amortize the cost of media servers, global points of presence, monitoring, and SRE; when traffic is highly volatile, the elasticity of a cloud service remains valuable.
-3. **Strategic conditions**: The audio and video experience has become a core competitive advantage rather than an ancillary feature, and the company needs to customize congestion control, routing, codecs, mixing, or spatial audio.
-4. **Organizational conditions**: The company already has the capabilities for WebRTC/SFU, client-side media, networking, SRE, quality measurement, and 24/7 incident response.
-5. **Compliance conditions**: Data sovereignty, private deployment, government requirements, or regulatory requirements cannot be met through a standard public-cloud product.
-6. **Migration conditions**: The business layer is decoupled from the media layer, enabling dual-stack operation, gradual traffic migration, and rapid rollback.
+- **Cost conditions**: RTC billing has become a significant and stable part of the product's unit economics, and the fully loaded cost of building infrastructure, paying for bandwidth, and staffing a team is clearly below the vendor's pricing.
+- **Workload conditions**: Traffic is large enough and predictable enough to continuously amortize the cost of media servers, global points of presence, monitoring, and SRE; when traffic is highly volatile, the elasticity of a cloud service remains valuable.
+- **Strategic conditions**: The audio and video experience has become a core competitive advantage rather than an ancillary feature, and the company needs to customize congestion control, routing, codecs, mixing, or spatial audio.
+- **Organizational conditions**: The company already has the capabilities for WebRTC/SFU, client-side media, networking, SRE, quality measurement, and 24/7 incident response.
+- **Compliance conditions**: Data sovereignty, private deployment, government requirements, or regulatory requirements cannot be met through a standard public-cloud product.
+- **Migration conditions**: The business layer is decoupled from the media layer, enabling dual-stack operation, gradual traffic migration, and rapid rollback.
 
 The more common path is not a sudden jump from “buy” to “build everything in-house,” but a gradual progression:
 
