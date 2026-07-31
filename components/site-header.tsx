@@ -31,7 +31,7 @@ const menuItems = {
       { title: "OpenAI 与 LiveKit 关系", href: "/Supply/OpenAI_LiveKit_Relationship/" },
     ],
     agora: [
-      { title: "声网客户场景和竞争分析", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
+      { title: "声网生存空间和迁移案例", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
       { title: "Whatnot & Agora直播合作", href: "/Agora/Whatnot_Agora_Partnership/" },
       { title: "股权结构与回购分析", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
       { title: "员工人数变化", href: "/Agora/Employee_Headcount_Changes/" },
@@ -56,7 +56,7 @@ const menuItems = {
       { title: "OpenAI and LiveKit Relationship", href: "/Supply/OpenAI_LiveKit_Relationship/" },
     ],
     agora: [
-      { title: "Agora Customer Scenarios & Competitive Analysis", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
+      { title: "Agora's Competitive Space & Migration Cases", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
       { title: "Whatnot & Agora Livestream Partnership", href: "/Agora/Whatnot_Agora_Partnership/" },
       { title: "Equity Ownership & Share Repurchase Analysis", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
       { title: "Employee Headcount Changes", href: "/Agora/Employee_Headcount_Changes/" },
