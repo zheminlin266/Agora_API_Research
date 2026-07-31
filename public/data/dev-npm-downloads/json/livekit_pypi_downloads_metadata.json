@@ -1,19 +1,19 @@
 {
-  "generated_at_utc": "2026-07-27T09:13:35+00:00",
+  "generated_at_utc": "2026-07-31T07:41:51+00:00",
   "vendor": "livekit",
   "source": {
     "download_table": "pypi.pypi_downloads_per_day",
     "download_provider": "ClickPy public ClickHouse endpoint",
     "metadata_provider": "PyPI JSON API",
-    "source_last_date": "2026-07-26",
+    "source_last_date": "2026-07-30",
     "weekly_grain": "Monday-start weeks",
     "latest_complete_week_start": "2026-07-20"
   },
   "dataset": {
     "csv": "livekit_pypi_weekly_downloads.csv",
-    "rows": 164,
+    "rows": 165,
     "first_week_start": "2023-06-05",
-    "last_week_start": "2026-07-20",
+    "last_week_start": "2026-07-27",
     "latest_complete_week_start": "2026-07-20",
     "columns": [
       "week_start",
