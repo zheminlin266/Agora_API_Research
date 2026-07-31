@@ -1,6 +1,6 @@
 On February 8, 2026, MrBeast hosted a major giveaway on Whatnot, a livestream shopping platform. Peak concurrent viewership reached 583,000, and more than 555,000 people entered the same giveaway round. The platform also attracted hundreds of thousands of new users within 24 hours. Ultimately, the event concluded without any major technical incidents.
 
-The significance of this livestream went beyond setting a viewership record. It also demonstrated the technical capabilities of Whatnot and Agora in ultra-large-scale, real-time livestreaming.
+The significance of this livestream went beyond setting a viewership record. It also demonstrated the technical capabilities of Whatnot and Agora in ultra-large-scale, real-time livestreaming. The original technical blog post is available at [Scaling Whatnot: Behind the Largest Live Shopping Stream in US History](https://medium.com/whatnot-engineering/scaling-whatnot-behind-the-largest-live-shopping-stream-in-us-history-040a458f538c).
 
 ### Whatnot's Technical Requirements and Solutions
 
