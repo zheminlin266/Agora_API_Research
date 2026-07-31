@@ -4,7 +4,7 @@ The significance of this livestream went beyond setting a viewership record. It 
 
 ### Whatnot's Technical Requirements and Solutions
 
-#### 1. Which Scenarios Created the Greatest Technical Demands?
+#### Which Scenarios Created the Greatest Technical Demands?
 
 Conventional online video primarily solves the problem of letting users watch content. Livestream commerce, however, must support video, comments, product displays, giveaways, follows, account registration, and purchases—all at the same time.
 
@@ -12,7 +12,7 @@ The real challenge in this event was not having 583,000 people passively watch. 
 
 The platform therefore had to handle extremely high concurrency—the number of users accessing a system simultaneously—while also keeping video latency low, giveaway results accurate, and transactions uninterrupted, without affecting other livestreams on the platform.
 
-#### 2. Why Was the Technical Challenge So Difficult?
+#### Why Was the Technical Challenge So Difficult?
 
 The first challenge was the tension between scale and low latency.
 
@@ -26,7 +26,7 @@ The third challenge was unpredictable traffic.
 
 Livestreams do not follow a fixed workflow. A single sentence from the host can instantly trigger simultaneous actions from hundreds of thousands of users. Traditional, gradually ramped load tests have difficulty simulating this kind of sudden burst.
 
-#### 3. How Did Whatnot Address These Challenges?
+#### How Did Whatnot Address These Challenges?
 
 First, Whatnot developed a CAS admission-control system, a service that controls when new users are allowed to enter the platform. When traffic exceeds a safe threshold, the system limits new users from entering but does not affect people who are already watching or completing transactions, helping prevent a platform-wide outage.
 
@@ -52,14 +52,14 @@ The two companies also formed a joint operations team of approximately 30 people
 
 The description of this livestream highlights several of Agora's core advantages.
 
-#### 1. Supporting Ultra-Large-Scale, Single-Channel Livestreams
+**Supporting Ultra-Large-Scale, Single-Channel Livestreams**
 
 During this event, Agora supported roughly 580,000 concurrent users in a single RTC channel while maintaining stable, low-latency video. This indicates that its systems can operate reliably in a scenario where users are highly concentrated in one livestream—not merely support a large aggregate user count across many rooms.
 
-#### 2. Maintaining a Stable Experience on Complex Networks
+**Maintaining a Stable Experience on Complex Networks**
 
 Throughout the livestream, Agora used adaptive bitrate, congestion control, and packet-loss resilience to preserve video continuity, stable image quality, and controllable latency despite network fluctuations. This demonstrates its ability to deliver real-time media under unstable network conditions.
 
-#### 3. Providing Joint Engineering Support for Large-Scale Events
+**Providing Joint Engineering Support for Large-Scale Events**
 
 For this livestream, Agora and Whatnot conducted joint testing ten weeks in advance and validated the delivery path at a scale of approximately 1.3 million users. Agora also provided 72 hours of continuous monitoring during the livestream and helped form a joint support team of approximately 30 people. This shows that Agora provides more than technical capabilities: it also offers end-to-end engineering collaboration and operational support.
