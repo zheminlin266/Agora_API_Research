@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { SearchResult } from "@/lib/site-search";
 import { useSitePreferences } from "@/components/site-preferences";
@@ -9,6 +10,7 @@ import styles from "./site-search.module.css";
 
 export function SiteSearch() {
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -17,11 +19,32 @@ export function SiteSearch() {
   const listRef = useRef<HTMLUListElement>(null);
   const { language } = useSitePreferences();
 
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openSearch = useCallback(() => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+    setClosing(false);
+    setOpen(true);
+  }, []);
+
   const close = useCallback(() => {
-    setOpen(false);
-    setQuery("");
-    setResults([]);
-    setSelectedIndex(0);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setClosing(true);
+    closeTimer.current = setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+      setQuery("");
+      setResults([]);
+      setSelectedIndex(0);
+      closeTimer.current = null;
+    }, 180);
+  }, []);
+
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
   }, []);
 
   useEffect(() => {
@@ -103,34 +126,34 @@ export function SiteSearch() {
   return (
     <>
       <button
-        className={styles.trigger}
-        onClick={() => setOpen(true)}
+        className="control-button icon-button"
+        onClick={openSearch}
         aria-label={language === "zh" ? "搜索文章" : "Search articles"}
+        title={language === "zh" ? "搜索文章" : "Search articles"}
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-        <span className={styles.triggerLabel}>
-          {language === "zh" ? "搜索" : "Search"}
+        <span className="control-icon">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
         </span>
-        <kbd className={styles.kbd}>
-          <span className={styles.kbdKey}>⌘</span>K
-        </kbd>
       </button>
 
-      {open && (
-        <div className={styles.overlay} onClick={close}>
+      {open && typeof document !== "undefined" && createPortal(
+        <div
+          className={closing ? styles.overlay + " " + styles.closing : styles.overlay}
+          onClick={close}
+        >
           <dialog
-            className={styles.dialog}
+            className={closing ? styles.dialog + " " + styles.closing : styles.dialog}
             open
             onClick={(event) => event.stopPropagation()}
             aria-label={language === "zh" ? "搜索文章" : "Search articles"}
@@ -201,7 +224,8 @@ export function SiteSearch() {
               </div>
             )}
           </dialog>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

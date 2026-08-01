@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { BackToTop } from "@/components/back-to-top";
 import { SiteHeader } from "@/components/site-header";
 import { ArticleToc, type ArticleTocItem, type ArticleTocLabels } from "@/components/article-toc";
 
@@ -161,6 +162,18 @@ function parseBlocks(markdown: string): ArticleBlock[] {
   return blocks;
 }
 
+function normalizeArticleHref(href: string) {
+  try {
+    const url = new URL(href);
+    if (url.hostname === "agora.zhemin.ltd" || url.hostname === "www.agora.zhemin.ltd") {
+      return `${url.pathname}${url.search}${url.hash}`;
+    }
+  } catch {
+    // Keep malformed or non-URL values unchanged for the renderer to handle.
+  }
+  return href;
+}
+
 function renderInline(value: string, keyPrefix: string): ReactNode[] {
   const normalizedValue = normalizeInlineMarkdown(value);
   const nodes: ReactNode[] = [];
@@ -173,12 +186,16 @@ function renderInline(value: string, keyPrefix: string): ReactNode[] {
     if (match.index > lastIndex) nodes.push(normalizedValue.slice(lastIndex, match.index));
     if (match[1] && match[2]) {
       nodes.push(
-        <a className="article-link" href={match[2]} key={`${keyPrefix}-${key}`} rel="noreferrer" target="_blank">
+        <a className="article-link" href={normalizeArticleHref(match[2])} key={`${keyPrefix}-${key}`} rel="noreferrer" target="_blank">
           {match[1]}
         </a>,
       );
     } else if (match[3] || match[4]) {
-      nodes.push(<strong key={`${keyPrefix}-${key}`}>{match[3] ?? match[4]}</strong>);
+      nodes.push(
+        <strong key={`${keyPrefix}-${key}`}>
+          {renderInline(match[3] ?? match[4] ?? "", `${keyPrefix}-${key}-strong`)}
+        </strong>,
+      );
     } else if (match[5]) {
       nodes.push(<code key={`${keyPrefix}-${key}`}>{match[5]}</code>);
     } else {
@@ -227,6 +244,9 @@ type MarkdownArticleProps = {
   language?: "zh" | "en";
   articleTitle?: string;
   articleClassName?: string;
+  imageBasePath?: string;
+  showHeader?: boolean;
+  showToc?: boolean;
   publicationDateLabel?: string;
   backToTopLabel?: string;
   tocLabels?: ArticleTocLabels;
@@ -237,6 +257,9 @@ export function MarkdownArticle({
   language = "zh",
   articleTitle,
   articleClassName,
+  imageBasePath,
+  showHeader = true,
+  showToc = true,
   publicationDateLabel = "2026年7月",
   backToTopLabel = "返回顶部",
   tocLabels,
@@ -249,18 +272,22 @@ export function MarkdownArticle({
   const title = articleTitle ?? (titleBlock?.kind === "heading" ? titleBlock.content : undefined);
   const contentBlocks = titleBlockIndex >= 0 ? blocks.slice(titleBlockIndex + 1) : blocks;
   const tocItems: ArticleTocItem[] = contentBlocks.flatMap((block, index) => block.kind === "heading" ? [{ id: getHeadingId(block.content, index), label: block.content, level: block.level }] : []);
+  const resolveImageSrc = (src: string) => {
+    if (!imageBasePath || /^(?:[a-z]+:)?\//i.test(src)) return src;
+    return `${imageBasePath.replace(/\/$/, "")}/${src}`;
+  };
 
   return (
     <>
       <SiteHeader />
-      <ArticleToc items={tocItems} labels={tocLabels} />
+      {showToc && <ArticleToc items={tocItems} labels={tocLabels} />}
       <main className={["site-main", "article-page", articleClassName].filter(Boolean).join(" ")} id="top">
-        <header className="article-header rise delay-1">
-
-          <h1>{title ? renderInline(title, "article-title") : "RTC industry supply"}</h1>
-          <div className="article-meta"><time dateTime="2026-07">{publicationDateLabel}</time></div>
-
-        </header>
+        {showHeader && (
+          <header className="article-header rise delay-1">
+            <h1>{title ? renderInline(title, "article-title") : "RTC industry supply"}</h1>
+            <div className="article-meta"><time dateTime="2026-07">{publicationDateLabel}</time></div>
+          </header>
+        )}
 
         <article className="article-content rise delay-2">
           {contentBlocks.map((block, index) => {
@@ -288,7 +315,7 @@ export function MarkdownArticle({
             if (block.kind === "image") {
               return (
                 <figure className="article-image" key={`image-${index}`}>
-                  <img alt={block.alt} loading="lazy" src={block.src} />
+                  <img alt={block.alt} loading="lazy" src={resolveImageSrc(block.src)} />
                 </figure>
               );
             }
@@ -317,7 +344,7 @@ export function MarkdownArticle({
         </article>
 
         <footer className="article-footer rise delay-3">
-          <a href="#top">{backToTopLabel}</a>
+          <BackToTop label={backToTopLabel} />
         </footer>
       </main>
     </>

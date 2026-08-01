@@ -11,6 +11,9 @@ type LocalizedMarkdownArticleProps = {
   zhTitle?: string;
   enTitle?: string;
   articleClassName?: string;
+  imageBasePath?: string;
+  showHeader?: boolean;
+  showToc?: boolean;
 };
 
 export function LocalizedMarkdownArticle({
@@ -19,6 +22,9 @@ export function LocalizedMarkdownArticle({
   zhTitle,
   enTitle,
   articleClassName,
+  imageBasePath,
+  showHeader,
+  showToc,
 }: LocalizedMarkdownArticleProps) {
   const { language } = useSitePreferences();
   const isEnglish = language === "en";
@@ -39,9 +45,12 @@ export function LocalizedMarkdownArticle({
       articleClassName={articleClassName}
       backToTopLabel={isEnglish ? "Back to top" : "返回顶部"}
       articleTitle={articleTitle}
+      imageBasePath={imageBasePath}
       language={language}
+      showHeader={showHeader}
       markdown={isEnglish ? enMarkdown : zhMarkdown}
       publicationDateLabel={isEnglish ? "July 2026" : "2026年7月"}
+      showToc={showToc}
       tocLabels={isEnglish ? {
         ariaLabel: "Table of contents",
         collapse: "Collapse table of contents",

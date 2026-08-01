@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import agoraLogo from "@/assets/Agora_Logo.png";
 import { useSitePreferences } from "@/components/site-preferences";
+import { SiteSearch } from "@/components/site-search";
 
 type MenuKey = "home" | "demand" | "supply" | "agora" | "resources";
 
@@ -271,6 +272,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="site-controls" aria-label={text.settings}>
+          <SiteSearch />
           <button
             aria-label={text.switchLanguage}
             className="control-button language-button"
