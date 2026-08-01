@@ -407,6 +407,7 @@ export function DownloadDashboard() {
 
         <footer className="dashboard-footer rise">
           <a href="#top">{text.backToTop}</a>
+          <a href="https://www.zhemin.ltd">@Zhemin</a>
         </footer>
       </main>
     </>

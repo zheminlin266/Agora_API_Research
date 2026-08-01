@@ -345,6 +345,7 @@ export function MarkdownArticle({
 
         <footer className="article-footer rise delay-3">
           <BackToTop label={backToTopLabel} />
+          <a href="https://www.zhemin.ltd">@Zhemin</a>
         </footer>
       </main>
     </>

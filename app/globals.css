@@ -887,7 +887,7 @@ p {
 
 .dashboard-methodology h2 { font-size: 16px; font-weight: 600; line-height: 24px; }
 .dashboard-methodology p { margin-top: 10px; color: var(--body); font-size: 14px; line-height: 22px; }
-.dashboard-footer { padding-top: 72px; color: var(--muted); font-size: 14px; line-height: 20px; }
+.dashboard-footer { display: flex; justify-content: space-between; gap: 24px; padding-top: 72px; color: var(--muted); font-size: 14px; line-height: 20px; }
 .dashboard-footer a { text-decoration-color: var(--border); text-underline-offset: 4px; }
 .dashboard-footer a:hover { color: var(--foreground); text-decoration-color: var(--foreground); }
 .range-control button:focus-visible,
@@ -1125,7 +1125,7 @@ p {
 
 .article-footer {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 24px;
   margin-top: 56px;
   padding-top: 18px;
@@ -1180,8 +1180,9 @@ p {
   }
 
   .article-footer {
-    display: grid;
-    gap: 7px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
   }
 }
 /* Article feedback overrides */
