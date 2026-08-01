@@ -29,24 +29,13 @@ export function SitePreferencesProvider({ children }: { children: React.ReactNod
       // The site remains usable when storage is unavailable.
     }
 
-    const requestedLanguage = new URLSearchParams(window.location.search).get("lang");
-    const initialLanguage: Language = requestedLanguage === "en" || requestedLanguage === "zh"
-      ? requestedLanguage
-      : savedLanguage === "en" ? "en" : "zh";
+    const initialLanguage: Language = savedLanguage === "en" ? "en" : "zh";
     const systemTheme: Theme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
     const initialTheme: Theme = savedTheme === "dark" || savedTheme === "light"
       ? savedTheme
       : systemTheme;
-
-    if (requestedLanguage === "en" || requestedLanguage === "zh") {
-      try {
-        window.localStorage.setItem("agora-research-language", requestedLanguage);
-      } catch {
-        // The active language still works without persistence.
-      }
-    }
 
     setLanguage(initialLanguage);
     setTheme(initialTheme);
