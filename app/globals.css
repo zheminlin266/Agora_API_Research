@@ -1049,6 +1049,12 @@ p {
   background: var(--surface);
 }
 
+.home-article .article-image img {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
 @media (max-width: 520px) {
   .article-chart-embed {
     margin-inline: -4px;
