@@ -8,15 +8,55 @@ import { useSitePreferences } from "@/components/site-preferences";
 
 import styles from "./site-search.module.css";
 
+const MAX_QUERY_LENGTH = 80;
+
+type SearchErrorCode = "too_long" | "unavailable" | "invalid_response";
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isSearchResult(value: unknown): value is SearchResult {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.articleTitle === "string" &&
+    typeof value.href === "string" &&
+    typeof value.sectionTitle === "string" &&
+    typeof value.snippet === "string"
+  );
+}
+
+function parseSearchResults(value: unknown): SearchResult[] {
+  if (!isRecord(value) || !Array.isArray(value.results) || !value.results.every(isSearchResult)) {
+    throw new Error("Invalid search response");
+  }
+  return value.results;
+}
+
+function errorCodeFromResponse(value: unknown): SearchErrorCode {
+  if (isRecord(value) && value.code === "QUERY_TOO_LONG") return "too_long";
+  return "unavailable";
+}
+
+function errorMessage(language: "zh" | "en", code: SearchErrorCode) {
+  if (code === "too_long") {
+    return language === "zh" ? "搜索关键词不能超过 80 个字符" : "Search queries must be 80 characters or fewer";
+  }
+  return language === "zh" ? "搜索暂时不可用，请稍后重试" : "Search is temporarily unavailable. Please try again later";
+}
+
 export function SiteSearch() {
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<SearchErrorCode | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
   const { language } = useSitePreferences();
 
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -26,6 +66,10 @@ export function SiteSearch() {
       clearTimeout(closeTimer.current);
       closeTimer.current = null;
     }
+    const activeElement = document.activeElement;
+    restoreFocusRef.current = activeElement instanceof HTMLElement && activeElement !== document.body
+      ? activeElement
+      : triggerRef.current;
     setClosing(false);
     setOpen(true);
   }, []);
@@ -38,20 +82,26 @@ export function SiteSearch() {
       setClosing(false);
       setQuery("");
       setResults([]);
+      setError(null);
       setSelectedIndex(0);
       closeTimer.current = null;
+      restoreFocusRef.current?.focus();
+      restoreFocusRef.current = null;
     }, 180);
   }, []);
 
   useEffect(() => () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+    restoreFocusRef.current = null;
   }, []);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
-        setOpen((prev) => !prev);
+        if (open) close();
+        else openSearch();
+        return;
       }
       if (event.key === "Escape" && open) {
         event.preventDefault();
@@ -61,31 +111,43 @@ export function SiteSearch() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, close]);
+  }, [open, close, openSearch]);
 
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
+      setError(null);
       setLoading(false);
       return;
     }
 
     let cancelled = false;
     setLoading(true);
+    setError(null);
 
     const controller = new AbortController();
     fetch(
-      `/api/search?q=${encodeURIComponent(query)}&lang=${language}`,
+      `/api/search/?q=${encodeURIComponent(query)}&lang=${language}`,
       { signal: controller.signal },
     )
       .then(async (res) => {
         if (cancelled) return;
-        const data = await res.json();
-        setResults(data.results ?? []);
+        const data: unknown = await res.json().catch(() => null);
+        if (!res.ok) {
+          throw { code: errorCodeFromResponse(data) };
+        }
+        setResults(parseSearchResults(data));
         setSelectedIndex(0);
       })
-      .catch(() => {
-        if (!cancelled) setResults([]);
+      .catch((reason: unknown) => {
+        if (cancelled || (reason instanceof DOMException && reason.name === "AbortError")) return;
+        setResults([]);
+        setSelectedIndex(0);
+        setError(
+          isRecord(reason) && (reason.code === "too_long" || reason.code === "unavailable")
+            ? reason.code
+            : "invalid_response",
+        );
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -96,6 +158,10 @@ export function SiteSearch() {
       controller.abort();
     };
   }, [query, language]);
+
+  useEffect(() => {
+    setSelectedIndex((previous) => results.length === 0 ? 0 : Math.min(previous, results.length - 1));
+  }, [results.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -110,7 +176,7 @@ export function SiteSearch() {
   function handleInputKeyDown(event: React.KeyboardEvent) {
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1));
+      setSelectedIndex((prev) => results.length === 0 ? 0 : Math.min(prev + 1, results.length - 1));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
       setSelectedIndex((prev) => Math.max(prev - 1, 0));
@@ -126,6 +192,7 @@ export function SiteSearch() {
   return (
     <>
       <button
+        ref={triggerRef}
         className="control-button icon-button"
         onClick={openSearch}
         aria-label={language === "zh" ? "搜索文章" : "Search articles"}
@@ -176,6 +243,7 @@ export function SiteSearch() {
                 ref={inputRef}
                 className={styles.input}
                 type="text"
+                maxLength={MAX_QUERY_LENGTH}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={handleInputKeyDown}
@@ -185,7 +253,7 @@ export function SiteSearch() {
               {query && (
                 <button
                   className={styles.clearButton}
-                  onClick={() => { setQuery(""); setResults([]); }}
+                  onClick={() => { setQuery(""); setResults([]); setError(null); }}
                   aria-label={language === "zh" ? "清除搜索" : "Clear search"}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -218,7 +286,13 @@ export function SiteSearch() {
               </ul>
             )}
 
-            {!loading && query.trim() && results.length === 0 && (
+            {!loading && error && (
+              <div className={styles.status} role="status" aria-live="polite">
+                {errorMessage(language, error)}
+              </div>
+            )}
+
+            {!loading && !error && query.trim() && results.length === 0 && (
               <div className={styles.status}>
                 {language === "zh" ? "未找到相关结果" : "No results found"}
               </div>

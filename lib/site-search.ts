@@ -145,14 +145,25 @@ let sectionCache: Promise<SearchSection[]> | undefined;
 
 async function loadSections() {
   const articleRoot = path.join(process.cwd(), "articles");
-  const groups = await Promise.all(articles.flatMap((article) => (
+  const groups = await Promise.allSettled(articles.flatMap((article) => (
     (["zh", "en"] as const).map(async (language) => {
       const definition = article[language];
       const markdown = await readFile(path.join(articleRoot, definition.file), "utf8");
       return sectionsFromMarkdown(markdown, language, definition.title, article.href);
     })
   )));
-  return groups.flat();
+  const rejected = groups.filter((result): result is PromiseRejectedResult => result.status === "rejected");
+  const sections = groups
+    .filter((result): result is PromiseFulfilledResult<SearchSection[]> => result.status === "fulfilled")
+    .flatMap((result) => result.value);
+
+  if (rejected.length > 0) {
+    console.error(`Search index skipped ${rejected.length} article file(s).`, rejected.map((result) => result.reason));
+  }
+  if (sections.length === 0) {
+    throw new Error("Search index contains no readable article files.");
+  }
+  return sections;
 }
 
 function makeSnippet(text: string, query: string) {
@@ -169,7 +180,13 @@ function makeSnippet(text: string, query: string) {
 export async function searchArticles(rawQuery: string, language: SearchLanguage, limit = 10) {
   const query = rawQuery.trim().toLocaleLowerCase();
   if (!query) return [];
-  sectionCache ??= loadSections();
+  if (!sectionCache) {
+    const pending = loadSections();
+    sectionCache = pending.catch((error) => {
+      sectionCache = undefined;
+      throw error;
+    });
+  }
 
   const matches = (await sectionCache)
     .filter((section) => section.language === language)
