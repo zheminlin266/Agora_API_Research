@@ -31,3 +31,9 @@ base64_content.txt
 
 .vercel
 .env*
+
+# Local browser and preview artifacts
+.playwright-mcp/
+/next-preview-*.log
+
+# Research/editor settings are intentionally not deleted or force-ignored.
