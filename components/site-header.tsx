@@ -6,69 +6,26 @@ import { useEffect, useRef, useState } from "react";
 import agoraLogo from "@/assets/Agora_Logo.png";
 import { useSitePreferences } from "@/components/site-preferences";
 import { SiteSearch } from "@/components/site-search";
+import {
+  getNavigationMenu,
+  navigationLabels,
+  navigationSections,
+  type NavigationSection,
+} from "@/lib/content-manifest";
 
-type MenuKey = "home" | "demand" | "supply" | "agora" | "resources";
+type MenuKey = "home" | NavigationSection;
+type MenuItem = { title: string; href: string };
+type MenuItems = Record<MenuKey, MenuItem[]>;
 
 const navigation: Array<{ key: MenuKey; zh: string; en: string }> = [
-  { key: "home", zh: "首页", en: "Home" },
-  { key: "demand", zh: "行业需求", en: "Demand" },
-  { key: "supply", zh: "行业供给", en: "Supply" },
-  { key: "agora", zh: "声网", en: "Agora" },
-  { key: "resources", zh: "资源", en: "Resources" },
+  { key: "home", ...navigationLabels.home },
+  ...navigationSections.map((key) => ({ key, ...navigationLabels[key] })),
 ];
 
-const menuItems = {
-  zh: {
-    home: [],
-    demand: [
-      { title: "RTC行业需求", href: "/Demand/RTC_industry_demand/" },
-      { title: "美国直播电商增长情况", href: "/Demand/US_Livestream_Commerce_Growth/" },
-      { title: "AI语音对基础设施需求的特性", href: "/Demand/AI_Voice_Infrastructure/" },
-      { title: "RTC开发者项目库下载量", href: "/Demand/Dev_npm_downloads/" },
-    ],
-    supply: [
-      { title: "RTC 行业供给", href: "/Supply/RTC_supply/" },
-      { title: "AI对RTC业务护城河的影响", href: "/Supply/AI_RTC_moats/" },
-      { title: "OpenAI 与 LiveKit 关系", href: "/Supply/OpenAI_LiveKit_Relationship/" },
-    ],
-    agora: [
-      { title: "声网生存空间和迁移案例", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
-      { title: "Whatnot & Agora直播合作", href: "/Agora/Whatnot_Agora_Partnership/" },
-      { title: "股权结构与回购分析", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
-      { title: "员工人数变化", href: "/Agora/Employee_Headcount_Changes/" },
-      { title: "上海总部建设分析", href: "/Agora/Shanghai_Headquarters_Construction_Analysis/" },
-    ],
-    resources: [
-      { title: "声网核心数据", href: "/Resources/Agora_Key_Metrics/" },
-      { title: "RTC Learning Materials", href: "https://github.com/zheminlin266/Agora_Research/tree/main/Resources" },
-    ],
-  },
-  en: {
-    home: [],
-    demand: [
-      { title: "RTC Industry Demand", href: "/Demand/RTC_industry_demand/" },
-      { title: "U.S. Livestream Commerce Growth", href: "/Demand/US_Livestream_Commerce_Growth/" },
-      { title: "AI Voice Infrastructure Requirements", href: "/Demand/AI_Voice_Infrastructure/" },
-      { title: "RTC Dev npm Download", href: "/Demand/Dev_npm_downloads/" },
-    ],
-    supply: [
-      { title: "RTC Industry Supply", href: "/Supply/RTC_supply/" },
-      { title: "Impact of AI on RTC Business Moats", href: "/Supply/AI_RTC_moats/" },
-      { title: "OpenAI and LiveKit Relationship", href: "/Supply/OpenAI_LiveKit_Relationship/" },
-    ],
-    agora: [
-      { title: "Agora's Competitive Space & Migration Cases", href: "/Agora/Customer_Scenarios_Competitive_Analysis/" },
-      { title: "Whatnot & Agora Livestream Partnership", href: "/Agora/Whatnot_Agora_Partnership/" },
-      { title: "Equity Ownership & Share Repurchase Analysis", href: "/Agora/Equity_Ownership_Share_Repurchase_Analysis/" },
-      { title: "Employee Headcount Changes", href: "/Agora/Employee_Headcount_Changes/" },
-      { title: "Shanghai Headquarters Construction Analysis", href: "/Agora/Shanghai_Headquarters_Construction_Analysis/" },
-    ],
-    resources: [
-      { title: "Agora Key Metrics", href: "/Resources/Agora_Key_Metrics/" },
-      { title: "RTC Learning Materials", href: "https://github.com/zheminlin266/Agora_Research/tree/main/Resources" },
-    ],
-  },
-} as const;
+const menuItems: Record<"zh" | "en", MenuItems> = {
+  zh: { home: [], ...getNavigationMenu("zh") },
+  en: { home: [], ...getNavigationMenu("en") },
+};
 
 const labels = {
   zh: {
