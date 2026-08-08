@@ -4,15 +4,16 @@ import { useEffect, useMemo, useState, type PointerEvent } from "react";
 
 import { SiteHeader } from "@/components/site-header";
 import { useSitePreferences, type Language } from "@/components/site-preferences";
+import { parseDownloadDataset, type DownloadRow } from "@/lib/download-data";
 
 type RangeKey = "1y" | "3y" | "all";
 type VendorKey = "agora" | "livekit" | "twilio" | "tencent";
 type DatasetKey = "agoraNpm" | "agoraPypi" | "livekitNpm" | "livekitPypi" | "twilioNpm" | "rtcNpm";
-type DataRow = { week_start: string; [key: string]: string | number | null };
+type DataRow = DownloadRow;
 type LoadedDataset = {
   rows: DataRow[];
   registry: string;
-  completeWeek?: string;
+  completeWeek: string;
   sharedCompleteWeek?: string;
 };
 
@@ -129,36 +130,6 @@ const vendors: Array<{ key: VendorKey; index: string; name: string }> = [
   { key: "tencent", index: "04", name: "Tencent RTC" },
 ];
 
-function parseCsv(text: string): DataRow[] {
-  const [headerLine, ...lines] = text.trim().split(/\r?\n/);
-  const headers = headerLine.replace(/^\uFEFF/, "").split(",");
-  return lines.filter(Boolean).map((line) => {
-    const cells = line.split(",");
-    const row: DataRow = { week_start: "" };
-    headers.forEach((header, index) => {
-      const value = cells[index] ?? "";
-      row[header] = header === "week_start" ? value : value === "" ? null : Number(value);
-    });
-    return row;
-  });
-}
-
-function getNestedString(value: unknown, path: string[]): string | undefined {
-  let current: unknown = value;
-  for (const key of path) {
-    if (!current || typeof current !== "object") return undefined;
-    current = (current as Record<string, unknown>)[key];
-  }
-  return typeof current === "string" ? current : undefined;
-}
-
-function getCompleteWeek(metadata: unknown, rows: DataRow[]) {
-  return getNestedString(metadata, ["source", "latest_complete_week_start"])
-    ?? getNestedString(metadata, ["source", "html_chart_complete_through_week_start"])
-    ?? getNestedString(metadata, ["dataset", "latest_complete_week_start"])
-    ?? rows.at(-1)?.week_start;
-}
-
 function visibleRows(rows: DataRow[], range: RangeKey) {
   if (range === "all" || rows.length === 0) return rows;
   const end = Date.parse(`${rows.at(-1)?.week_start}T00:00:00Z`);
@@ -182,7 +153,7 @@ function DownloadChart({ rows, dataKey, label, language, empty, downloads }: {
   downloads: string;
 }) {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const series = rows.filter((row) => typeof row[dataKey] === "number") as Array<DataRow & Record<string, number>>;
+  const series = rows.filter((row) => typeof row[dataKey] === "number" && Number.isFinite(row[dataKey])) as Array<DataRow & Record<string, number>>;
 
   if (!series.length) return <p className="chart-empty">{empty}</p>;
 
@@ -194,11 +165,11 @@ function DownloadChart({ rows, dataKey, label, language, empty, downloads }: {
   const bottom = 32;
   const plotWidth = width - left - right;
   const plotHeight = height - top - bottom;
-  const values = series.map((row) => Number(row[dataKey]));
+  const values = series.map((row) => row[dataKey]);
   const yMax = niceMax(Math.max(...values));
   const x = (index: number) => series.length === 1 ? left + plotWidth / 2 : left + index * plotWidth / (series.length - 1);
   const y = (value: number) => top + plotHeight - value * plotHeight / yMax;
-  const points = series.map((row, index) => `${x(index)},${y(Number(row[dataKey]))}`).join(" ");
+  const points = series.map((row, index) => `${x(index)},${y(row[dataKey])}`).join(" ");
   const labelIndexes = [...new Set([0, Math.floor((series.length - 1) / 2), series.length - 1])];
   const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
   const exact = new Intl.NumberFormat("en-US");
@@ -242,7 +213,7 @@ function DownloadChart({ rows, dataKey, label, language, empty, downloads }: {
         {hovered && hoverIndex !== null ? (
           <>
             <line x1={x(hoverIndex)} x2={x(hoverIndex)} y1={top} y2={top + plotHeight} className="chart-guide is-visible" />
-            <circle cx={x(hoverIndex)} cy={y(Number(hovered[dataKey]))} r="4" className="chart-hover-point is-visible" />
+            <circle cx={x(hoverIndex)} cy={y(hovered[dataKey])} r="4" className="chart-hover-point is-visible" />
           </>
         ) : null}
         <rect x={left} y={top} width={plotWidth} height={plotHeight} className="chart-hit" onPointerMove={handlePointerMove} onPointerLeave={() => setHoverIndex(null)} />
@@ -250,10 +221,10 @@ function DownloadChart({ rows, dataKey, label, language, empty, downloads }: {
       {hovered && hoverIndex !== null ? (
         <div
           className="chart-tooltip is-visible"
-          style={{ left: `${x(hoverIndex) / width * 100}%`, top: `${y(Number(hovered[dataKey])) / height * 100}%` }}
+          style={{ left: `${x(hoverIndex) / width * 100}%`, top: `${y(hovered[dataKey]) / height * 100}%` }}
         >
           <strong>{hovered.week_start}</strong>
-          <span>{exact.format(Number(hovered[dataKey]))} {downloads}</span>
+          <span>{exact.format(hovered[dataKey])} {downloads}</span>
         </div>
       ) : null}
     </div>
@@ -317,9 +288,12 @@ export function DownloadDashboard() {
         (Object.entries(datasets) as Array<[DatasetKey, (typeof datasets)[DatasetKey]]>).map(async ([key, definition]) => {
           const [csvResponse, metadataResponse] = await Promise.all([fetch(definition.csv), fetch(definition.metadata)]);
           if (!csvResponse.ok) throw new Error(`${key}: CSV ${csvResponse.status}`);
-          const rows = parseCsv(await csvResponse.text());
-          const metadata: unknown = metadataResponse.ok ? await metadataResponse.json() : {};
-          return [key, { rows, registry: definition.registry, completeWeek: getCompleteWeek(metadata, rows) }] as const;
+          if (!metadataResponse.ok) throw new Error(`${key}: metadata ${metadataResponse.status}`);
+          const metadata: unknown = await metadataResponse.json();
+          const parsed = parseDownloadDataset(await csvResponse.text(), metadata, {
+            expectedCsvFilename: definition.csv.split("/").at(-1) ?? "",
+          });
+          return [key, { rows: parsed.rows, registry: definition.registry, completeWeek: parsed.completeWeek }] as const;
         }),
       );
 
