@@ -1,6 +1,6 @@
 "use client";
 
-import "./agora-key-metrics.module.css";
+import styles from "./agora-key-metrics.module.css";
 
 import { useEffect } from "react";
 
@@ -23,7 +23,7 @@ export function AgoraKeyMetricsPageContent() {
   return (
     <>
       <SiteHeader />
-      <main className="site-main metrics-page" id="top">
+      <main className={`site-main metrics-page ${styles.metricsScope}`} id="top">
         <header className="metrics-header rise delay-1">
           <h1>{title}</h1>
         </header>
