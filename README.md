@@ -1,60 +1,73 @@
 # Agora Research
 
-Agora Research 是一个面向实时互动行业的双语研究网站，围绕行业需求、行业供给与声网竞争优势组织长期研究和公开数据。
+Agora Research 是一个面向实时互动行业的中英双语研究站点，内容覆盖行业需求、行业供给、声网竞争力以及公开数据。线上文章由 `articles/` 提供，研究草稿和资料保留在 `Research_Report/`、`Resources/`，后两者不会自动进入站点搜索。
 
-- 网站：[agora.zhemin.ltd](https://agora.zhemin.ltd/)
-- 开发者下载看板：[RTC Dev npm downloads](https://agora.zhemin.ltd/Demand/Dev_npm_downloads/)
+## 运行时路由
 
-## 网站结构
+项目使用 Next.js App Router，并启用 trailing slash。当前应用包含 14 条页面路由：
 
-| 路径 | 内容 |
-|---|---|
-| `/` | Agora Research 首页与研究框架 |
-| `/Demand/Dev_npm_downloads/` | Agora、LiveKit、Twilio 和腾讯 RTC 的 17 个 npm / PyPI 包周度下载趋势 |
+| 路由 | 内容 |
+| --- | --- |
+| `/` | 首页与研究入口 |
+| `/Demand/RTC_industry_demand/` | RTC 行业需求 |
+| `/Demand/US_Livestream_Commerce_Growth/` | 美国直播电商增长 |
+| `/Demand/AI_Voice_Infrastructure/` | AI 语音基础设施需求 |
+| `/Demand/Dev_npm_downloads/` | npm / PyPI 下载量看板 |
+| `/Supply/RTC_supply/` | RTC 行业供给 |
+| `/Supply/AI_RTC_moats/` | AI 对 RTC 业务护城河的影响 |
+| `/Supply/OpenAI_LiveKit_Relationship/` | OpenAI 与 LiveKit 关系 |
+| `/Agora/Customer_Scenarios_Competitive_Analysis/` | 声网客户场景与竞争分析 |
+| `/Agora/Whatnot_Agora_Partnership/` | Whatnot 与声网直播合作 |
+| `/Agora/Equity_Ownership_Share_Repurchase_Analysis/` | 股权结构与回购 |
+| `/Agora/Employee_Headcount_Changes/` | 员工人数变化 |
+| `/Agora/Shanghai_Headquarters_Construction_Analysis/` | 上海总部建设分析 |
+| `/Resources/Agora_Key_Metrics/` | 声网季度核心指标 |
 
-两页共用顶部导航、中英文切换和明暗主题。语言及主题偏好保存在浏览器本地存储中，并在页面之间保持一致。
+Resources 导航中的 RTC Learning Materials 是指向 GitHub `Resources/` 目录的外部链接，不是应用页面。
 
-## 技术结构
+## 内容与代码结构
 
 ```text
-app/
-├─ page.tsx                              # 首页路由
-├─ layout.tsx                            # 全局 metadata 与偏好 Provider
-└─ Demand/Dev_npm_downloads/             # 开发者下载看板路由
-components/
-├─ site-header.tsx                       # 全站共享顶部功能行
-├─ site-preferences.tsx                  # 语言与主题状态
-├─ home-page.tsx                         # 首页内容
-└─ download-dashboard.tsx                # 双语数据看板与 SVG 图表
-public/data/dev-npm-downloads/
-├─ Data/                                 # 六个周度 CSV 数据集
-└─ json/                                 # 数据来源与完整周 metadata
-scripts/                                 # 数据更新入口
-lib/                                     # npm / PyPI 抓取与周度聚合
-Research_Report/                         # 研究报告
-Resources/                               # 研究资料
+app/                              # App Router 页面、全局布局与 CSS
+articles/                         # 线上文章的中英文 Markdown
+components/                       # 站点导航、文章渲染、看板和偏好设置
+lib/content-manifest.ts           # 路由、标题、文件和搜索可见性的唯一清单
+components/manifest-article-page.tsx # 按 manifest 从 articles/读取文章
+lib/site-search.ts                # 由 manifest 驱动的搜索索引
+public/data/dev-npm-downloads/    # 6 组 CSV 与对应 metadata
+scripts/                          # 6 个数据更新入口与 validate:data
+tests/                            # Python、数据契约和 manifest 检查
+Research_Report/                  # 研究工作资料，不自动发布
+Resources/                        # 资料文件与外部资源
+docs/                             # 架构、数据管线和恢复手册
 ```
 
-网站采用 Next.js 16 App Router、React 19 和 TypeScript。图表使用原生 SVG 绘制，不依赖第三方图表库。
+新增或移动线上文章时，先修改 `lib/content-manifest.ts`，再确认中英文文件存在；不要分别在路由、导航和搜索中维护重复映射。
 
-## 本地预览
+## 本地开发与验证
+
+验证环境使用 Node.js 24、npm 11 和 Python 3.12；推荐 Node.js ≥20.9、Python ≥3.10。仓库未提交密钥、`.env` 或 Vercel 本地配置。
 
 ```powershell
-npm install
+npm ci
 npm run dev
 ```
 
-打开 `http://127.0.0.1:3000/`。生产构建检查：
+默认打开 `http://localhost:3000/`。提交前运行：
 
 ```powershell
 npm run typecheck
+npm test
+npm run validate:data
 npm run build
-npm run start
+npm run build -- --webpack
 ```
+
+`npm test` 包含 Python 单元测试、下载数据解析检查和 content manifest 检查。`validate:data` 不访问网络，只校验已提交的 CSV/metadata 契约。
 
 ## 数据更新
 
-按数据集运行对应脚本：
+六个入口分别更新一个数据集：
 
 ```powershell
 python scripts/build_agora_npm_dashboard.py
@@ -65,14 +78,14 @@ python scripts/build_vendor_npm_dashboards.py
 python scripts/build_rtc_competitor_dashboard.py
 ```
 
-脚本直接更新 `public/data/dev-npm-downloads/`。详细校验与发布流程见 [workflow.md](workflow.md)。
+npm 数据来自 npm 官方 Downloads API；PyPI 数据来自 PyPI 项目元数据和 ClickPy/ClickHouse。脚本会在内存中完成校验，再以临时文件和原子替换更新 CSV/metadata。网络失败、空结果、schema 变化或数据回退都不得覆盖现有产物。详见 [docs/data-pipeline.md](docs/data-pipeline.md)。
 
-## 数据口径
+## Git、备份与部署
 
-npm 数据来自官方 Downloads API；PyPI 数据来自 ClickPy 公共 ClickHouse 数据集。页面以六个数据集共同可用的最近完整周为截止日。
+所有变更从最新 `origin/main` 创建功能分支，通过 PR 合并；不要在 `main` 上直接提交、推送或 force-push。预览应使用 PR 对应的 Vercel Preview，合并后再核验 Production deployment 的 commit SHA。
 
-下载量包含自动化安装、CI、镜像、缓存和依赖安装等影响，只适合观察单个软件包的方向与持续性，不等同于客户数、应用数或商业收入。
+重构或数据更新前，先在仓库外保存工作树快照、Git bundle、staged/unstaged patch、未跟踪资料清单和 submodule 状态。恢复和回滚步骤见 [docs/recovery.md](docs/recovery.md)。
 
-## 部署
+`.playwright-mcp/` 和根目录 `next-preview-*.log` 是本地运行工件，已加入忽略；`.obsidian/` 可能包含共享研究配置，当前不自动忽略或删除，须先确认归属。
 
-`main` 分支连接 Vercel 项目 `agora-research`，生产域名为 `agora.zhemin.ltd`。推送到 `main` 后会自动触发生产部署。
+更多运行时关系见 [docs/architecture.md](docs/architecture.md)；旧的 `workflow.md` 仅作为数据更新流程的兼容入口。
