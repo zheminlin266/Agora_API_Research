@@ -8,7 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "python -m unittest discover -s tests -v && npm run test:frontend",
-    "test:frontend": "node --no-warnings --experimental-strip-types tests/test_download_data.mjs",
+    "test:frontend": "node --no-warnings --experimental-strip-types tests/test_download_data.mjs && node --no-warnings --experimental-strip-types tests/test_content_manifest.mjs",
     "validate:data": "python scripts/validate_dashboard_data.py"
   },
   "dependencies": {
