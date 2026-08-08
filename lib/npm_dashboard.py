@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import io
 import json
 import time
 import urllib.error
@@ -12,10 +13,13 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from .dashboard_outputs import validate_rows, write_pair_atomic
+
 NPM_REGISTRY = "https://registry.npmjs.org"
 NPM_DOWNLOADS = "https://api.npmjs.org/downloads"
 EARLIEST_DOWNLOAD_DATE = date(2015, 1, 10)
 MAX_RANGE_DAYS = 548
+RETRYABLE_HTTP_STATUS = {429, 500, 502, 503, 504}
 
 
 @dataclass
@@ -48,11 +52,11 @@ def fetch_json(url: str, *, user_agent: str, retries: int = 6) -> dict:
             with urllib.request.urlopen(request, timeout=45) as response:
                 return json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
-            if exc.code == 429 and attempt < retries - 1:
+            if exc.code in RETRYABLE_HTTP_STATUS and attempt < retries - 1:
                 try:
-                    wait = float(exc.headers.get("Retry-After") or 20 * (attempt + 1))
+                    wait = float(exc.headers.get("Retry-After") or min(30, 1.5 * (2**attempt)))
                 except ValueError:
-                    wait = 20 * (attempt + 1)
+                    wait = min(30, 1.5 * (2**attempt))
                 time.sleep(wait)
                 continue
             raise
@@ -89,7 +93,9 @@ def load_package_meta(package: str, *, user_agent: str) -> PackageMeta:
     try:
         data = fetch_json(url, user_agent=user_agent)
     except urllib.error.HTTPError as exc:
-        return PackageMeta(exists=False, error=f"HTTP {exc.code}: {exc.reason}")
+        if exc.code == 404:
+            return PackageMeta(exists=False, error=f"HTTP {exc.code}: {exc.reason}")
+        raise
     created_raw = data.get("time", {}).get("created")
     return PackageMeta(
         exists=True,
@@ -111,12 +117,7 @@ def load_weekly(package: str, start: date, end: date, *, user_agent: str) -> dic
     encoded = urllib.parse.quote(package, safe="")
     for chunk_start, chunk_end in iter_ranges(start, end):
         period = f"{chunk_start.isoformat()}:{chunk_end.isoformat()}"
-        try:
-            payload = fetch_json(f"{NPM_DOWNLOADS}/range/{period}/{encoded}", user_agent=user_agent)
-        except urllib.error.HTTPError as exc:
-            if exc.code == 404:
-                continue
-            raise
+        payload = fetch_json(f"{NPM_DOWNLOADS}/range/{period}/{encoded}", user_agent=user_agent)
         time.sleep(0.25)
         for row in payload.get("downloads", []):
             monday = week_start(date.fromisoformat(row["day"]))
@@ -125,7 +126,10 @@ def load_weekly(package: str, start: date, end: date, *, user_agent: str) -> dic
 
 
 def build_rows(
-    metas: dict[str, PackageMeta], downloads: dict[str, dict[date, int]], latest_day: date
+    metas: dict[str, PackageMeta],
+    downloads: dict[str, dict[date, int]],
+    latest_day: date,
+    coverage_starts: dict[str, date] | None = None,
 ) -> list[dict[str, str]]:
     starts = [week_start(meta.created) for meta in metas.values() if meta.created]
     if not starts:
@@ -136,7 +140,13 @@ def build_rows(
         row = {"week_start": current.isoformat()}
         for package, meta in metas.items():
             start = week_start(meta.created) if meta.created else None
-            row[package] = "" if start is None or current < start else str(downloads[package].get(current, 0))
+            coverage_start = coverage_starts.get(package) if coverage_starts else None
+            coverage_week = max(start, week_start(coverage_start)) if start and coverage_start else start
+            row[package] = (
+                ""
+                if coverage_week is None or current < coverage_week
+                else str(downloads[package].get(current, 0))
+            )
         rows.append(row)
         current += timedelta(days=7)
     return rows
@@ -146,11 +156,11 @@ def write_outputs(
     rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest_day: date, config: VendorConfig
 ) -> None:
     columns = ["week_start", *config.packages]
-    config.csv_path.parent.mkdir(parents=True, exist_ok=True)
-    with config.csv_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=columns)
-        writer.writeheader()
-        writer.writerows(rows)
+    validate_rows(rows, columns)
+    csv_buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(csv_buffer, fieldnames=columns)
+    writer.writeheader()
+    writer.writerows(rows)
 
     complete_week = latest_complete_week(latest_day).isoformat()
     metadata = {
@@ -182,28 +192,31 @@ def write_outputs(
             for package, meta in metas.items()
         },
     }
-    config.meta_path.parent.mkdir(parents=True, exist_ok=True)
-    config.meta_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_pair_atomic(
+        config.csv_path,
+        csv_buffer.getvalue(),
+        config.meta_path,
+        json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+        columns=columns,
+        latest_week=date.fromisoformat(rows[-1]["week_start"]),
+        row_count=len(rows),
+    )
 
 
 def run(config: VendorConfig) -> dict:
     """Refresh one npm dataset and its metadata."""
     metas = {package: load_package_meta(package, user_agent=config.user_agent) for package in config.packages}
     latest_day = latest_download_day(user_agent=config.user_agent)
-    downloads = {
-        package: (
-            load_weekly(
-                package,
-                max(meta.created, EARLIEST_DOWNLOAD_DATE),
-                latest_day,
-                user_agent=config.user_agent,
-            )
-            if meta.exists and meta.created
-            else {}
-        )
-        for package, meta in metas.items()
-    }
-    rows = build_rows(metas, downloads, latest_day)
+    downloads: dict[str, dict[date, int]] = {}
+    coverage_starts: dict[str, date] = {}
+    for package, meta in metas.items():
+        if not meta.exists or not meta.created:
+            downloads[package] = {}
+            continue
+        coverage_start = max(meta.created, EARLIEST_DOWNLOAD_DATE)
+        coverage_starts[package] = coverage_start
+        downloads[package] = load_weekly(package, coverage_start, latest_day, user_agent=config.user_agent)
+    rows = build_rows(metas, downloads, latest_day, coverage_starts)
     write_outputs(rows, metas, latest_day, config)
     return {
         "csv": str(config.csv_path),
