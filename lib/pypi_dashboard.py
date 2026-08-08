@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from .dashboard_outputs import validate_rows, write_pair_atomic
+
 CLICKHOUSE_ENDPOINT = "https://sql-clickhouse.clickhouse.com/"
 PYPI_JSON_URL = "https://pypi.org/pypi/{package}/json"
 
@@ -61,8 +63,7 @@ def fetch_url(
                 last_error = exc
                 time.sleep(2.5 * (attempt + 1))
                 continue
-            body = exc.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"HTTP {exc.code} for {url}: {body[:800]}") from exc
+            raise
         except Exception as exc:  # noqa: BLE001
             last_error = exc
             if attempt < retries - 1:
@@ -80,8 +81,10 @@ def load_meta(package: str, *, user_agent: str) -> PackageMeta:
     url = PYPI_JSON_URL.format(package=urllib.parse.quote(package, safe=""))
     try:
         payload = json.loads(fetch_url(url, user_agent=user_agent))
-    except Exception as exc:  # noqa: BLE001
-        return PackageMeta(exists=False, error=str(exc))
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return PackageMeta(exists=False, error=f"HTTP {exc.code}: {exc.reason}")
+        raise
     info = payload.get("info", {})
     uploads = []
     for files in payload.get("releases", {}).values():
@@ -111,7 +114,10 @@ def load_meta(package: str, *, user_agent: str) -> PackageMeta:
 
 def latest_download_day(*, user_agent: str) -> date:
     sql = "SELECT toString(max(date)) AS d FROM pypi.pypi_downloads_per_day FORMAT CSVWithNames"
-    return date.fromisoformat(clickhouse_csv(sql, user_agent=user_agent)[0]["d"])
+    rows = clickhouse_csv(sql, user_agent=user_agent)
+    if not rows or not rows[0].get("d"):
+        raise RuntimeError("ClickHouse returned no latest PyPI download date")
+    return date.fromisoformat(rows[0]["d"])
 
 
 def fetch_weekly(packages: list[str], *, user_agent: str) -> list[dict[str, str]]:
@@ -126,7 +132,11 @@ FORMAT CSVWithNames""".strip()
     return clickhouse_csv(sql, user_agent=user_agent)
 
 
-def build_rows(raw_rows: list[dict[str, str]], packages: list[str]) -> list[dict[str, int | str]]:
+def build_rows(
+    raw_rows: list[dict[str, str]],
+    packages: list[str],
+    first_uploads: dict[str, date | None] | None = None,
+) -> list[dict[str, int | str]]:
     weekly = {
         (date.fromisoformat(row["week_start"]), row["project"]): int(row["downloads"])
         for row in raw_rows
@@ -136,10 +146,20 @@ def build_rows(raw_rows: list[dict[str, str]], packages: list[str]) -> list[dict
     weeks = [week for week, _ in weekly]
     rows = []
     current = min(weeks)
+    observed_starts = {
+        package: min((week for week, project in weekly if project == package), default=None)
+        for package in packages
+    }
     while current <= max(weeks):
+        values: dict[str, int | str] = {}
+        for package in packages:
+            first_upload = first_uploads.get(package) if first_uploads else None
+            first_week = first_upload - timedelta(days=first_upload.weekday()) if first_upload else None
+            coverage_week = max(first_week, observed_starts[package]) if first_week and observed_starts[package] else first_week or observed_starts[package]
+            values[package] = "" if coverage_week is None or current < coverage_week else weekly.get((current, package), 0)
         rows.append({
             "week_start": current.isoformat(),
-            **{package: weekly.get((current, package), 0) for package in packages},
+            **values,
         })
         current += timedelta(days=7)
     return rows
@@ -157,11 +177,11 @@ def write_outputs(
     rows: list[dict[str, int | str]], metas: dict[str, PackageMeta], latest_day: date, config: PyPIConfig
 ) -> None:
     columns = ["week_start", *config.packages]
-    config.csv_path.parent.mkdir(parents=True, exist_ok=True)
-    with config.csv_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=columns)
-        writer.writeheader()
-        writer.writerows(rows)
+    validate_rows(rows, columns)
+    csv_buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(csv_buffer, fieldnames=columns)
+    writer.writeheader()
+    writer.writerows(rows)
 
     latest_complete = complete_week(rows, latest_day)
     metadata = {
@@ -197,15 +217,24 @@ def write_outputs(
             for package, meta in metas.items()
         },
     }
-    config.meta_path.parent.mkdir(parents=True, exist_ok=True)
-    config.meta_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_pair_atomic(
+        config.csv_path,
+        csv_buffer.getvalue(),
+        config.meta_path,
+        json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+        columns=columns,
+        latest_week=date.fromisoformat(rows[-1]["week_start"]),
+        row_count=len(rows),
+    )
 
 
 def run_pypi(config: PyPIConfig) -> dict:
     """Refresh one PyPI dataset and its metadata."""
     metas = {package: load_meta(package, user_agent=config.user_agent) for package in config.packages}
     latest_day = latest_download_day(user_agent=config.user_agent)
-    rows = build_rows(fetch_weekly(config.packages, user_agent=config.user_agent), config.packages)
+    raw_rows = fetch_weekly(config.packages, user_agent=config.user_agent)
+    first_uploads = {package: meta.first_upload for package, meta in metas.items()}
+    rows = build_rows(raw_rows, config.packages, first_uploads)
     write_outputs(rows, metas, latest_day, config)
     return {
         "csv": str(config.csv_path),
