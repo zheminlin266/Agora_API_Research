@@ -7,7 +7,8 @@ The download dashboard publishes six datasets under:
 ```text
 public/data/dev-npm-downloads/
 ├── Data/*.csv
-└── json/*_metadata.json
+├── json/*_metadata.json
+└── manifest.json
 ```
 
 The datasets are Agora npm, Agora PyPI, LiveKit npm, LiveKit PyPI, Twilio npm, and Tencent TRTC npm. Each CSV has a `week_start` column followed by package columns. The matching metadata records the dataset columns, source, generation time, and `source.latest_complete_week_start`.
@@ -16,16 +17,20 @@ There is also a separate quarterly metrics file at `public/data/agora_quarterly_
 
 ## Sources and entry points
 
-| Dataset | Source | Command |
+| Dataset | Source | Selective command |
 | --- | --- | --- |
-| Agora npm | npm Downloads API | `python scripts/build_agora_npm_dashboard.py` |
-| Agora PyPI | PyPI metadata and ClickPy/ClickHouse | `python scripts/build_agora_pypi_dashboard.py` |
-| LiveKit npm | npm Downloads API | `python scripts/build_livekit_npm_dashboard.py` |
-| LiveKit PyPI | PyPI metadata and ClickPy/ClickHouse | `python scripts/build_livekit_pypi_dashboard.py` |
-| Twilio npm | npm Downloads API | `python scripts/build_vendor_npm_dashboards.py` |
-| Tencent TRTC npm | npm Downloads API | `python scripts/build_rtc_competitor_dashboard.py` |
+| Agora npm | npm Downloads API | `python scripts/update_dashboard_data.py --dataset agoraNpm` |
+| Agora PyPI | PyPI metadata and ClickPy/ClickHouse | `python scripts/update_dashboard_data.py --dataset agoraPypi` |
+| LiveKit npm | npm Downloads API | `python scripts/update_dashboard_data.py --dataset livekitNpm` |
+| LiveKit PyPI | PyPI metadata and ClickPy/ClickHouse | `python scripts/update_dashboard_data.py --dataset livekitPypi` |
+| Twilio npm | npm Downloads API | `python scripts/update_dashboard_data.py --dataset twilioNpm` |
+| Tencent TRTC npm | npm Downloads API | `python scripts/update_dashboard_data.py --dataset rtcNpm` |
 
-The builders use bounded retries for transient responses, file locks for concurrent runs, temporary files with `fsync`, and atomic replacement. A failed or suspicious refresh must leave the previous CSV/metadata pair intact.
+Running `python scripts/update_dashboard_data.py` refreshes all six datasets. It
+uses an overlapping recent window and merges it into the existing CSV by
+default. Use `--rebuild` for a full historical refresh.
+
+The updater uses bounded retries for transient responses, file locks for concurrent runs, temporary files with `fsync`, and atomic replacement. A failed or suspicious refresh must leave the previous CSV/metadata pair intact.
 
 ## Value semantics
 

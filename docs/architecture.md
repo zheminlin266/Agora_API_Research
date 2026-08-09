@@ -47,7 +47,7 @@ The browser search component must treat non-2xx responses and malformed JSON as 
 
 ## Data flow
 
-The download dashboard reads six CSV/metadata pairs from `public/data/dev-npm-downloads/`. Python entry points in `scripts/` call the guarded builders in `lib/`. The dashboard component parses only the validated data contract and renders charts as inline SVG; there is no chart-library runtime dependency.
+The download dashboard reads six CSV/metadata pairs plus a generated manifest from `public/data/dev-npm-downloads/`. The unified updater in `scripts/update_dashboard_data.py` calls the guarded builders in `lib/`. The dashboard component parses only the validated data contract and renders charts as inline SVG; there is no chart-library runtime dependency.
 
 `npm run validate:data` checks the committed artifacts without network access. CI runs typecheck, build, tests, and data validation before a PR can be merged.
 

@@ -67,15 +67,17 @@ npm run build -- --webpack
 
 ## 数据更新
 
-六个入口分别更新一个数据集：
+统一入口默认增量更新全部数据集：
 
 ```powershell
-python scripts/build_agora_npm_dashboard.py
-python scripts/build_agora_pypi_dashboard.py
-python scripts/build_livekit_npm_dashboard.py
-python scripts/build_livekit_pypi_dashboard.py
-python scripts/build_vendor_npm_dashboards.py
-python scripts/build_rtc_competitor_dashboard.py
+# 默认增量更新全部六组数据
+npm run update:data
+
+# 需要从源数据完整重建时使用
+npm run rebuild:data
+
+# 只更新一组数据时重复 --dataset 或选择一个
+python scripts/update_dashboard_data.py --dataset agoraNpm
 ```
 
 npm 数据来自 npm 官方 Downloads API；PyPI 数据来自 PyPI 项目元数据和 ClickPy/ClickHouse。脚本会在内存中完成校验，再以临时文件和原子替换更新 CSV/metadata。网络失败、空结果、schema 变化或数据回退都不得覆盖现有产物。详见 [docs/data-pipeline.md](docs/data-pipeline.md)。

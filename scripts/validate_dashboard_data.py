@@ -134,11 +134,67 @@ def validate_dataset(csv_path: Path, metadata_path: Path) -> dict[str, Any]:
     }
 
 
+def validate_manifest(root: Path, metadata_files: list[Path]) -> None:
+    """Validate the generated frontend manifest against published metadata."""
+
+    manifest_path = root / "public" / "data" / "dev-npm-downloads" / "manifest.json"
+    _require(manifest_path.is_file(), f"manifest does not exist: {manifest_path}")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValidationError(f"cannot read manifest {manifest_path}: {exc}") from exc
+
+    _require(isinstance(manifest, dict) and manifest.get("version") == 1, "manifest.version must be 1")
+    _require(manifest.get("data_root") == "/data/dev-npm-downloads", "manifest.data_root is invalid")
+    datasets = manifest.get("datasets")
+    packages = manifest.get("packages")
+    _require(isinstance(datasets, dict) and datasets, "manifest.datasets must be a non-empty object")
+    _require(isinstance(packages, list), "manifest.packages must be a list")
+
+    expected_metadata = {path.name for path in metadata_files}
+    seen_metadata: set[str] = set()
+    expected_packages: list[tuple[str, str, str]] = []
+    for key, entry in datasets.items():
+        _require(isinstance(entry, dict), f"manifest.datasets.{key} must be an object")
+        csv_name = entry.get("csv")
+        metadata_name = entry.get("metadata")
+        package_names = entry.get("packages")
+        _require(
+            isinstance(csv_name, str) and not csv_name.startswith("/") and ".." not in csv_name,
+            f"manifest.datasets.{key}.csv is invalid",
+        )
+        _require(
+            isinstance(metadata_name, str) and not metadata_name.startswith("/") and ".." not in metadata_name,
+            f"manifest.datasets.{key}.metadata is invalid",
+        )
+        _require(isinstance(package_names, list) and all(isinstance(package, str) for package in package_names), f"manifest.datasets.{key}.packages is invalid")
+        metadata_basename = Path(metadata_name).name
+        csv_path = root / "public" / "data" / "dev-npm-downloads" / "Data" / Path(csv_name).name
+        _require(csv_path.is_file(), f"manifest references missing CSV: {csv_name}")
+        metadata_path = root / "public" / "data" / "dev-npm-downloads" / "json" / metadata_basename
+        _require(metadata_basename in expected_metadata, f"manifest references unknown metadata: {metadata_name}")
+        _require(metadata_basename not in seen_metadata, f"manifest references metadata twice: {metadata_name}")
+        seen_metadata.add(metadata_basename)
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        _require(metadata["dataset"]["columns"][1:] == package_names, f"manifest package columns do not match {metadata_name}")
+        vendor = entry.get("vendor")
+        _require(isinstance(vendor, str) and vendor, f"manifest.datasets.{key}.vendor is required")
+        expected_packages.extend((vendor, key, package) for package in package_names)
+
+    actual_packages = []
+    for index, package in enumerate(packages):
+        _require(isinstance(package, dict), f"manifest.packages[{index}] must be an object")
+        actual_packages.append((package.get("vendor"), package.get("dataset"), package.get("key")))
+    _require(actual_packages == expected_packages, "manifest.packages does not match dataset package order")
+    _require(seen_metadata == expected_metadata, "manifest does not cover every metadata file")
+
+
 def validate_root(root: Path) -> list[dict[str, Any]]:
     metadata_dir = root / "public" / "data" / "dev-npm-downloads" / "json"
     data_dir = root / "public" / "data" / "dev-npm-downloads" / "Data"
     metadata_files = sorted(metadata_dir.glob("*_metadata.json"))
     _require(metadata_files, f"no dashboard metadata files found in {metadata_dir}")
+    validate_manifest(root, metadata_files)
     summaries = []
     for metadata_path in metadata_files:
         try:

@@ -206,3 +206,78 @@ export function parseDownloadDataset(
 
   return { ...parsedCsv, completeWeek: sourceCompleteWeek, vendor };
 }
+
+export type DashboardManifestDataset = {
+  vendor: string;
+  registry: string;
+  csv: string;
+  metadata: string;
+  packages: string[];
+};
+
+export type DashboardManifestPackage = {
+  vendor: string;
+  dataset: string;
+  key: string;
+};
+
+export type DashboardManifest = {
+  version: 1;
+  dataRoot: string;
+  datasets: Record<string, DashboardManifestDataset>;
+  packages: DashboardManifestPackage[];
+};
+
+export function parseDashboardManifest(value: unknown): DashboardManifest {
+  const root = asRecord(value, "manifest");
+  if (root.version !== 1) throw new DownloadDataError("manifest.version must be 1");
+  const dataRoot = requiredString(root, "data_root", "manifest.data_root");
+  const datasetRecord = asRecord(root.datasets, "manifest.datasets");
+  const datasets: Record<string, DashboardManifestDataset> = {};
+
+  Object.entries(datasetRecord).forEach(([key, rawDataset]) => {
+    const dataset = asRecord(rawDataset, `manifest.datasets.${key}`);
+    const rawPackages = dataset.packages;
+    if (!Array.isArray(rawPackages) || !rawPackages.every((item) => typeof item === "string" && item.length > 0)) {
+      throw new DownloadDataError(`manifest.datasets.${key}.packages must be a non-empty string list`);
+    }
+    if (new Set(rawPackages).size !== rawPackages.length) {
+      throw new DownloadDataError(`manifest.datasets.${key}.packages must be unique`);
+    }
+    const csv = requiredString(dataset, "csv", `manifest.datasets.${key}.csv`);
+    const metadata = requiredString(dataset, "metadata", `manifest.datasets.${key}.metadata`);
+    if (csv.startsWith("/") || metadata.startsWith("/") || csv.includes("..") || metadata.includes("..")) {
+      throw new DownloadDataError(`manifest.datasets.${key} paths must be relative and local`);
+    }
+    datasets[key] = {
+      vendor: requiredString(dataset, "vendor", `manifest.datasets.${key}.vendor`),
+      registry: requiredString(dataset, "registry", `manifest.datasets.${key}.registry`),
+      csv,
+      metadata,
+      packages: [...rawPackages],
+    };
+  });
+
+  if (!Array.isArray(root.packages)) throw new DownloadDataError("manifest.packages must be a list");
+  const packages = root.packages.map((rawPackage, index) => {
+    const packageRecord = asRecord(rawPackage, `manifest.packages[${index}]`);
+    const item = {
+      vendor: requiredString(packageRecord, "vendor", `manifest.packages[${index}].vendor`),
+      dataset: requiredString(packageRecord, "dataset", `manifest.packages[${index}].dataset`),
+      key: requiredString(packageRecord, "key", `manifest.packages[${index}].key`),
+    };
+    const dataset = datasets[item.dataset];
+    if (!dataset || !dataset.packages.includes(item.key)) {
+      throw new DownloadDataError(`manifest package ${item.key} does not match its dataset`);
+    }
+    if (dataset.vendor !== item.vendor) {
+      throw new DownloadDataError(`manifest package ${item.key} vendor does not match its dataset`);
+    }
+    return item;
+  });
+  if (new Set(packages.map((item) => item.key)).size !== packages.length) {
+    throw new DownloadDataError("manifest package keys must be unique");
+  }
+
+  return { version: 1, dataRoot, datasets, packages };
+}

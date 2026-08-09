@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "data_root": "/data/dev-npm-downloads",
+  "datasets": {
+    "agoraNpm": {
+      "vendor": "agora",
+      "registry": "npm",
+      "csv": "Data/agora_npm_weekly_downloads.csv",
+      "metadata": "json/agora_npm_downloads_metadata.json",
+      "packages": [
+        "agora-rtc-sdk-ng",
+        "agora-rtm-sdk",
+        "agora-rtc-react",
+        "react-native-agora"
+      ]
+    },
+    "agoraPypi": {
+      "vendor": "agora",
+      "registry": "PyPI",
+      "csv": "Data/agora_pypi_weekly_downloads.csv",
+      "metadata": "json/agora_pypi_downloads_metadata.json",
+      "packages": [
+        "agora-token-builder",
+        "agora-python-server-sdk"
+      ]
+    },
+    "livekitNpm": {
+      "vendor": "livekit",
+      "registry": "npm",
+      "csv": "Data/livekit_npm_weekly_downloads.csv",
+      "metadata": "json/livekit_npm_downloads_metadata.json",
+      "packages": [
+        "livekit-client",
+        "@livekit/components-react",
+        "@livekit/react-native",
+        "@livekit/agents",
+        "@livekit/agents-plugin-silero"
+      ]
+    },
+    "livekitPypi": {
+      "vendor": "livekit",
+      "registry": "PyPI",
+      "csv": "Data/livekit_pypi_weekly_downloads.csv",
+      "metadata": "json/livekit_pypi_downloads_metadata.json",
+      "packages": [
+        "livekit",
+        "livekit-api",
+        "livekit-agents"
+      ]
+    },
+    "twilioNpm": {
+      "vendor": "twilio",
+      "registry": "npm",
+      "csv": "Data/twilio_npm_weekly_downloads.csv",
+      "metadata": "json/twilio_npm_downloads_metadata.json",
+      "packages": [
+        "@twilio/voice-sdk",
+        "twilio"
+      ]
+    },
+    "rtcNpm": {
+      "vendor": "tencent",
+      "registry": "npm",
+      "csv": "Data/rtc_competitor_npm_weekly_downloads.csv",
+      "metadata": "json/rtc_competitor_npm_downloads_metadata.json",
+      "packages": [
+        "trtc-cloud-js-sdk"
+      ]
+    }
+  },
+  "packages": [
+    {
+      "vendor": "agora",
+      "dataset": "agoraNpm",
+      "key": "agora-rtc-sdk-ng"
+    },
+    {
+      "vendor": "agora",
+      "dataset": "agoraNpm",
+      "key": "agora-rtm-sdk"
+    },
+    {
+      "vendor": "agora",
+      "dataset": "agoraNpm",
+      "key": "agora-rtc-react"
+    },
+    {
+      "vendor": "agora",
+      "dataset": "agoraNpm",
+      "key": "react-native-agora"
+    },
+    {
+      "vendor": "agora",
+      "dataset": "agoraPypi",
+      "key": "agora-token-builder"
+    },
+    {
+      "vendor": "agora",
+      "dataset": "agoraPypi",
+      "key": "agora-python-server-sdk"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitNpm",
+      "key": "livekit-client"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitNpm",
+      "key": "@livekit/components-react"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitNpm",
+      "key": "@livekit/react-native"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitNpm",
+      "key": "@livekit/agents"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitNpm",
+      "key": "@livekit/agents-plugin-silero"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitPypi",
+      "key": "livekit"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitPypi",
+      "key": "livekit-api"
+    },
+    {
+      "vendor": "livekit",
+      "dataset": "livekitPypi",
+      "key": "livekit-agents"
+    },
+    {
+      "vendor": "twilio",
+      "dataset": "twilioNpm",
+      "key": "@twilio/voice-sdk"
+    },
+    {
+      "vendor": "twilio",
+      "dataset": "twilioNpm",
+      "key": "twilio"
+    },
+    {
+      "vendor": "tencent",
+      "dataset": "rtcNpm",
+      "key": "trtc-cloud-js-sdk"
+    }
+  ]
+}

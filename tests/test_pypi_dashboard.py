@@ -12,6 +12,7 @@ from lib.pypi_dashboard import (
     build_rows,
     clickhouse_csv,
     complete_week,
+    merge_incremental_rows,
     write_outputs,
 )
 
@@ -39,6 +40,43 @@ class PypiDashboardTests(unittest.TestCase):
         self.assertEqual(rows[0]["beta"], "")
         self.assertEqual(rows[1]["beta"], "")
         self.assertEqual(rows[2]["beta"], 2)
+
+    def test_incremental_rows_update_overlap_and_append_new_weeks(self):
+        rows = merge_incremental_rows(
+            [
+                {"week_start": "2024-01-01", "alpha": "5"},
+                {"week_start": "2024-01-08", "alpha": "9"},
+            ],
+            [
+                {"week_start": "2024-01-08", "project": "alpha", "downloads": "10"},
+                {"week_start": "2024-01-15", "project": "alpha", "downloads": "11"},
+            ],
+            ["alpha"],
+            date(2024, 1, 21),
+            {"alpha": date(2024, 1, 1)},
+        )
+        self.assertEqual(rows, [
+            {"week_start": "2024-01-01", "alpha": "5"},
+            {"week_start": "2024-01-08", "alpha": 10},
+            {"week_start": "2024-01-15", "alpha": 11},
+        ])
+
+    def test_incremental_rows_preserve_history_before_refresh_window(self):
+        rows = merge_incremental_rows(
+            [
+                {"week_start": "2024-01-01", "alpha": "0"},
+                {"week_start": "2024-01-08", "alpha": "9"},
+            ],
+            [
+                {"week_start": "2024-01-08", "project": "alpha", "downloads": "10"},
+                {"week_start": "2024-01-15", "project": "alpha", "downloads": "11"},
+            ],
+            ["alpha"],
+            date(2024, 1, 21),
+            {"alpha": date(2024, 1, 8)},
+        )
+        self.assertEqual(rows[0]["alpha"], "0")
+        self.assertEqual(rows[1]["alpha"], 10)
 
     def test_complete_week_uses_last_complete_row(self):
         rows = [{"week_start": "2024-01-01"}, {"week_start": "2024-01-08"}]
