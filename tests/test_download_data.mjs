@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { DownloadDataError, parseDownloadDataset } from "../lib/download-data.ts";
+import { DownloadDataError, parseDashboardManifest, parseDownloadDataset } from "../lib/download-data.ts";
 
 const csv = [
   "week_start,alpha,beta",
@@ -42,6 +42,34 @@ assert.throws(
 assert.throws(
   () => parseDownloadDataset(csv.replace("2024-01-08", "2024-01-09"), metadata, { expectedCsvFilename: "demo.csv" }),
   /Monday/,
+);
+
+const manifest = parseDashboardManifest({
+  version: 1,
+  data_root: "/data/dev-npm-downloads",
+  datasets: {
+    demo: {
+      vendor: "demo",
+      registry: "npm",
+      csv: "Data/demo.csv",
+      metadata: "json/demo.json",
+      packages: ["alpha", "beta"],
+    },
+  },
+  packages: [
+    { vendor: "demo", dataset: "demo", key: "alpha" },
+    { vendor: "demo", dataset: "demo", key: "beta" },
+  ],
+});
+assert.equal(manifest.datasets.demo.csv, "Data/demo.csv");
+assert.equal(manifest.packages.length, 2);
+assert.throws(
+  () => parseDashboardManifest({
+    ...manifest,
+    data_root: manifest.dataRoot,
+    packages: [{ vendor: "other", dataset: "demo", key: "alpha" }],
+  }),
+  /vendor does not match/,
 );
 
 console.log("download-data parser checks passed");

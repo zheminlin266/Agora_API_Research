@@ -63,6 +63,25 @@ def validate_rows(rows: Sequence[Mapping[str, object]], columns: Sequence[str]) 
             _validate_value(row[column], f"Row {index}.{column}")
 
 
+def load_existing_rows(csv_path: Path, columns: Sequence[str]) -> list[dict[str, str]]:
+    """Load and validate a previously published CSV for an incremental refresh."""
+
+    if not csv_path.exists():
+        return []
+    try:
+        with csv_path.open(newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            if reader.fieldnames != list(columns):
+                raise OutputSafetyError(
+                    f"Existing CSV columns do not match the configured schema: {csv_path}"
+                )
+            rows = list(reader)
+    except OSError as exc:
+        raise OutputSafetyError(f"Cannot read existing CSV: {csv_path}") from exc
+    validate_rows(rows, columns)
+    return rows
+
+
 def _existing_row_count(csv_path: Path) -> int:
     if not csv_path.exists():
         return 0

@@ -16,6 +16,7 @@ from lib.npm_dashboard import (
     latest_complete_week,
     load_package_meta,
     load_weekly,
+    merge_incremental_rows,
     parse_iso_date,
     week_start,
     write_outputs,
@@ -84,6 +85,40 @@ class NpmDashboardTests(unittest.TestCase):
         by_week = {row["week_start"]: row["legacy"] for row in rows}
         self.assertEqual(by_week["2014-12-29"], "")
         self.assertEqual(by_week["2015-01-05"], "3")
+
+    def test_incremental_rows_update_overlap_and_append_new_weeks(self):
+        metas = {"demo": PackageMeta(exists=True, created=date(2024, 1, 2))}
+        rows = merge_incremental_rows(
+            [
+                {"week_start": "2024-01-01", "demo": "7"},
+                {"week_start": "2024-01-08", "demo": "8"},
+            ],
+            metas,
+            {"demo": {date(2024, 1, 8): 80, date(2024, 1, 15): 9}},
+            date(2024, 1, 21),
+            {"demo": date(2024, 1, 2)},
+            {"demo": date(2024, 1, 8)},
+        )
+        self.assertEqual(rows, [
+            {"week_start": "2024-01-01", "demo": "7"},
+            {"week_start": "2024-01-08", "demo": "80"},
+            {"week_start": "2024-01-15", "demo": "9"},
+        ])
+
+    def test_incremental_rows_preserve_history_before_refresh_window(self):
+        rows = merge_incremental_rows(
+            [
+                {"week_start": "2024-01-01", "demo": "0"},
+                {"week_start": "2024-01-08", "demo": "7"},
+            ],
+            {"demo": PackageMeta(exists=True, created=date(2024, 1, 10))},
+            {"demo": {date(2024, 1, 8): 80, date(2024, 1, 15): 9}},
+            date(2024, 1, 21),
+            {"demo": date(2024, 1, 10)},
+            {"demo": date(2024, 1, 8)},
+        )
+        self.assertEqual(rows[0]["demo"], "0")
+        self.assertEqual(rows[1]["demo"], "80")
 
     def test_write_outputs_writes_csv_and_metadata_contract(self):
         with tempfile.TemporaryDirectory() as directory:

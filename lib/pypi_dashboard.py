@@ -13,10 +13,11 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from .dashboard_outputs import validate_rows, write_pair_atomic
+from .dashboard_outputs import OutputSafetyError, load_existing_rows, validate_rows, write_pair_atomic
 
 CLICKHOUSE_ENDPOINT = "https://sql-clickhouse.clickhouse.com/"
 PYPI_JSON_URL = "https://pypi.org/pypi/{package}/json"
+INCREMENTAL_OVERLAP_DAYS = 14
 
 
 @dataclass
@@ -120,16 +121,34 @@ def latest_download_day(*, user_agent: str) -> date:
     return date.fromisoformat(rows[0]["d"])
 
 
-def fetch_weekly(packages: list[str], *, user_agent: str) -> list[dict[str, str]]:
+def fetch_weekly(
+    packages: list[str],
+    *,
+    user_agent: str,
+    start: date | None = None,
+    end: date | None = None,
+) -> list[dict[str, str]]:
     values = ", ".join("'" + package.replace("'", "\\'") + "'" for package in packages)
+    conditions = [f"project IN ({values})"]
+    if start is not None:
+        conditions.append(f"date >= '{start.isoformat()}'")
+    if end is not None:
+        conditions.append(f"date <= '{end.isoformat()}'")
     sql = f"""
 SELECT toString(toMonday(date)) AS week_start, project, sum(count) AS downloads
 FROM pypi.pypi_downloads_per_day
-WHERE project IN ({values})
+WHERE {' AND '.join(conditions)}
 GROUP BY week_start, project
 ORDER BY week_start, project
 FORMAT CSVWithNames""".strip()
     return clickhouse_csv(sql, user_agent=user_agent)
+
+
+def coverage_week(first_upload: date | None, observed_week: date | None) -> date | None:
+    first_week = first_upload - timedelta(days=first_upload.weekday()) if first_upload else None
+    if first_week and observed_week:
+        return max(first_week, observed_week)
+    return first_week or observed_week
 
 
 def build_rows(
@@ -154,15 +173,94 @@ def build_rows(
         values: dict[str, int | str] = {}
         for package in packages:
             first_upload = first_uploads.get(package) if first_uploads else None
-            first_week = first_upload - timedelta(days=first_upload.weekday()) if first_upload else None
-            coverage_week = max(first_week, observed_starts[package]) if first_week and observed_starts[package] else first_week or observed_starts[package]
-            values[package] = "" if coverage_week is None or current < coverage_week else weekly.get((current, package), 0)
+            package_coverage = coverage_week(first_upload, observed_starts[package])
+            values[package] = "" if package_coverage is None or current < package_coverage else weekly.get((current, package), 0)
         rows.append({
             "week_start": current.isoformat(),
             **values,
         })
         current += timedelta(days=7)
     return rows
+
+
+def merge_incremental_rows(
+    existing_rows: list[dict[str, str]],
+    raw_rows: list[dict[str, str]],
+    packages: list[str],
+    latest_day: date,
+    first_uploads: dict[str, date | None],
+) -> list[dict[str, int | str]]:
+    """Merge a recent ClickHouse window into the previously published rows."""
+
+    weekly = {
+        (date.fromisoformat(row["week_start"]), row["project"]): int(row["downloads"])
+        for row in raw_rows
+    }
+    if not weekly:
+        raise OutputSafetyError("ClickHouse returned no rows for an incremental refresh")
+
+    raw_observed_starts = {
+        package: min((week for week, project in weekly if project == package), default=None)
+        for package in packages
+    }
+    existing_observed_starts = {
+        package: min(
+            (
+                date.fromisoformat(row["week_start"])
+                for row in existing_rows
+                if row.get(package, "") != ""
+            ),
+            default=None,
+        )
+        for package in packages
+    }
+    observed_starts = {
+        package: existing_observed_starts[package] or raw_observed_starts[package]
+        for package in packages
+    }
+    refresh_week = min(week for week, _ in weekly)
+
+    rows: list[dict[str, int | str]] = [dict(row) for row in existing_rows]
+    for row in rows:
+        current = date.fromisoformat(str(row["week_start"]))
+        for package in packages:
+            package_coverage = coverage_week(first_uploads.get(package), observed_starts[package])
+            if current >= refresh_week:
+                row[package] = (
+                    ""
+                    if package_coverage is None or current < package_coverage
+                    else weekly.get((current, package), 0)
+                )
+
+    current = date.fromisoformat(str(rows[-1]["week_start"])) + timedelta(days=7)
+    last_week = latest_day - timedelta(days=latest_day.weekday())
+    while current <= last_week:
+        values: dict[str, int | str] = {}
+        for package in packages:
+            package_coverage = coverage_week(first_uploads.get(package), observed_starts[package])
+            values[package] = (
+                ""
+                if package_coverage is None or current < package_coverage
+                else weekly.get((current, package), 0)
+            )
+        rows.append({"week_start": current.isoformat(), **values})
+        current += timedelta(days=7)
+    return rows
+
+
+def incremental_query_start(configs: list[PyPIConfig], *, rebuild: bool = False) -> date | None:
+    """Return one shared overlap start for a group of PyPI datasets."""
+
+    if rebuild:
+        return None
+    starts: list[date] = []
+    for config in configs:
+        existing_rows = load_existing_rows(config.csv_path, ["week_start", *config.packages])
+        if not existing_rows:
+            return None
+        last_week = date.fromisoformat(existing_rows[-1]["week_start"])
+        starts.append(last_week - timedelta(days=INCREMENTAL_OVERLAP_DAYS))
+    return min(starts)
 
 
 def complete_week(rows: list[dict[str, int | str]], latest_day: date) -> str | None:
@@ -228,13 +326,35 @@ def write_outputs(
     )
 
 
-def run_pypi(config: PyPIConfig) -> dict:
-    """Refresh one PyPI dataset and its metadata."""
+def run_pypi(
+    config: PyPIConfig,
+    *,
+    latest_day: date | None = None,
+    raw_rows: list[dict[str, str]] | None = None,
+    rebuild: bool = False,
+) -> dict:
+    """Refresh one PyPI dataset, using a shared recent query when supplied."""
     metas = {package: load_meta(package, user_agent=config.user_agent) for package in config.packages}
-    latest_day = latest_download_day(user_agent=config.user_agent)
-    raw_rows = fetch_weekly(config.packages, user_agent=config.user_agent)
+    latest_day = latest_day or latest_download_day(user_agent=config.user_agent)
+    columns = ["week_start", *config.packages]
+    existing_rows = [] if rebuild else load_existing_rows(config.csv_path, columns)
+    if raw_rows is None:
+        query_start = None
+        if existing_rows:
+            last_week = date.fromisoformat(existing_rows[-1]["week_start"])
+            query_start = last_week - timedelta(days=INCREMENTAL_OVERLAP_DAYS)
+        raw_rows = fetch_weekly(
+            config.packages,
+            user_agent=config.user_agent,
+            start=query_start,
+            end=latest_day,
+        )
     first_uploads = {package: meta.first_upload for package, meta in metas.items()}
-    rows = build_rows(raw_rows, config.packages, first_uploads)
+    rows = (
+        merge_incremental_rows(existing_rows, raw_rows, config.packages, latest_day, first_uploads)
+        if existing_rows
+        else build_rows(raw_rows, config.packages, first_uploads)
+    )
     write_outputs(rows, metas, latest_day, config)
     return {
         "csv": str(config.csv_path),

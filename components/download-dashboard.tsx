@@ -4,11 +4,16 @@ import { useEffect, useMemo, useState, type PointerEvent } from "react";
 
 import { SiteHeader } from "@/components/site-header";
 import { useSitePreferences, type Language } from "@/components/site-preferences";
-import { parseDownloadDataset, type DownloadRow } from "@/lib/download-data";
+import {
+  parseDashboardManifest,
+  parseDownloadDataset,
+  type DashboardManifest,
+  type DownloadRow,
+} from "@/lib/download-data";
 
 type RangeKey = "1y" | "3y" | "all";
 type VendorKey = "agora" | "livekit" | "twilio" | "tencent";
-type DatasetKey = "agoraNpm" | "agoraPypi" | "livekitNpm" | "livekitPypi" | "twilioNpm" | "rtcNpm";
+type DatasetKey = string;
 type DataRow = DownloadRow;
 type LoadedDataset = {
   rows: DataRow[];
@@ -17,42 +22,51 @@ type LoadedDataset = {
   sharedCompleteWeek?: string;
 };
 
-const dataRoot = "/data/dev-npm-downloads";
+const manifestPath = "/data/dev-npm-downloads/manifest.json";
 
-const datasets: Record<DatasetKey, { csv: string; metadata: string; registry: string }> = {
-  agoraNpm: { csv: `${dataRoot}/Data/agora_npm_weekly_downloads.csv`, metadata: `${dataRoot}/json/agora_npm_downloads_metadata.json`, registry: "npm" },
-  agoraPypi: { csv: `${dataRoot}/Data/agora_pypi_weekly_downloads.csv`, metadata: `${dataRoot}/json/agora_pypi_downloads_metadata.json`, registry: "PyPI" },
-  livekitNpm: { csv: `${dataRoot}/Data/livekit_npm_weekly_downloads.csv`, metadata: `${dataRoot}/json/livekit_npm_downloads_metadata.json`, registry: "npm" },
-  livekitPypi: { csv: `${dataRoot}/Data/livekit_pypi_weekly_downloads.csv`, metadata: `${dataRoot}/json/livekit_pypi_downloads_metadata.json`, registry: "PyPI" },
-  twilioNpm: { csv: `${dataRoot}/Data/twilio_npm_weekly_downloads.csv`, metadata: `${dataRoot}/json/twilio_npm_downloads_metadata.json`, registry: "npm" },
-  rtcNpm: { csv: `${dataRoot}/Data/rtc_competitor_npm_weekly_downloads.csv`, metadata: `${dataRoot}/json/rtc_competitor_npm_downloads_metadata.json`, registry: "npm" },
-};
-
-const packages: Array<{
-  vendor: VendorKey;
-  dataset: DatasetKey;
+const packagePresentations: Array<{
   key: string;
   label: string;
   description: Record<Language, string>;
 }> = [
-  { vendor: "agora", dataset: "agoraNpm", key: "agora-rtc-sdk-ng", label: "agora-rtc-sdk-ng", description: { zh: "浏览器实时音视频 Web SDK，用于视频会议、互动直播、语音通话和在线课堂等低延迟场景。", en: "Browser RTC SDK for low-latency video meetings, interactive streaming, voice calls, and online classrooms." } },
-  { vendor: "agora", dataset: "agoraNpm", key: "agora-rtm-sdk", label: "agora-rtm-sdk", description: { zh: "实时消息 SDK，用于频道信令、聊天、在线状态与呼叫邀请，常与 RTC 音视频能力配合。", en: "Real-time messaging SDK for channel signaling, chat, presence, and call invitations alongside RTC media." } },
-  { vendor: "agora", dataset: "agoraNpm", key: "agora-rtc-react", label: "agora-rtc-react", description: { zh: "React 封装与组件，用于在 React 应用中快速接入音视频房间、设备管理和通话状态。", en: "React bindings and components for adding media rooms, device controls, and call state to React applications." } },
-  { vendor: "agora", dataset: "agoraNpm", key: "react-native-agora", label: "react-native-agora", description: { zh: "React Native RTC SDK，用于 iOS、Android 跨平台应用中的语音通话、视频会议和直播互动。", en: "React Native RTC SDK for voice calls, video meetings, and interactive streaming on iOS and Android." } },
-  { vendor: "agora", dataset: "agoraPypi", key: "agora-token-builder", label: "agora-token-builder", description: { zh: "Python Token 生成工具，用于服务端签发 RTC、RTM 鉴权令牌，控制用户加入频道与访问权限。", en: "Python token builder for issuing RTC and RTM credentials and controlling channel access from a server." } },
-  { vendor: "agora", dataset: "agoraPypi", key: "agora-python-server-sdk", label: "agora-python-server-sdk", description: { zh: "Python 服务端 SDK，用于后台管理房间、用户及云端能力，适合自动化服务和业务后端集成。", en: "Python server SDK for managing rooms, users, and cloud capabilities in automated services and backends." } },
-  { vendor: "livekit", dataset: "livekitNpm", key: "livekit-client", label: "livekit-client", description: { zh: "JavaScript、TypeScript 核心客户端，用于浏览器或 Node.js 接入房间、音视频轨道和实时数据。", en: "Core JavaScript and TypeScript client for rooms, media tracks, and real-time data in browsers or Node.js." } },
-  { vendor: "livekit", dataset: "livekitNpm", key: "@livekit/components-react", label: "livekit/components-react", description: { zh: "LiveKit React UI 组件，用于快速搭建视频会议、语音房间、设备控制和参与者界面。", en: "React UI components for quickly building video meetings, voice rooms, device controls, and participant views." } },
-  { vendor: "livekit", dataset: "livekitNpm", key: "@livekit/react-native", label: "livekit/react-native", description: { zh: "LiveKit React Native SDK，用于 iOS、Android 跨平台应用中的实时音视频房间与数据通信。", en: "React Native SDK for real-time media rooms and data communication on iOS and Android." } },
-  { vendor: "livekit", dataset: "livekitNpm", key: "@livekit/agents", label: "livekit/agents", description: { zh: "JavaScript、TypeScript Agent 框架，用于构建实时语音 AI、电话机器人及低延迟多模态交互服务。", en: "JavaScript and TypeScript agent framework for real-time voice AI, phone agents, and low-latency multimodal services." } },
-  { vendor: "livekit", dataset: "livekitNpm", key: "@livekit/agents-plugin-silero", label: "livekit/agents-plugin-silero", description: { zh: "LiveKit Agents 的 Silero VAD 插件，用于检测用户开始或停止说话，改善语音 Agent 轮次切换。", en: "Silero VAD plugin for LiveKit Agents that detects speech boundaries and improves conversational turn-taking." } },
-  { vendor: "livekit", dataset: "livekitPypi", key: "livekit", label: "livekit", description: { zh: "Python 实时 SDK，用于后端或 Agent 服务处理房间、音视频轨道、数据消息与实时任务。", en: "Python real-time SDK for handling rooms, media tracks, data messages, and live tasks in backend or agent services." } },
-  { vendor: "livekit", dataset: "livekitPypi", key: "livekit-api", label: "livekit-api", description: { zh: "Python 服务端 API 客户端，用于创建房间、管理参与者、生成令牌及调用云端管理接口。", en: "Python server API client for creating rooms, managing participants, issuing tokens, and calling cloud management APIs." } },
-  { vendor: "livekit", dataset: "livekitPypi", key: "livekit-agents", label: "livekit-agents", description: { zh: "Python Agents 框架，用于开发实时语音助手、呼叫机器人和接入 STT、LLM、TTS 的工作流。", en: "Python Agents framework for real-time voice assistants, calling agents, and STT, LLM, and TTS workflows." } },
-  { vendor: "twilio", dataset: "twilioNpm", key: "@twilio/voice-sdk", label: "twilio/voice-sdk", description: { zh: "浏览器与应用内语音通话 SDK，用于软电话、客服坐席、点击呼叫和 PSTN 通话控制。", en: "Browser and in-app voice SDK for softphones, contact center agents, click-to-call, and PSTN call control." } },
-  { vendor: "twilio", dataset: "twilioNpm", key: "twilio", label: "twilio", description: { zh: "Twilio Node.js 服务端库，用于短信、语音、视频及验证等 API 的鉴权、请求和后台自动化。", en: "Twilio Node.js server library for authentication, API requests, and backend automation across messaging, voice, video, and verification." } },
-  { vendor: "tencent", dataset: "rtcNpm", key: "trtc-cloud-js-sdk", label: "trtc-cloud-js-sdk", description: { zh: "腾讯 TRTC Web SDK，用于浏览器和 Electron 的视频会议、互动直播、语音通话及低延迟连麦。", en: "Tencent TRTC Web SDK for video meetings, interactive streaming, voice calls, and low-latency co-hosting in browsers and Electron." } },
+  { key: "agora-rtc-sdk-ng", label: "agora-rtc-sdk-ng", description: { zh: "浏览器实时音视频 Web SDK，用于视频会议、互动直播、语音通话和在线课堂等低延迟场景。", en: "Browser RTC SDK for low-latency video meetings, interactive streaming, voice calls, and online classrooms." } },
+  { key: "agora-rtm-sdk", label: "agora-rtm-sdk", description: { zh: "实时消息 SDK，用于频道信令、聊天、在线状态与呼叫邀请，常与 RTC 音视频能力配合。", en: "Real-time messaging SDK for channel signaling, chat, presence, and call invitations alongside RTC media." } },
+  { key: "agora-rtc-react", label: "agora-rtc-react", description: { zh: "React 封装与组件，用于在 React 应用中快速接入音视频房间、设备管理和通话状态。", en: "React bindings and components for adding media rooms, device controls, and call state to React applications." } },
+  { key: "react-native-agora", label: "react-native-agora", description: { zh: "React Native RTC SDK，用于 iOS、Android 跨平台应用中的语音通话、视频会议和直播互动。", en: "React Native RTC SDK for voice calls, video meetings, and interactive streaming on iOS and Android." } },
+  { key: "agora-token-builder", label: "agora-token-builder", description: { zh: "Python Token 生成工具，用于服务端签发 RTC、RTM 鉴权令牌，控制用户加入频道与访问权限。", en: "Python token builder for issuing RTC and RTM credentials and controlling channel access from a server." } },
+  { key: "agora-python-server-sdk", label: "agora-python-server-sdk", description: { zh: "Python 服务端 SDK，用于后台管理房间、用户及云端能力，适合自动化服务和业务后端集成。", en: "Python server SDK for managing rooms, users, and cloud capabilities in automated services and backends." } },
+  { key: "livekit-client", label: "livekit-client", description: { zh: "JavaScript、TypeScript 核心客户端，用于浏览器或 Node.js 接入房间、音视频轨道和实时数据。", en: "Core JavaScript and TypeScript client for rooms, media tracks, and real-time data in browsers or Node.js." } },
+  { key: "@livekit/components-react", label: "livekit/components-react", description: { zh: "LiveKit React UI 组件，用于快速搭建视频会议、语音房间、设备控制和参与者界面。", en: "React UI components for quickly building video meetings, voice rooms, device controls, and participant views." } },
+  { key: "@livekit/react-native", label: "livekit/react-native", description: { zh: "LiveKit React Native SDK，用于 iOS、Android 跨平台应用中的实时音视频房间与数据通信。", en: "React Native SDK for real-time media rooms and data communication on iOS and Android." } },
+  { key: "@livekit/agents", label: "livekit/agents", description: { zh: "JavaScript、TypeScript Agent 框架，用于构建实时语音 AI、电话机器人及低延迟多模态交互服务。", en: "JavaScript and TypeScript agent framework for real-time voice AI, phone agents, and low-latency multimodal services." } },
+  { key: "@livekit/agents-plugin-silero", label: "livekit/agents-plugin-silero", description: { zh: "LiveKit Agents 的 Silero VAD 插件，用于检测用户开始或停止说话，改善语音 Agent 轮次切换。", en: "Silero VAD plugin for LiveKit Agents that detects speech boundaries and improves conversational turn-taking." } },
+  { key: "livekit", label: "livekit", description: { zh: "Python 实时 SDK，用于后端或 Agent 服务处理房间、音视频轨道、数据消息与实时任务。", en: "Python real-time SDK for handling rooms, media tracks, data messages, and live tasks in backend or agent services." } },
+  { key: "livekit-api", label: "livekit-api", description: { zh: "Python 服务端 API 客户端，用于创建房间、管理参与者、生成令牌及调用云端管理接口。", en: "Python server API client for creating rooms, managing participants, issuing tokens, and calling cloud management APIs." } },
+  { key: "livekit-agents", label: "livekit-agents", description: { zh: "Python Agents 框架，用于开发实时语音助手、呼叫机器人和接入 STT、LLM、TTS 的工作流。", en: "Python Agents framework for real-time voice assistants, calling agents, and STT, LLM, and TTS workflows." } },
+  { key: "@twilio/voice-sdk", label: "twilio/voice-sdk", description: { zh: "浏览器与应用内语音通话 SDK，用于软电话、客服坐席、点击呼叫和 PSTN 通话控制。", en: "Browser and in-app voice SDK for softphones, contact center agents, click-to-call, and PSTN call control." } },
+  { key: "twilio", label: "twilio", description: { zh: "Twilio Node.js 服务端库，用于短信、语音、视频及验证等 API 的鉴权、请求和后台自动化。", en: "Twilio Node.js server library for authentication, API requests, and backend automation across messaging, voice, video, and verification." } },
+  { key: "trtc-cloud-js-sdk", label: "trtc-cloud-js-sdk", description: { zh: "腾讯 TRTC Web SDK，用于浏览器和 Electron 的视频会议、互动直播、语音通话及低延迟连麦。", en: "Tencent TRTC Web SDK for video meetings, interactive streaming, voice calls, and low-latency co-hosting in browsers and Electron." } },
 ];
+
+type PackageDefinition = {
+  key: string;
+  label: string;
+  description: Record<Language, string>;
+  vendor: VendorKey;
+  dataset: string;
+};
+
+function packageDefinitions(manifest: DashboardManifest): PackageDefinition[] {
+  return manifest.packages.map((item) => {
+    const presentation = packagePresentations.find((candidate) => candidate.key === item.key);
+    if (!presentation) throw new Error(`Missing presentation for ${item.key}`);
+    return {
+      ...presentation,
+      vendor: item.vendor as VendorKey,
+      dataset: item.dataset,
+    };
+  });
+}
 
 const copy = {
   zh: {
@@ -232,7 +246,7 @@ function DownloadChart({ rows, dataKey, label, language, empty, downloads }: {
 }
 
 function PackageChart({ definition, dataset, range, language }: {
-  definition: (typeof packages)[number];
+  definition: PackageDefinition;
   dataset?: LoadedDataset;
   range: RangeKey;
   language: Language;
@@ -275,6 +289,7 @@ function PackageChart({ definition, dataset, range, language }: {
 export function DownloadDashboard() {
   const { language } = useSitePreferences();
   const [range, setRange] = useState<RangeKey>("3y");
+  const [manifest, setManifest] = useState<DashboardManifest | null>(null);
   const [loaded, setLoaded] = useState<Partial<Record<DatasetKey, LoadedDataset>>>({});
   const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -284,9 +299,15 @@ export function DownloadDashboard() {
     let cancelled = false;
 
     async function load() {
+      const manifestResponse = await fetch(manifestPath);
+      if (!manifestResponse.ok) throw new Error(`manifest: ${manifestResponse.status}`);
+      const dashboardManifest = parseDashboardManifest(await manifestResponse.json());
       const results = await Promise.allSettled(
-        (Object.entries(datasets) as Array<[DatasetKey, (typeof datasets)[DatasetKey]]>).map(async ([key, definition]) => {
-          const [csvResponse, metadataResponse] = await Promise.all([fetch(definition.csv), fetch(definition.metadata)]);
+        (Object.entries(dashboardManifest.datasets) as Array<[DatasetKey, DashboardManifest["datasets"][string]]>).map(async ([key, definition]) => {
+          const [csvResponse, metadataResponse] = await Promise.all([
+            fetch(`${dashboardManifest.dataRoot}/${definition.csv}`),
+            fetch(`${dashboardManifest.dataRoot}/${definition.metadata}`),
+          ]);
           if (!csvResponse.ok) throw new Error(`${key}: CSV ${csvResponse.status}`);
           if (!metadataResponse.ok) throw new Error(`${key}: metadata ${metadataResponse.status}`);
           const metadata: unknown = await metadataResponse.json();
@@ -304,9 +325,11 @@ export function DownloadDashboard() {
         if (result.status === "fulfilled") next[result.value[0]] = result.value[1];
         else nextErrors.push(result.reason instanceof Error ? result.reason.message : String(result.reason));
       });
-      const completeWeeks = Object.values(next).map((dataset) => dataset.completeWeek).filter((value): value is string => Boolean(value)).sort();
+      const loadedDatasets = Object.values(next).filter((dataset): dataset is LoadedDataset => Boolean(dataset));
+      const completeWeeks = loadedDatasets.map((dataset) => dataset.completeWeek).filter((value): value is string => Boolean(value)).sort();
       const sharedCompleteWeek = completeWeeks[0];
-      Object.values(next).forEach((dataset) => { dataset.sharedCompleteWeek = sharedCompleteWeek; });
+      loadedDatasets.forEach((dataset) => { dataset.sharedCompleteWeek = sharedCompleteWeek; });
+      setManifest(dashboardManifest);
       setLoaded(next);
       setErrors(nextErrors);
       setLoading(false);
@@ -321,7 +344,11 @@ export function DownloadDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const sharedCompleteWeek = useMemo(() => Object.values(loaded).map((dataset) => dataset.sharedCompleteWeek).find(Boolean), [loaded]);
+  const visiblePackages = manifest ? packageDefinitions(manifest) : [];
+  const sharedCompleteWeek = useMemo(
+    () => Object.values(loaded).find((dataset): dataset is LoadedDataset => Boolean(dataset))?.sharedCompleteWeek,
+    [loaded],
+  );
 
   return (
     <>
@@ -336,7 +363,7 @@ export function DownloadDashboard() {
         </header>
 
         <section className="summary-strip rise delay-2" aria-label={text.summaryLabel}>
-          <div className="summary-item"><span>{text.packages}</span><strong>{packages.length}</strong></div>
+          <div className="summary-item"><span>{text.packages}</span><strong>{visiblePackages.length}</strong></div>
           <div className="summary-item"><span>{text.ecosystems}</span><strong>4</strong></div>
           <div className="summary-item"><span>{text.granularity}</span><strong>{text.week}</strong></div>
           <div className="summary-item"><span>{text.completeThrough}</span><strong>{sharedCompleteWeek ?? "—"}</strong></div>
@@ -365,7 +392,7 @@ export function DownloadDashboard() {
                 <p>{text.vendorDescriptions[vendor.key]}</p>
               </header>
               <div className="chart-list">
-                {packages.filter((definition) => definition.vendor === vendor.key).map((definition) => (
+                {visiblePackages.filter((definition) => definition.vendor === vendor.key).map((definition) => (
                   <PackageChart key={definition.key} definition={definition} dataset={loaded[definition.dataset]} range={range} language={language} />
                 ))}
               </div>

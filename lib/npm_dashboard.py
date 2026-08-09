@@ -13,12 +13,13 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from .dashboard_outputs import validate_rows, write_pair_atomic
+from .dashboard_outputs import load_existing_rows, validate_rows, write_pair_atomic
 
 NPM_REGISTRY = "https://registry.npmjs.org"
 NPM_DOWNLOADS = "https://api.npmjs.org/downloads"
 EARLIEST_DOWNLOAD_DATE = date(2015, 1, 10)
 MAX_RANGE_DAYS = 548
+INCREMENTAL_OVERLAP_DAYS = 14
 RETRYABLE_HTTP_STATUS = {429, 500, 502, 503, 504}
 
 
@@ -152,6 +153,45 @@ def build_rows(
     return rows
 
 
+def merge_incremental_rows(
+    existing_rows: list[dict[str, str]],
+    metas: dict[str, PackageMeta],
+    downloads: dict[str, dict[date, int]],
+    latest_day: date,
+    coverage_starts: dict[str, date],
+    fetch_starts: dict[str, date],
+) -> list[dict[str, str]]:
+    """Merge an overlapping recent fetch into the previously published rows."""
+
+    rows = [dict(row) for row in existing_rows]
+    for package in metas:
+        coverage_week = week_start(coverage_starts[package]) if package in coverage_starts else None
+        refresh_week = week_start(fetch_starts[package]) if package in fetch_starts else None
+        for row in rows:
+            current = date.fromisoformat(row["week_start"])
+            if refresh_week is not None and current >= refresh_week:
+                row[package] = (
+                    ""
+                    if coverage_week is None or current < coverage_week
+                    else str(downloads[package].get(current, 0))
+                )
+
+    current = date.fromisoformat(rows[-1]["week_start"]) + timedelta(days=7)
+    last_week = week_start(latest_day)
+    while current <= last_week:
+        row = {"week_start": current.isoformat()}
+        for package in metas:
+            coverage_week = week_start(coverage_starts[package]) if package in coverage_starts else None
+            row[package] = (
+                ""
+                if coverage_week is None or current < coverage_week
+                else str(downloads[package].get(current, 0))
+            )
+        rows.append(row)
+        current += timedelta(days=7)
+    return rows
+
+
 def write_outputs(
     rows: list[dict[str, str]], metas: dict[str, PackageMeta], latest_day: date, config: VendorConfig
 ) -> None:
@@ -203,20 +243,40 @@ def write_outputs(
     )
 
 
-def run(config: VendorConfig) -> dict:
-    """Refresh one npm dataset and its metadata."""
+def run(
+    config: VendorConfig,
+    *,
+    latest_day: date | None = None,
+    rebuild: bool = False,
+) -> dict:
+    """Refresh one npm dataset, fetching only the recent overlap by default."""
     metas = {package: load_package_meta(package, user_agent=config.user_agent) for package in config.packages}
-    latest_day = latest_download_day(user_agent=config.user_agent)
+    latest_day = latest_day or latest_download_day(user_agent=config.user_agent)
+    columns = ["week_start", *config.packages]
+    existing_rows = [] if rebuild else load_existing_rows(config.csv_path, columns)
     downloads: dict[str, dict[date, int]] = {}
     coverage_starts: dict[str, date] = {}
+    fetch_starts: dict[str, date] = {}
     for package, meta in metas.items():
         if not meta.exists or not meta.created:
             downloads[package] = {}
             continue
         coverage_start = max(meta.created, EARLIEST_DOWNLOAD_DATE)
         coverage_starts[package] = coverage_start
-        downloads[package] = load_weekly(package, coverage_start, latest_day, user_agent=config.user_agent)
-    rows = build_rows(metas, downloads, latest_day, coverage_starts)
+        fetch_start = coverage_start
+        if existing_rows:
+            last_existing_week = date.fromisoformat(existing_rows[-1]["week_start"])
+            fetch_start = max(
+                coverage_start,
+                last_existing_week - timedelta(days=INCREMENTAL_OVERLAP_DAYS),
+            )
+        fetch_starts[package] = fetch_start
+        downloads[package] = load_weekly(package, fetch_start, latest_day, user_agent=config.user_agent)
+    rows = (
+        merge_incremental_rows(existing_rows, metas, downloads, latest_day, coverage_starts, fetch_starts)
+        if existing_rows
+        else build_rows(metas, downloads, latest_day, coverage_starts)
+    )
     write_outputs(rows, metas, latest_day, config)
     return {
         "csv": str(config.csv_path),
