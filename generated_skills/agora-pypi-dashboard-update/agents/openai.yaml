@@ -1,4 +1,0 @@
-interface:
-  display_name: "Agora PyPI Data Update"
-  short_description: "Refresh Agora PyPI data for the single-page dashboard."
-  default_prompt: "Use $agora-pypi-dashboard-update to refresh the Agora PyPI CSV and metadata, validate the root dashboard, and report the result."

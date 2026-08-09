@@ -1,0 +1,4 @@
+interface:
+  display_name: "Developer Download Data Update"
+  short_description: "Refresh and maintain the unified developer download dashboard."
+  default_prompt: "Use $developer-download-data-update to refresh the developer download dashboard, validate the data and preview, and report any publication status."
