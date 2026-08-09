@@ -170,7 +170,6 @@ export function SiteHeader() {
                 }}
                 onFocus={() => {
                   cancelClose();
-                  setOpenMenu(item.key);
                 }}
                 onPointerEnter={(event) => {
                   if (event.pointerType === "mouse") {
