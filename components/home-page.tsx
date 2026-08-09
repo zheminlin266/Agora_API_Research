@@ -15,7 +15,6 @@ export function HomePageContent({ zhMarkdown, enMarkdown }: HomePageContentProps
       enTitle="Agora — Key Takeaways"
       imageBasePath="/articles/agora-key-takeaways"
       showHeader={false}
-      showToc={false}
       zhMarkdown={zhMarkdown}
       zhTitle="声网-主要观点"
     />

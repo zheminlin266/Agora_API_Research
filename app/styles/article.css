@@ -400,7 +400,7 @@
   font-weight: 400;
 }
 
-@media (max-width: 1179px) {
+@media (max-width: 1279px) {
   .article-toc {
     display: none;
   }
