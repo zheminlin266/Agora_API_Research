@@ -1,5 +1,7 @@
 # Agora — Key Takeaways
 
+### Background
+
 This work is intended both to study Agora and to experiment with using more AI architectures and a broader set of AI tools in fundamental company research. Agora operates in a highly specialized technical field, where knowledge and information circulate within a relatively small community, while B2B businesses also have a high barrier to understanding. The research process around RTC has been interesting in its own right: it has offered a chance to explore better ways to use AI's analytical and execution capabilities, while also highlighting some of AI's limitations in investment research. I am still working to develop as objective a view of the company as possible, so I am sharing both the positives and the negatives. This is not investment advice.
 
 ### Agora's Core Investment Thesis
@@ -103,7 +105,7 @@ AI has now dramatically lowered the barrier to writing code, which in turn has l
 
 Over the long term, AI will have a profound impact on the software industry, but the pace of progress is currently so rapid that it is difficult to see clearly where things are headed. Agora's advantages in specialized scenarios such as high concurrency and weak-network conditions are to a significant extent based on software engineering capabilities. However, those capabilities also depend on years of practical experience and accumulated data. AI may need to advance for quite some time before it can gradually catch up.
 
-#### A Few Speculations
+### A Few Speculations
 
 AI will significantly reduce the cost of digital assets. High-quality AIGC content on Douyin is an obvious example. I recently tried using Tripo to generate 3D models, and the quality was high while the cost was lower than buying a model from the Unity Asset Store. A major expansion in digital assets may make previously impractical projects feasible.
 
