@@ -90,4 +90,4 @@ npm 数据来自 npm 官方 Downloads API；PyPI 数据来自 PyPI 项目元数�
 
 `.playwright-mcp/` 和根目录 `next-preview-*.log` 是本地运行工件，已加入忽略；`.obsidian/` 可能包含共享研究配置，当前不自动忽略或删除，须先确认归属。
 
-更多运行时关系见 [docs/architecture.md](docs/architecture.md)；旧的 `workflow.md` 仅作为数据更新流程的兼容入口。
+更多运行时关系见 [docs/architecture.md](docs/architecture.md)。
