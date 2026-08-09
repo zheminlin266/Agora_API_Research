@@ -1,4 +1,0 @@
-interface:
-  display_name: "LiveKit npm Data Update"
-  short_description: "Refresh LiveKit npm data for the single-page dashboard."
-  default_prompt: "Use $livekit-npm-dashboard-update to refresh the LiveKit npm CSV and metadata, validate the root dashboard, and report the result."
