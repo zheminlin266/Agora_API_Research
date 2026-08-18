@@ -1,20 +1,20 @@
 {
-  "generated_at_utc": "2026-08-09T01:05:14+00:00",
+  "generated_at_utc": "2026-08-18T08:52:09+00:00",
   "vendor": "livekit",
   "source": {
     "download_table": "pypi.pypi_downloads_per_day",
     "download_provider": "ClickPy public ClickHouse endpoint",
     "metadata_provider": "PyPI JSON API",
-    "source_last_date": "2026-08-08",
+    "source_last_date": "2026-08-17",
     "weekly_grain": "Monday-start weeks",
-    "latest_complete_week_start": "2026-07-27"
+    "latest_complete_week_start": "2026-08-10"
   },
   "dataset": {
     "csv": "livekit_pypi_weekly_downloads.csv",
-    "rows": 166,
+    "rows": 168,
     "first_week_start": "2023-06-05",
-    "last_week_start": "2026-08-03",
-    "latest_complete_week_start": "2026-07-27",
+    "last_week_start": "2026-08-17",
+    "latest_complete_week_start": "2026-08-10",
     "columns": [
       "week_start",
       "livekit",
@@ -46,7 +46,7 @@
     "livekit-agents": {
       "exists": true,
       "summary": "A powerful framework for building realtime voice AI agents",
-      "latest_version": "1.6.9",
+      "latest_version": "1.6.10",
       "requires_python": "<3.15,>=3.10",
       "first_upload": "2023-11-14",
       "package_url": "https://pypi.org/project/livekit-agents/",
