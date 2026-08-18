@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2026-08-09T01:05:04.654438+00:00",
+  "generated_at_utc": "2026-08-18T08:52:00.520100+00:00",
   "vendor": "livekit",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-08-06",
-    "latest_complete_week_start": "2026-07-27",
+    "latest_download_day": "2026-08-15",
+    "latest_complete_week_start": "2026-08-03",
     "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
   },
   "dataset": {
     "csv": "livekit_npm_weekly_downloads.csv",
-    "rows": 290,
+    "rows": 291,
     "columns": [
       "week_start",
       "livekit-client",
@@ -20,23 +20,23 @@
       "@livekit/agents",
       "@livekit/agents-plugin-silero"
     ],
-    "latest_complete_week_start": "2026-07-27"
+    "latest_complete_week_start": "2026-08-03"
   },
   "packages": {
     "livekit-client": {
       "exists": true,
       "created": "2021-01-24T23:09:43.737Z",
-      "modified": "2026-07-23T14:20:42.390Z",
-      "latest_version": "2.21.0",
+      "modified": "2026-08-17T13:21:31.514Z",
+      "latest_version": "2.22.0",
       "description": "JavaScript/TypeScript client SDK for LiveKit",
       "error": null
     },
     "@livekit/components-react": {
       "exists": true,
       "created": "2022-10-07T08:26:58.958Z",
-      "modified": "2026-07-09T14:10:49.187Z",
-      "latest_version": "2.9.23",
-      "description": "A LiveKit Components implementation in [React](https://reactjs.org/).",
+      "modified": "2026-08-11T01:36:55.179Z",
+      "latest_version": "2.9.24",
+      "description": null,
       "error": null
     },
     "@livekit/react-native": {
@@ -50,16 +50,16 @@
     "@livekit/agents": {
       "exists": true,
       "created": "2024-05-21T08:53:35.047Z",
-      "modified": "2026-08-06T01:13:56.272Z",
-      "latest_version": "1.6.2",
+      "modified": "2026-08-14T23:06:37.948Z",
+      "latest_version": "1.6.4",
       "description": "LiveKit Agents - Node.js",
       "error": null
     },
     "@livekit/agents-plugin-silero": {
       "exists": true,
       "created": "2024-11-10T15:13:39.024Z",
-      "modified": "2026-08-06T01:14:17.031Z",
-      "latest_version": "1.6.2",
+      "modified": "2026-08-14T23:06:46.949Z",
+      "latest_version": "1.6.4",
       "description": "Silero voice activity detection LiveKit Node Agents",
       "error": null
     }
