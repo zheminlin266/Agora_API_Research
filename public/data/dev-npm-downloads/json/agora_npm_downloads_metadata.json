@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2026-08-18T08:51:50.464311+00:00",
+  "generated_at_utc": "2026-08-26T06:25:55.119238+00:00",
   "vendor": "agora",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-08-15",
-    "latest_complete_week_start": "2026-08-03",
+    "latest_download_day": "2026-08-24",
+    "latest_complete_week_start": "2026-08-17",
     "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
   },
   "dataset": {
     "csv": "agora_npm_weekly_downloads.csv",
-    "rows": 479,
+    "rows": 481,
     "columns": [
       "week_start",
       "agora-rtc-sdk-ng",
@@ -19,7 +19,7 @@
       "agora-rtc-react",
       "react-native-agora"
     ],
-    "latest_complete_week_start": "2026-08-03"
+    "latest_complete_week_start": "2026-08-17"
   },
   "packages": {
     "agora-rtc-sdk-ng": {
