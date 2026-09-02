@@ -1,20 +1,20 @@
 {
-  "generated_at_utc": "2026-08-26T06:26:24+00:00",
+  "generated_at_utc": "2026-09-02T13:26:17+00:00",
   "vendor": "agora",
   "source": {
     "download_table": "pypi.pypi_downloads_per_day",
     "download_provider": "ClickPy public ClickHouse endpoint",
     "metadata_provider": "PyPI JSON API",
-    "source_last_date": "2026-08-25",
+    "source_last_date": "2026-09-01",
     "weekly_grain": "Monday-start weeks",
-    "latest_complete_week_start": "2026-08-17"
+    "latest_complete_week_start": "2026-08-24"
   },
   "dataset": {
     "csv": "agora_pypi_weekly_downloads.csv",
-    "rows": 248,
+    "rows": 249,
     "first_week_start": "2021-11-29",
-    "last_week_start": "2026-08-24",
-    "latest_complete_week_start": "2026-08-17",
+    "last_week_start": "2026-08-31",
+    "latest_complete_week_start": "2026-08-24",
     "columns": [
       "week_start",
       "agora-token-builder",
