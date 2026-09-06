@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2026-09-02T13:26:12.469945+00:00",
+  "generated_at_utc": "2026-09-06T08:21:22.704155+00:00",
   "vendor": "twilio",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-08-29",
-    "latest_complete_week_start": "2026-08-17",
+    "latest_download_day": "2026-08-30",
+    "latest_complete_week_start": "2026-08-24",
     "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
   },
   "dataset": {
@@ -17,7 +17,7 @@
       "@twilio/voice-sdk",
       "twilio"
     ],
-    "latest_complete_week_start": "2026-08-17"
+    "latest_complete_week_start": "2026-08-24"
   },
   "packages": {
     "@twilio/voice-sdk": {

@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2026-09-02T13:25:58.279335+00:00",
+  "generated_at_utc": "2026-09-06T08:20:59.569606+00:00",
   "vendor": "agora",
   "source": {
     "registry": "https://registry.npmjs.org",
     "downloads": "https://api.npmjs.org/downloads",
     "weekly_grain": "Monday-start weeks",
-    "latest_download_day": "2026-08-29",
-    "latest_complete_week_start": "2026-08-17",
+    "latest_download_day": "2026-08-30",
+    "latest_complete_week_start": "2026-08-24",
     "caveat": "npm counts include automation, mirrors, caches, and dependency installs."
   },
   "dataset": {
@@ -19,7 +19,7 @@
       "agora-rtc-react",
       "react-native-agora"
     ],
-    "latest_complete_week_start": "2026-08-17"
+    "latest_complete_week_start": "2026-08-24"
   },
   "packages": {
     "agora-rtc-sdk-ng": {
@@ -49,8 +49,8 @@
     "react-native-agora": {
       "exists": true,
       "created": "2017-06-13T10:15:31.546Z",
-      "modified": "2026-09-01T04:06:14.356Z",
-      "latest_version": "4.6.2",
+      "modified": "2026-09-03T10:09:44.558Z",
+      "latest_version": "4.6.4",
       "description": "Agora RTC SDK For React Native",
       "error": null
     }
